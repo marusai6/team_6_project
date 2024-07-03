@@ -1,4 +1,4 @@
-# team_6_project
+# Team 6 Project
 
 ## Frontend
 
