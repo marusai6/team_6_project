@@ -1,20 +1,29 @@
-from datetime import timedelta, datetime
-
 from airflow import DAG
-from airflow.operators.python_operator import PythonOperator
+from airflow.operators.empty import EmptyOperator
+from datetime import datetime
+from airflow.providers.postgres.operators.postgres import SQLExecuteQueryOperator
+from airflow.models import Variable
 
-from commons.datasources import sql_server_ds
+config = Variable.get("hello", deserialize_json=True)
 
-dag = DAG('orders',
-          schedule_interval=timedelta(hours=6),
-          start_date=datetime(2024, 7, 3, 0))
+dag = DAG(
+    'reading_dag',
+    description='Postgres DAG',
+    schedule_interval=config['time_start'],
+    start_date=datetime(2021, 11, 7),
+    catchup=False
+)
 
-def workflow(**context):
-    print(context)
+start_step = EmptyOperator(task_id="start_step", dag=dag)
 
-for conn_id, schema in sql_server_ds:
-    PythonOperator(
-        task_id=schema,
-        python_callable=workflow,
-        provide_context=True,
-        dag=dag)
+hello_step = SQLExecuteQueryOperator(
+    task_id="select_step",
+    sql="SELECT * FROM source_data.инструменты",
+    conn_id='Korus_airflow',
+    database='source',
+    dag=dag
+)
+
+end_step = EmptyOperator(task_id="end_step", dag=dag)
+
+start_step >> hello_step >> end_step
