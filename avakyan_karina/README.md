@@ -13,3 +13,7 @@
 docker compose up airflow-init
 docker compose up
 ```
+Отслеживание результата работы dags происходит на 
+```
+http://localhost:8080/
+```
