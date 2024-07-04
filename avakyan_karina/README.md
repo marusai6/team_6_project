@@ -7,8 +7,14 @@
 ## Dags
 Все файлы dags лежат в соответсвующей папке dags
 
+** Перед запуском установите необходимые пакеты командой ** 
+```
+pip install -r requirements.txt
+```
+
 ## Запуск файла docker compose
 Для того, чтобы поднять сервер, необходимо выполнить следующие команды: 
+
 ```
 docker compose up airflow-init
 docker compose up
