@@ -1,38 +1,57 @@
-"use client"
-
-import { ModeToggle } from "@/components/ModeToggle";
-import { barChartData, barListData, chartdata, donutData } from "@/data/data";
+import React, { useEffect, useState } from 'react'
+import './output.css'
+import './styles.css'
 import { AreaChart, BarChart, BarList, DonutChart, Legend } from '@tremor/react';
+
+// @ts-ignore
+import { KoobDataService } from 'bi-internal/services'
+import { barChartData, barListData, chartdata, donutData } from '../ds_res/src/data/data';
+
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
+} from "../ds_res/src/components/Card"
 
-const currencyDataFormatter = (number: number) =>
-  `${Intl.NumberFormat('ru').format(number).toString()} руб`;
+import { ScrollArea } from "../ds_res/src/components/scroll-area"
 
-const defaultDataFormatter = (number: number) =>
-  `${Intl.NumberFormat('ru').format(number).toString()}`;
+import { currencyDataFormatter, defaultDataFormatter } from '../ds_res/src/lib/utils';
 
+const { koobDataRequest3 } = KoobDataService
 
-export default function Home() {
+function App() {
+  // const [data, setData] = useState([])
+
+  // useEffect(() => {
+  //   koobDataRequest3(
+  //     'course_2024.Student6',
+  //     ['categoryname'],
+  //     ['sum(order_unitprice)'],
+  //     {
+  //       customer_country: ['=', 'Мексика'],
+  //     },
+  //     { schema_name: 'ds_10' },
+  //     'course_2024.Student6'
+  //   ).then(res => {
+  //     const mappedData = res.map((el, i) => {
+  //       return {
+  //         value: el.order_unitprice,
+  //         name: el.categoryname,
+  //       }
+  //     })
+  //     console.log(res)
+  //     setData(mappedData)
+  //   })
+  // }, [])
+
   return (
-    <main className="flex min-h-screen flex-col items-center xl:px-40 md:px-24 px-4">
-      <header className="w-full">
-        <div className="flex flex-row gap-4 justify-between items-center border-b w-full py-4">
-          <ul className="flex gap-6">
-            <li className="cursor-pointer">Статистика</li>
-            <li className="cursor-pointer">Меню</li>
-            <li className="cursor-pointer">Разделы</li>
-          </ul>
-          <ModeToggle />
-        </div>
-      </header>
 
-      <div className="grid grid-cols-12 gap-4 my-4">
+
+    <ScrollArea className="h-full w-full rounded-md border p-4">
+      <h1 className='text-3xl text-center'>Тестовая визуализация на фейк данных</h1>
+      <div className="grid grid-cols-12 gap-4 my-4 mx-4">
         <Card className="col-span-4">
 
           <CardHeader>
@@ -123,6 +142,9 @@ export default function Home() {
 
       </div>
 
-    </main>
-  );
+    </ScrollArea>
+
+  )
 }
+
+export default App
