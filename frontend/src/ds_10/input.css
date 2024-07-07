@@ -74,6 +74,7 @@
 @layer base {
     * {
         @apply border-border;
+        @apply box-border;
     }
 
     body {
