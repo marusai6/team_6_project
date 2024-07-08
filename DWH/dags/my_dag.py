@@ -1,7 +1,7 @@
 from airflow import DAG
-from airflow.operators.dummy_operator import DummyOperator
+from airflow.operators.empty import EmptyOperator
 from datetime import datetime
-from airflow.providers.postgres.operators.postgres import PostgresOperator
+from airflow.providers.postgres.operators.postgres import SQLExecuteQueryOperator
 from airflow.models import Variable
 
 config = Variable.get("hello", deserialize_json=True)
@@ -14,15 +14,16 @@ dag = DAG(
     catchup=False
 )
 
-start_step = DummyOperator(task_id="start_step", dag=dag)
+start_step = EmptyOperator(task_id="start_step", dag=dag)
 
-hello_step = PostgresOperator(
+hello_step = SQLExecuteQueryOperator(
     task_id="select_step",
     sql="SELECT * FROM source_data.инструменты",
-    postgres_conn_id='source_database',
+    conn_id='Korus_airflow',
+    database='source',
     dag=dag
 )
 
-end_step = DummyOperator(task_id="end_step", dag=dag)
+end_step = EmptyOperator(task_id="end_step", dag=dag)
 
 start_step >> hello_step >> end_step
