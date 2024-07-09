@@ -24,7 +24,7 @@ source_engine = create_engine(source_conn_str)
 target_engine = create_engine(target_conn_str)
 
 def copy_table(table_name):
-    df = pd.read_sql(f'SELECT * FROM {table_name}', source_engine)
+    df = pd.read_sql(f'SELECT * FROM source_data.{table_name}', source_engine)
     df.to_sql(table_name, target_engine, schema='ods', if_exists='replace', index=False)
     print(f"Table {table_name} copied successfully")
 
