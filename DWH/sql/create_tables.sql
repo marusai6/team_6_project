@@ -1,78 +1,159 @@
-CREATE TABLE базы_данных (
-    id SERIAL PRIMARY KEY,
-    название VARCHAR(50) NOT NULL,
+CREATE TABLE dss.базы_данных (
+    id INT PRIMARY KEY,
+    название VARCHAR(50),
     активность BOOLEAN,
-    дата_изм DATE
+    "Дата изм." DATE
 );
 
-CREATE TABLE инструменты (
-    id SERIAL PRIMARY KEY,
-    название VARCHAR(50) NOT NULL,
+CREATE TABLE dds.инструменты (
+    id INT PRIMARY KEY,
+    название VARCHAR(50),
     активность BOOLEAN,
-    дата_изм DATE
+    "Дата изм." DATE
 );
 
-CREATE TABLE среды_разработки (
-    id SERIAL PRIMARY KEY,
-    название VARCHAR(50) NOT NULL,
+CREATE TABLE dds.среды_разработки (
+    id INT PRIMARY KEY,
+    название VARCHAR(50),
     активность BOOLEAN,
-    дата_изм DATE
+    "Дата изм." DATE
 );
 
-CREATE TABLE уровни_знаний_в_отрасли (
-    id SERIAL PRIMARY KEY,
-    название VARCHAR(50) NOT NULL,
+CREATE TABLE dds.платформы (
+    id INT PRIMARY KEY,
+    название VARCHAR(50),
     активность BOOLEAN,
-    дата_изм DATE
+    "Дата изм." DATE
 );
 
-CREATE TABLE предметная_область (
-    id SERIAL PRIMARY KEY,
-    название VARCHAR(50) NOT NULL,
+CREATE TABLE dds.уровни_знаний (
+    id INT PRIMARY KEY,
+    название VARCHAR(20),
     активность BOOLEAN,
-    дата_изм DATE
+    "Дата изм." DATE
 );
 
-CREATE TABLE уровни_образования (
-    id SERIAL PRIMARY KEY,
-    название VARCHAR(50) NOT NULL,
+CREATE TABLE dds.отрасли (
+    id INT PRIMARY KEY,
+    название VARCHAR(50),
     активность BOOLEAN,
-    дата_изм DATE
+    "Дата изм." DATE
 );
 
-CREATE TABLE отрасли (
-    id SERIAL PRIMARY KEY,
-    название VARCHAR(50) NOT NULL,
+CREATE TABLE dds.предметная_область (
+    id INT PRIMARY KEY,
+    название VARCHAR(50),
     активность BOOLEAN,
-    дата_изм DATE
+    "Дата изм." DATE
 );
 
-CREATE TABLE платформы (
-    id SERIAL PRIMARY KEY,
-    название VARCHAR(50) NOT NULL,
+CREATE TABLE dds.уровень_образования (
+    id INT PRIMARY KEY,
+    название VARCHAR(50),
     активность BOOLEAN,
-    дата_изм DATE
+    "Дата изм." DATE
 );
 
-CREATE TABLE уровни_знаний (
-    id SERIAL PRIMARY KEY,
-    название VARCHAR(20) NOT NULL,
+CREATE TABLE dds.образование_сотрудников (
+    id INT PRIMARY KEY,
+    "User ID" INT,
     активность BOOLEAN,
-    дата_изм DATE
+    "Дата изм." DATE,
+    уровень_образования INT,
+    основное_название VARCHAR(50),
+    направление VARCHAR(50),
+    год_окончания INT,
+    FOREIGN KEY ("User ID") REFERENCES dds.сотрудники_даp(id),
+    FOREIGN KEY (уровень_образования) REFERENCES dds.уровень_образования(id)
 );
 
-CREATE TABLE сотрудники_дпр (
-    id SERIAL PRIMARY KEY,
+
+CREATE TABLE dds.базы_данных_и_уровни_знаний (
+    id INT PRIMARY KEY,
+    "User ID" INT,
+    активность BOOLEAN,
+    "Дата изм." DATE,
+    база_данных INT,
+    уровень_знаний INT,
+    FOREIGN KEY ("User ID") REFERENCES dds.сотрудники_даp(id),
+    FOREIGN KEY (база_данных) REFERENCES dds.базы_данных(id),
+    FOREIGN KEY (уровень_знаний) REFERENCES dds.уровни_знаний(id)
+);
+
+CREATE TABLE dds.инструменты_и_уровень_знаний (
+    id INT PRIMARY KEY,
+    "User ID" INT,
+    активность BOOLEAN,
+    "Дата изм." DATE,
+    инструмент INT,
+    уровень_знаний INT,
+    FOREIGN KEY ("User ID") REFERENCES dds.сотрудники_даp(id),
+    FOREIGN KEY (инструмент) REFERENCES dds.инструменты(id),
+    FOREIGN KEY (уровень_знаний) REFERENCES dds.уровни_знаний(id)
+);
+
+CREATE TABLE dds.среды_разработки_и_уровень_знаний (
+    id INT PRIMARY KEY,
+    "User ID" INT,
+    активность BOOLEAN,
+    "Дата изм." DATE,
+    среда_разработки INT,
+    уровень_знаний INT,
+    FOREIGN KEY ("User ID") REFERENCES dds.сотрудники_даp(id),
+    FOREIGN KEY (среда_разработки) REFERENCES dds.среды_разработки(id),
+    FOREIGN KEY (уровень_знаний) REFERENCES dds.уровни_знаний(id)
+);
+
+CREATE TABLE dds.языки_программирования (
+    id INT PRIMARY KEY,
+    название VARCHAR(50),
+    активность BOOLEAN,
+    "Дата изм." DATE
+);
+
+CREATE TABLE dds.технологии (
+    id INT PRIMARY KEY,
+    название VARCHAR(50),
+    активность BOOLEAN,
+    "Дата изм." DATE
+);
+
+CREATE TABLE dds.опыт_сотрудника_в_отраслях (
+    id INT PRIMARY KEY,
+    "User ID" INT,
+    активность BOOLEAN,
+    "Дата изм." DATE,
+    отрасль INT,
+    уровень_знаний INT,
+    FOREIGN KEY ("User ID") REFERENCES dds.сотрудники_даp(id),
+    FOREIGN KEY (отрасль) REFERENCES dds.отрасли(id),
+    FOREIGN KEY (уровень_знаний) REFERENCES dds.уровни_знаний(id)
+);
+
+CREATE TABLE dds.опыт_сотрудника_в_предметных_областях (
+    id INT PRIMARY KEY,
+    "User ID" INT,
+    активность BOOLEAN,
+    "Дата изм." DATE,
+    область INT,
+    уровень_знаний INT,
+    FOREIGN KEY ("User ID") REFERENCES dds.сотрудники_даp(id),
+    FOREIGN KEY (область) REFERENCES dds.предметная_область(id),
+    FOREIGN KEY (уровень_знаний) REFERENCES dds.уровни_знаний(id)
+);
+
+CREATE TABLE dds.сотрудники_даp (
+    id INT PRIMARY KEY,
     дата_рождения DATE,
     активность BOOLEAN,
     пол VARCHAR(5),
     фамилия VARCHAR(20),
     имя VARCHAR(20),
-    отчество VARCHAR(20),
-    должность VARCHAR(20),
-    цпо VARCHAR(10),
+    последняя_авторизация DATE,
+    должность VARCHAR(50),
+    цфо VARCHAR(10),
     дата_регистрации DATE,
-    дата_изменения DATE,
+    "Дата изм." DATE,
     подразделение VARCHAR(50),
     email VARCHAR(50),
     логин VARCHAR(50),
@@ -80,139 +161,152 @@ CREATE TABLE сотрудники_дпр (
     город_проживания VARCHAR(50)
 );
 
-CREATE TABLE сертификаты_пользователей (
-    id SERIAL PRIMARY KEY,
-    user_id INT REFERENCES сотрудники_дпр(id),
+CREATE TABLE dds.сертификаты_пользователей (
+    id INT PRIMARY KEY,
+    "User ID" INT,
     активность BOOLEAN,
-    дата_изм DATE,
-    год_сертификата INT,
-    название_сертификата VARCHAR(100),
-    организация_выдавшая_сертификат VARCHAR(50)
+    "Дата изм." DATE,
+    наименование_сертификата VARCHAR(100),
+    организация_выдавшая_сертификат VARCHAR(50),
+    FOREIGN KEY ("User ID") REFERENCES dds.сотрудники_даp(id)
 );
 
-CREATE TABLE опыт_сотрудника_в_различных_отраслях (
-    id SERIAL PRIMARY KEY,
-    user_id INT REFERENCES сотрудники_дпр(id),
-    опыт INT,
-    дата DATE,
-    отрасль INT REFERENCES отрасли(id),
-    уровень_знаний_в_отрасли INT REFERENCES уровни_знаний(id)
-);
-
-CREATE TABLE опыт_сотрудника_в_предметной_области (
-    id SERIAL PRIMARY KEY,
-    user_id INT REFERENCES сотрудники_дпр(id),
-    опыт INT,
-    дата DATE,
-    предметная_область INT REFERENCES предметная_область(id),
-    уровень_знаний_в_предметной_обл INT REFERENCES уровни_знаний(id)
-);
-
-CREATE TABLE базы_данных_и_уровень_владения (
-    id SERIAL PRIMARY KEY,
-    user_id INT REFERENCES сотрудники_дпр(id),
-    база_данных INT REFERENCES базы_данных(id),
+CREATE TABLE dds.языки_пользователей (
+    id INT PRIMARY KEY,
+    "User ID" INT,
     активность BOOLEAN,
-    дата_изм DATE,
-    уровень_знаний INT REFERENCES уровни_знаний(id)
+    "Дата изм." DATE,
+    язык INT,
+    уровень_знаний INT,
+    FOREIGN KEY ("User ID") REFERENCES dds.сотрудники_даp(id),
+    FOREIGN KEY (язык) REFERENCES dds.языки(id),
+    FOREIGN KEY (уровень_знаний) REFERENCES dds.уровни_владения_ин(id)
 );
 
-CREATE TABLE инструменты_и_уровень_владения (
-    id SERIAL PRIMARY KEY,
-    user_id INT REFERENCES сотрудники_дпр(id),
-    инструмент INT REFERENCES инструменты(id),
+CREATE TABLE dds.уровни_знаний_в_предметной_обла
+(
+    название VARCHAR(50),
+    id         INT PRIMARY KEY,
     активность BOOLEAN,
-    дата_изм DATE,
-    уровень_знаний INT REFERENCES уровни_знаний(id)
+    "Дата изм."   DATE
 );
 
-CREATE TABLE среды_разработки_и_уровень_владения (
-    id SERIAL PRIMARY KEY,
-    user_id INT REFERENCES сотрудники_дпр(id),
-    среда_разработки INT REFERENCES среды_разработки(id),
+CREATE TABLE dds.уровни_знаний_в_отрасли
+(
+    название VARCHAR(50),
+    id         INT PRIMARY KEY,
     активность BOOLEAN,
-    дата_изм DATE,
-    уровень_знаний INT REFERENCES уровни_знаний(id)
+    "Дата изм."   DATE
 );
 
-CREATE TABLE платформы_и_уровень_владения (
-    id SERIAL PRIMARY KEY,
-    user_id INT REFERENCES сотрудники_дпр(id),
-    платформа INT REFERENCES платформы(id),
+CREATE TABLE dds.уровни_владения_ин (
+    id INT PRIMARY KEY,
+    название VARCHAR(50),
     активность BOOLEAN,
-    дата_изм DATE,
-    уровень_знаний INT REFERENCES уровни_знаний(id)
+    "Дата изм." DATE
 );
 
-CREATE TABLE языки_программирования_и_уровень_владения (
-    id SERIAL PRIMARY KEY,
-    user_id INT REFERENCES сотрудники_дпр(id),
-    язык INT REFERENCES языки(id),
+CREATE TABLE dds.языки (
+    id INT PRIMARY KEY,
+    название VARCHAR(50),
     активность BOOLEAN,
-    дата_изм DATE,
-    уровень_знаний INT REFERENCES уровни_знаний(id)
+    "Дата изм." DATE
 );
 
-CREATE TABLE технологии (
-    id SERIAL PRIMARY KEY,
-    название VARCHAR(50) NOT NULL,
+CREATE TABLE dds.типы_систем (
+    id INT PRIMARY KEY,
+    название VARCHAR(50),
     активность BOOLEAN,
-    дата_изм DATE
+    "Дата изм." DATE
 );
 
-CREATE TABLE технологии_и_уровень_владения (
-    id SERIAL PRIMARY KEY,
-    user_id INT REFERENCES сотрудники_дпр(id),
-    технология INT REFERENCES технологии(id),
+CREATE TABLE dds.типы_систем_и_уровни_знаний (
+    id INT PRIMARY KEY,
+    "User ID" INT,
     активность BOOLEAN,
-    дата_изм DATE,
-    уровень_знаний INT REFERENCES уровни_знаний(id)
+    "Дата изм." DATE,
+    тип_системы INT,
+    уровень_знаний INT,
+    FOREIGN KEY ("User ID") REFERENCES dds.сотрудники_даp(id),
+    FOREIGN KEY (тип_системы) REFERENCES dds.типы_систем(id),
+    FOREIGN KEY (уровень_знаний) REFERENCES dds.уровни_знаний(id)
 );
 
-CREATE TABLE языки (
-    id SERIAL PRIMARY KEY,
-    название VARCHAR(50) NOT NULL,
+CREATE TABLE dds.технологии_и_уровни_знаний_сотрудникв (
+    id INT PRIMARY KEY,
+    "User ID" INT,
     активность BOOLEAN,
-    дата_изм DATE
+    "Дата изм." DATE,
+    технология INT,
+    уровень_знаний INT,
+    FOREIGN KEY ("User ID") REFERENCES dds.сотрудники_даp(id),
+    FOREIGN KEY (технология) REFERENCES dds.технологии(id),
+    FOREIGN KEY (уровень_знаний) REFERENCES dds.уровни_знаний(id)
 );
 
-CREATE TABLE языки_пользователей (
-    id SERIAL PRIMARY KEY,
-    user_id INT REFERENCES сотрудники_дпр(id),
-    язык INT REFERENCES языки(id),
+CREATE TABLE dds.фреймворки (
+    id INT PRIMARY KEY,
+    название VARCHAR(50),
     активность BOOLEAN,
-    дата_изм DATE,
-    уровень_владения_языком INT REFERENCES уровни_знаний(id)
+    "Дата изм." DATE
 );
 
-CREATE TABLE типы_систем (
-    id SERIAL PRIMARY KEY,
-    название VARCHAR(50) NOT NULL,
+CREATE TABLE dds.фреймворки_и_уровни_знаний_сотрудников (
+    id INT PRIMARY KEY,
+    "User ID" INT,
     активность BOOLEAN,
-    дата_изм DATE
+    "Дата изм." DATE,
+    фреймворк INT,
+    уровень_знаний INT,
+    FOREIGN KEY ("User ID") REFERENCES dds.сотрудники_даp(id),
+    FOREIGN KEY (фреймворк) REFERENCES dds.фреймворки(id),
+    FOREIGN KEY (уровень_знаний) REFERENCES dds.уровни_знаний(id)
 );
 
-CREATE TABLE типы_систем_и_уровень_владения (
-    id SERIAL PRIMARY KEY,
-    user_id INT REFERENCES сотрудники_дпр(id),
-    тип_системы INT REFERENCES типы_систем(id),
+CREATE TABLE dds.среды_и_уровни_знаний_сотрудников (
+    id INT PRIMARY KEY,
+    "User ID" INT,
     активность BOOLEAN,
-    дата_изм DATE,
-    уровень_знаний INT REFERENCES уровни_знаний(id)
+    "Дата изм." DATE,
+    среда INT,
+    уровень_знаний INT,
+    FOREIGN KEY ("User ID") REFERENCES dds.сотрудники_даp(id),
+    FOREIGN KEY (среда) REFERENCES dds.среды_разработки(id),
+    FOREIGN KEY (уровень_знаний) REFERENCES dds.уровни_знаний(id)
 );
 
-CREATE TABLE фреймворки (
-    id SERIAL PRIMARY KEY,
-    название VARCHAR(50) NOT NULL,
+CREATE TABLE dds.языки_программирования_и_уровень_знаний (
+    id INT PRIMARY KEY,
+    "User ID" INT,
     активность BOOLEAN,
-    дата_изм DATE
+    "Дата изм." DATE,
+    язык INT,
+    уровень_знаний INT,
+    FOREIGN KEY ("User ID") REFERENCES dds.сотрудники_даp(id),
+    FOREIGN KEY (язык) REFERENCES dds.языки(id),
+    FOREIGN KEY (уровень_знаний) REFERENCES dds.уровни_знаний(id)
 );
 
-CREATE TABLE фреймворки_и_уровень_владения (
-    id SERIAL PRIMARY KEY,
-    user_id INT REFERENCES сотрудники_дпр(id),
-    фреймворк INT REFERENCES фреймворки(id),
+CREATE TABLE dds.платформы_и_уровень_знаний_сотрудников (
+    id INT PRIMARY KEY,
+    "User ID" INT,
     активность BOOLEAN,
-    дата_изм DATE,
-    уровень_знаний INT REFERENCES уровни_знаний(id)
+    "Дата изм." DATE,
+    платформа INT,
+    уровень_знаний INT,
+    FOREIGN KEY ("User ID") REFERENCES dds.сотрудники_даp(id),
+    FOREIGN KEY (платформа) REFERENCES dds.платформы(id),
+    FOREIGN KEY (уровень_знаний) REFERENCES dds.уровни_знаний(id)
+);
+
+CREATE TABLE dds.технологии_и_уровни_сотрудников (
+    id INT PRIMARY KEY,
+    "User ID" INT,
+    активность BOOLEAN,
+    "Дата изм." DATE,
+    технология INT,
+    уровень_знаний INT,
+    FOREIGN KEY ("User ID") REFERENCES dds.сотрудники_даp(id),
+    FOREIGN KEY (технология) REFERENCES dds.технологии(id),
+    FOREIGN KEY (уровень_знаний) REFERENCES dds.уровни_знаний(id)
 );
