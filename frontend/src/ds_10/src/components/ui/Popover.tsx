@@ -1,6 +1,8 @@
-import React from "react"
+import React, { useEffect } from "react"
 import { useOutsideClick } from "../../hooks/useOutsideClick";
 import { cn } from "../../lib/utils";
+import { useDispatch } from "react-redux";
+import { changeBlurEffect } from "../../state/blurEffect/blurEffectSlice";
 
 const Popover = ({ children, setOpen }: { children: React.ReactNode, setOpen: React.Dispatch<React.SetStateAction<boolean>> }) => {
 
@@ -20,6 +22,12 @@ Popover.Trigger = ({ children, setOpen }: { children: React.ReactNode, setOpen: 
 }
 
 Popover.Content = ({ children, open, align = 'right' }: { children: React.ReactNode, open: boolean, align?: 'right' | 'left' | 'center' }) => {
+
+    const dispatch = useDispatch()
+    useEffect(() => {
+        dispatch(changeBlurEffect(open))
+    }, [open])
+
     return (
         <>
             {open &&

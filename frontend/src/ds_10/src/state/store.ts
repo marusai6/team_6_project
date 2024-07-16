@@ -1,7 +1,10 @@
 import { configureStore } from "@reduxjs/toolkit"
+import blurEffectReducer from "./blurEffect/blurEffectSlice"
 
 export const store = configureStore({
-    reducer: {}
+    reducer: {
+        blurEffect: blurEffectReducer,
+    }
 })
 
 export type RootState = ReturnType<typeof store.getState>

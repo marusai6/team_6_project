@@ -2,8 +2,13 @@ import React from 'react'
 import Logo from './src/components/Logo'
 import { Menu } from 'lucide-react'
 import Filters from './src/components/Filters'
+import { useSelector } from 'react-redux'
+import { RootState } from './src/state/store'
+import { cn } from './src/lib/utils'
 
 function Dashboard() {
+
+    const { blurEffect } = useSelector((state: RootState) => state.blurEffect)
 
     return (
         <div className="relative h-screen w-full flex flex-col">
@@ -27,8 +32,15 @@ function Dashboard() {
                 <Filters />
             </div>
 
-            <div className="flex-1 grid grid-cols-12 grid-rows-5 gap-4 my-4 mx-4">
-                Основная рабочая область
+            <div className="px-4 w-full h-full bg-white">
+                <div className={cn('z-20 bg-white opacity-40 h-full w-full', blurEffect ? 'opacity-20' : 'opacity-100')}>
+                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Accusantium aperiam est magnam iure odio quisquam nam voluptate! Veritatis repellendus laudantium dicta quam hic libero fuga quia sunt error. Nemo, possimus!</p>
+                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Accusantium aperiam est magnam iure odio quisquam nam voluptate! Veritatis repellendus laudantium dicta quam hic libero fuga quia sunt error. Nemo, possimus!</p>
+                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Accusantium aperiam est magnam iure odio quisquam nam voluptate! Veritatis repellendus laudantium dicta quam hic libero fuga quia sunt error. Nemo, possimus!</p>
+                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Accusantium aperiam est magnam iure odio quisquam nam voluptate! Veritatis repellendus laudantium dicta quam hic libero fuga quia sunt error. Nemo, possimus!</p>
+                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Accusantium aperiam est magnam iure odio quisquam nam voluptate! Veritatis repellendus laudantium dicta quam hic libero fuga quia sunt error. Nemo, possimus!</p>
+                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Accusantium aperiam est magnam iure odio quisquam nam voluptate! Veritatis repellendus laudantium dicta quam hic libero fuga quia sunt error. Nemo, possimus!</p>
+                </div>
             </div>
 
         </div>
