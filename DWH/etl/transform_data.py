@@ -42,9 +42,7 @@ def clean_data(df, table_name):
         df = df[df['User ID'].isin(valid_user_ids)]
         df.drop(columns=['Сорт.', 'Факультет, кафедра', 'специальность', 'квалификация'], inplace=True)
         broken_data = df[(df['Год окончания'] > 2024) | (df['Год окончания'] == 1960) | (df['Год окончания'].isna()) | (
-            df['Уровень образование'].isna())]
-
-        # Заполнение пустых и ошибочных значений в столбце 'Год окончания'
+            df['Уровень образование'].isna())]        # Заполнение пустых и ошибочных значений в столбце 'Год окончания'
         df['Год окончания'] = df['Год окончания'].fillna(1)
         df['Год окончания'] = df['Год окончания'].replace(1960, 1)
 
@@ -56,7 +54,6 @@ def clean_data(df, table_name):
 
         # Заполнение значений 0 в 'Год окончания' значением "1"
         df['Год окончания'] = df['Год окончания'].replace(0, 1)
-
 
         # Извлечение ID уровня образования
         df['Уровень образование'] = df['Уровень образование'].str.extract(r'(\d+)').astype(int)
@@ -326,59 +323,15 @@ def clean_data(df, table_name):
 
         df['Уровень знаний'] = df['Уровень знаний'].str.extract(r'(\d+)', expand=False)
 
-
-    elif table_name == 'языки':
+    tables_kn = [
+        'языки', 'уровни_владения_ин', 'среды_разработки', 'фреймворки', 'платформы',
+        'отрасли', 'технологии', 'типы_систем', 'уровни_знаний', 'языки_программирования',
+        'уровни_знаний_в_отрасли', 'уровни_знаний_в_предметной_област', 'предметная_область'
+    ]
+    if table_name in tables_kn:
         df.drop(columns=['Сорт.'], inplace=True)
-        df['активность'] = df['активность'].apply(lambda x: True if x == 'Да' else False if x == 'Нет' else None)
 
-    elif table_name == 'уровни_владения_ин':
-        df.drop(columns=['Сорт.'], inplace=True)
         df['активность'] = df['активность'].apply(lambda x: True if x == 'Да' else False if x == 'Нет' else None)
-
-    elif table_name == 'среды_разработки':
-        df.drop(columns=['Сорт.'], inplace=True)
-        df['активность'] = df['активность'].apply(lambda x: True if x == 'Да' else False if x == 'Нет' else None)
-
-    elif table_name == 'фреймворки':
-        df.drop(columns=['Сорт.'], inplace=True)
-        df['активность'] = df['активность'].apply(lambda x: True if x == 'Да' else False if x == 'Нет' else None)
-
-    elif table_name == 'платформы':
-        df.drop(columns=['Сорт.'], inplace=True)
-        df['активность'] = df['активность'].apply(lambda x: True if x == 'Да' else False if x == 'Нет' else None)
-
-    elif table_name == 'отрасли':
-        df.drop(columns=['Сорт.'], inplace=True)
-        df['активность'] = df['активность'].apply(lambda x: True if x == 'Да' else False if x == 'Нет' else None)
-
-    elif table_name == 'технологии':
-        df.drop(columns=['Сорт.'], inplace=True)
-        df['активность'] = df['активность'].apply(lambda x: True if x == 'Да' else False if x == 'Нет' else None)
-
-    elif table_name == 'типы_систем':
-        df.drop(columns=['Сорт.'], inplace=True)
-        df['активность'] = df['активность'].apply(lambda x: True if x == 'Да' else False if x == 'Нет' else None)
-
-    elif table_name == 'уровни_знаний':
-        df.drop(columns=['Сорт.'], inplace=True)
-        df['активность'] = df['активность'].apply(lambda x: True if x == 'Да' else False if x == 'Нет' else None)
-
-    elif table_name == 'языки_программирования':
-        df.drop(columns=['Сорт.'], inplace=True)
-        df['активность'] = df['активность'].apply(lambda x: True if x == 'Да' else False if x == 'Нет' else None)
-
-    elif table_name == 'уровни_знаний_в_отрасли':
-        df.drop(columns=['Сорт.'], inplace=True)
-        df['активность'] = df['активность'].apply(lambda x: True if x == 'Да' else False if x == 'Нет' else None)
-
-    elif table_name == 'уровни_знаний_в_предметной_област':
-        df.drop(columns=['Сорт.'], inplace=True)
-        df['активность'] = df['активность'].apply(lambda x: True if x == 'Да' else False if x == 'Нет' else None)
-
-    elif table_name == 'предметная_область':
-        df.drop(columns=['Сорт.'], inplace=True)
-        df['активность'] = df['активность'].apply(lambda x: True if x == 'Да' else False if x == 'Нет' else None)
-
 
     return df, broken_data
 
@@ -401,7 +354,37 @@ def load_and_clean_table(table_name):
         print(f"Broken data from {table_name} loaded into {broken_table_name}.")
 
 tables = [
+    'базы_данных',
+    'базы_данных_и_уровень_знаний_сотру',
+    'инструменты',
+    'образование_пользователей',
     'опыт_сотрудника_в_отраслях',
+    'опыт_сотрудника_в_предметных_обла',
+    'сертификаты_пользователей',
+    'сотрудники_дар',
+    'среды_разработки_и_уровень_знаний_',
+    'Уровень знаний',
+    'типы_систем_и_уровень_знаний_сотру',
+    'уровень_образования',
+    'фреймворки_и_уровень_знаний_сотру',
+    'языки_пользователей',
+    'языки_программирования_и_уровень',
+    'инструменты_и_уровень_знаний_сотр',
+    'технологии_и_уровень_знаний_сотру',
+    'языки',
+    'уровни_владения_ин',
+    'среды_разработки',
+    'фреймворки',
+    'платформы',
+    'отрасли',
+    'технологии',
+    'типы_систем',
+    'уровни_знаний',
+    'языки_программирования',
+    'уровни_знаний_в_отрасли',
+    'уровни_знаний_в_предметной_област',
+    'предметная_область'
+
 ]
 
 for table in tables:
