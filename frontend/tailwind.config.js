@@ -125,7 +125,6 @@ const tremor = {
 };
 
 module.exports = {
-  ...tremor,
   darkMode: ["class"],
   content: [
     './pages/**/*.{ts,tsx}',
@@ -202,6 +201,7 @@ module.exports = {
         "accordion-up": "accordion-up 0.2s ease-out",
       },
     },
+    ...tremor
   },
   plugins: [
     require("tailwindcss-animate"),
