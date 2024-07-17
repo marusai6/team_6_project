@@ -75,6 +75,9 @@ const FilterItem = ({ filterItemData }: { filterItemData: filterItemDataType }) 
 
     const [open, setOpen] = useState(false)
 
+    const urlModel = UrlState.getModel()
+    const urlValue = urlModel[filterItemData.id]
+
     const onItemClick = (value: string) => {
         urlState.updateModel({ [filterItemData.id]: value })
         setOpen(false)
@@ -83,9 +86,9 @@ const FilterItem = ({ filterItemData }: { filterItemData: filterItemDataType }) 
     return (
         <Popover setOpen={setOpen}>
             <Popover.Trigger setOpen={setOpen}>
-                <li className={cn('flex gap-2 items-center px-4 py-3 text-black hover:text-primary bg-background hover:bg-secondary cursor-pointer transition-all select-none', open && 'bg-secondary text-primary')}>
+                <li className={cn('flex gap-2 items-center px-4 py-3 text-black hover:text-primary bg-white hover:bg-secondary cursor-pointer transition-all select-none', open && 'bg-secondary text-primary')}>
                     {filterItemData.icon}
-                    <h3 className='text-lg'>{filterItemData.title}</h3>
+                    <h3 className='text-lg'>{urlValue || filterItemData.title}</h3>
                 </li>
             </Popover.Trigger>
             <Popover.Content open={open} align='center'>

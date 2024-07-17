@@ -2,11 +2,10 @@ import React from 'react'
 import './output.css'
 import './styles.css'
 
-import Dashboard from './Dashboard';
-
 import { Provider } from "react-redux"
 import { store } from "./src/state/store"
 import { HashRouter, Route, Routes } from "react-router-dom"
+import MainPage from './src/pages/MainPage';
 
 const BASE_URL = '/ds/ds_10/dashboards'
 
@@ -17,7 +16,7 @@ function App() {
       <HashRouter>
         <Routes>
           <Route path={BASE_URL}>
-            <Route index element={<Dashboard />} />
+            <Route index element={<MainPage />} />
             <Route path={'*'} element={<h1>Not Found</h1>} />
           </Route>
         </Routes>
