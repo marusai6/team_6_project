@@ -141,12 +141,12 @@ CREATE TABLE avakyan_dds.образование_пользователей (
     "Название учебного заведения" VARCHAR(200),
     "Фиктивное название" text,
     "Год окончания" INT,
-    FOREIGN KEY ("User ID") REFERENCES avakyan_dds.сотрудники_даp(id),
+    FOREIGN KEY ("User ID") REFERENCES avakyan_dds.сотрудники_дар (id),
     FOREIGN KEY ("Уровень образования") REFERENCES avakyan_dds.уровень_образования(id)
 );
 
 
-CREATE TABLE avakyan_dds.базы_данных_и_уровень_знаний_стору (
+CREATE TABLE avakyan_dds.базы_данных_и_уровень_знаний_сотру (
     id INT PRIMARY KEY,
     "User ID" INT,
     активность BOOLEAN,
@@ -154,7 +154,7 @@ CREATE TABLE avakyan_dds.базы_данных_и_уровень_знаний_с
     "Базы данных" INT,
     "Уровень знаний" INT,
     дата date,
-    FOREIGN KEY ("User ID") REFERENCES avakyan_dds.сотрудники_даp(id),
+    FOREIGN KEY ("User ID") REFERENCES avakyan_dds.сотрудники_дар (id),
     FOREIGN KEY ("Базы данных") REFERENCES avakyan_dds.базы_данных(id),
     FOREIGN KEY ("Уровень знаний") REFERENCES avakyan_dds.уровни_знаний(id)
 );
@@ -167,7 +167,7 @@ CREATE TABLE avakyan_dds.инструменты_и_уровень_знаний_�
     инструменты INT,
     "Уровень знаний" INT,
     дата DATE,
-    FOREIGN KEY ("User ID") REFERENCES avakyan_dds.сотрудники_даp(id),
+    FOREIGN KEY ("User ID") REFERENCES avakyan_dds.сотрудники_дар (id),
     FOREIGN KEY (инструменты) REFERENCES avakyan_dds.инструменты(id),
     FOREIGN KEY ("Уровень знаний") REFERENCES avakyan_dds.уровни_знаний(id)
 );
@@ -180,7 +180,7 @@ CREATE TABLE avakyan_dds.среды_разработки_и_уровень_зн�
     "Среды разработки" INT,
     "Уровень знаний" INT,
     дата date,
-    FOREIGN KEY ("User ID") REFERENCES avakyan_dds.сотрудники_даp(id),
+    FOREIGN KEY ("User ID") REFERENCES avakyan_dds.сотрудники_дар (id),
     FOREIGN KEY ("Среды разработки") REFERENCES avakyan_dds.среды_разработки(id),
     FOREIGN KEY ("Уровень знаний") REFERENCES avakyan_dds.уровни_знаний(id)
 );
@@ -193,7 +193,7 @@ CREATE TABLE avakyan_dds.опыт_сотрудника_в_отраслях (
     отрасли INT,
     "Уровень знаний в отрасли" INT,
     дата DATE,
-    FOREIGN KEY ("User ID") REFERENCES avakyan_dds.сотрудники_даp(id),
+    FOREIGN KEY ("User ID") REFERENCES avakyan_dds.сотрудники_дар (id),
     FOREIGN KEY (отрасли) REFERENCES avakyan_dds.отрасли(id),
     FOREIGN KEY ("Уровень знаний в отрасли") REFERENCES avakyan_dds.уровни_знаний_в_отрасли(id)
 );
@@ -206,7 +206,7 @@ CREATE TABLE avakyan_dds.опыт_сотрудника_в_предметных_�
     "Предметные области" INT,
     "Уровень знаний в предметной области" INT,
     дата DATE,
-    FOREIGN KEY ("User ID") REFERENCES avakyan_dds.сотрудники_даp(id),
+    FOREIGN KEY ("User ID") REFERENCES avakyan_dds.сотрудники_дар (id),
     FOREIGN KEY ("Предметные области") REFERENCES avakyan_dds.предметная_область(id),
     FOREIGN KEY ("Уровень знаний в предметной области") REFERENCES avakyan_dds.уровни_знаний_в_предметной_област(id)
 );
@@ -219,7 +219,7 @@ CREATE TABLE avakyan_dds.сертификаты_пользователей (
     "Наименование сертификата" Text,
     "Организация, выдавшая сертификат"  Text,
     "Год сертификата" Text,
-    FOREIGN KEY ("User ID") REFERENCES avakyan_dds.сотрудники_даp(id)
+    FOREIGN KEY ("User ID") REFERENCES avakyan_dds.сотрудники_дар (id)
 );
 
 CREATE TABLE avakyan_dds.языки_пользователей (
@@ -229,7 +229,7 @@ CREATE TABLE avakyan_dds.языки_пользователей (
     "Дата изм." DATE,
     язык INT,
     "Уровень знаний ин. языка" INT,
-    FOREIGN KEY ("User ID") REFERENCES avakyan_dds.сотрудники_даp(id),
+    FOREIGN KEY ("User ID") REFERENCES avakyan_dds.сотрудники_дар (id),
     FOREIGN KEY (язык) REFERENCES avakyan_dds.языки(id),
     FOREIGN KEY ("Уровень знаний ин. языка") REFERENCES avakyan_dds.уровни_владения_ин(id)
 );
@@ -242,7 +242,7 @@ CREATE TABLE avakyan_dds.типы_систем_и_уровень_знаний_с
     "Типы систем" INT,
     "Уровень знаний" INT,
     дата date,
-    FOREIGN KEY ("User ID") REFERENCES avakyan_dds.сотрудники_даp(id),
+    FOREIGN KEY ("User ID") REFERENCES avakyan_dds.сотрудники_дар (id),
     FOREIGN KEY ("Типы систем") REFERENCES avakyan_dds.типы_систем(id),
     FOREIGN KEY ("Уровень знаний") REFERENCES avakyan_dds.уровни_знаний(id)
 );
@@ -252,11 +252,11 @@ CREATE TABLE avakyan_dds.технологии_и_уровень_знаний_с�
     "User ID" INT,
     активность BOOLEAN,
     "Дата изм." DATE,
-    технология INT,
+    технологии INT,
     "Уровень знаний" INT,
     дата DATE,
-    FOREIGN KEY ("User ID") REFERENCES avakyan_dds.сотрудники_даp(id),
-    FOREIGN KEY (технология) REFERENCES avakyan_dds.технологии(id),
+    FOREIGN KEY ("User ID") REFERENCES avakyan_dds.сотрудники_дар (id),
+    FOREIGN KEY (технологии) REFERENCES avakyan_dds.технологии(id),
     FOREIGN KEY ("Уровень знаний") REFERENCES avakyan_dds.уровни_знаний(id)
 );
 
@@ -268,7 +268,7 @@ CREATE TABLE avakyan_dds.фреймворки_и_уровень_знаний_с�
     фреймворки INT,
     "Уровень знаний" INT,
     дата DATE,
-    FOREIGN KEY ("User ID") REFERENCES avakyan_dds.сотрудники_даp(id),
+    FOREIGN KEY ("User ID") REFERENCES avakyan_dds.сотрудники_дар (id),
     FOREIGN KEY (фреймворки) REFERENCES avakyan_dds.фреймворки(id),
     FOREIGN KEY ("Уровень знаний") REFERENCES avakyan_dds.уровни_знаний(id)
 );
@@ -281,7 +281,7 @@ CREATE TABLE avakyan_dds.языки_программирования_и_уров
     "Языки программирования" INT,
     "Уровень знаний" INT,
     дата DATE,
-    FOREIGN KEY ("User ID") REFERENCES avakyan_dds.сотрудники_даp(id),
+    FOREIGN KEY ("User ID") REFERENCES avakyan_dds.сотрудники_дар (id),
     FOREIGN KEY ("Языки программирования") REFERENCES avakyan_dds.языки_программирования(id),
     FOREIGN KEY ("Уровень знаний") REFERENCES avakyan_dds.уровни_знаний(id)
 );
@@ -294,7 +294,7 @@ CREATE TABLE avakyan_dds.платформы_и_уровень_знаний_со�
     платформы INT,
     "Уровень знаний" INT,
     дата date,
-    FOREIGN KEY ("User ID") REFERENCES avakyan_dds.сотрудники_даp(id),
+    FOREIGN KEY ("User ID") REFERENCES avakyan_dds.сотрудники_дар (id),
     FOREIGN KEY (платформы) REFERENCES avakyan_dds.платформы(id),
     FOREIGN KEY ("Уровень знаний") REFERENCES avakyan_dds.уровни_знаний(id)
 );
