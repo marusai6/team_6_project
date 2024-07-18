@@ -9,13 +9,12 @@ const ExportToPNGButton = ({ exportRef }: { exportRef: React.RefObject<HTMLEleme
         const el = exportRef.current
         html2canvas(el).then((canvas) => {
             const imgData = canvas.toDataURL('image/png')
-            console.log(imgData)
             const link = document.createElement('a');
-            link.href = imgData;
-            link.download = 'screenshot.png'; // Name of the downloaded file
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+            link.href = imgData
+            link.download = 'screenshot.png'
+            document.body.appendChild(link)
+            link.click()
+            document.body.removeChild(link)
         })
     }
 

@@ -6,6 +6,7 @@ import { cn } from '../lib/utils'
 import SelectWithSearch from './SelectWithSearch'
 import DatePicker from './DatePicker'
 import { urlState, UrlState } from 'bi-internal/core'
+import { easeIn, motion } from 'framer-motion'
 
 type filterItemDataType = filterSelectItemType | filterDateItemType
 
@@ -63,11 +64,14 @@ const filtersData: filterItemDataType[] = [
 
 const Filters = () => {
     return (
-        <ul className='flex divide-x border rounded w-fit'>
+        <motion.ul
+            layout
+            transition={{ duration: 0.2, ease: 'linear' }}
+            className='flex divide-x border rounded w-fit'>
             {filtersData.map((filter) =>
                 <FilterItem filterItemData={filter} />
             )}
-        </ul>
+        </motion.ul>
     )
 }
 
@@ -86,9 +90,18 @@ const FilterItem = ({ filterItemData }: { filterItemData: filterItemDataType }) 
     return (
         <Popover setOpen={setOpen}>
             <Popover.Trigger setOpen={setOpen}>
-                <li className={cn('flex gap-2 items-center px-4 py-3 text-black hover:text-primary bg-white hover:bg-secondary cursor-pointer transition-all select-none', open && 'bg-secondary text-primary')}>
+                <li
+                    className={cn('flex gap-2 items-center px-4 py-3 text-black hover:text-primary bg-white hover:bg-secondary cursor-pointer transition-all select-none', open && 'bg-secondary text-primary')}>
                     {filterItemData.icon}
-                    <h3 className='text-lg'>{urlValue || filterItemData.title}</h3>
+                    <motion.h3
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ duration: 0.3, delay: 0.2, ease: 'easeIn' }}
+                        key={urlValue}
+                        className='text-lg'
+                    >
+                        {filterItemData.popoverContentType === 'DatePicker' ? `${UrlState.getModel().halfyear}-е полугодие ${UrlState.getModel().year}` : urlValue || filterItemData.title}
+                    </motion.h3>
                 </li>
             </Popover.Trigger>
             <Popover.Content open={open} align='center'>

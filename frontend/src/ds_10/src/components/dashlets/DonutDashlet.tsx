@@ -1,7 +1,8 @@
-import React from 'react'
+import React, { useRef } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/Card';
 import { DonutChart, Legend } from '@tremor/react';
 import { defaultDataFormatter } from '../../lib/utils';
+import ExportToPNGButton from '../ExportToPNGButton';
 
 
 const sales = [
@@ -32,13 +33,19 @@ const sales = [
 ]
 
 const DonutDashlet = () => {
+
+    const ref = useRef()
+
     return (
-        <Card className='row-span-3'>
-            <CardHeader>
-                <CardTitle>Уровни навыков</CardTitle>
-                <CardDescription>круговая диаграмма</CardDescription>
+        <Card className='h-full'>
+            <CardHeader className='flex flex-row justify-between items-center'>
+                <div>
+                    <CardTitle>Уровни навыков</CardTitle>
+                    <CardDescription>круговая диаграмма</CardDescription>
+                </div>
+                <ExportToPNGButton exportRef={ref} />
             </CardHeader>
-            <CardContent className='flex flex-col justify-center items-center gap-2'>
+            <CardContent ref={ref} className='flex flex-col justify-center items-center gap-2'>
                 <DonutChart
                     data={sales}
                     category="sales"

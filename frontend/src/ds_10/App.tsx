@@ -5,9 +5,11 @@ import './styles.css'
 import { Provider } from "react-redux"
 import { store } from "./src/state/store"
 import { HashRouter, Route, Routes } from "react-router-dom"
-import MainPage from './src/pages/MainPage';
+import Layout from './Layout'
+import MainDashboard from './src/components/MainDashboard'
+import SecondDashboard from './src/components/SecondDashboard'
 
-const BASE_URL = '/ds/ds_10/dashboards'
+export const BASE_URL = '/ds/ds_10/dashboards'
 
 function App() {
 
@@ -15,8 +17,10 @@ function App() {
     <Provider store={store}>
       <HashRouter>
         <Routes>
-          <Route path={BASE_URL}>
-            <Route index element={<MainPage />} />
+          <Route path={BASE_URL} element={<Layout />}>
+            <Route index element={<MainDashboard />} />
+            <Route path={'employees'} element={<SecondDashboard />} />
+            <Route path={'settings'} element={<h1>Настройки</h1>} />
             <Route path={'*'} element={<h1>Not Found</h1>} />
           </Route>
         </Routes>

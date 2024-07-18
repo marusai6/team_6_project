@@ -1,7 +1,8 @@
-import React from 'react'
+import React, { useRef } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/Card';
 import { BarChart } from '@tremor/react';
 import { defaultDataFormatter } from '../../lib/utils';
+import ExportToPNGButton from '../ExportToPNGButton';
 
 
 const chartdata = [
@@ -36,13 +37,19 @@ const chartdata = [
 ];
 
 const BarChartDashlet = () => {
+
+    const ref = useRef()
+
     return (
-        <Card className='row-span-3 col-span-2'>
-            <CardHeader>
-                <CardTitle>Категории навыков</CardTitle>
-                <CardDescription>столбчатая диаграмма</CardDescription>
+        <Card className='h-full'>
+            <CardHeader className='flex flex-row justify-between items-center'>
+                <div>
+                    <CardTitle>Категории навыков</CardTitle>
+                    <CardDescription>столбчатая диаграмма</CardDescription>
+                </div>
+                <ExportToPNGButton exportRef={ref} />
             </CardHeader>
-            <CardContent>
+            <CardContent ref={ref}>
                 <BarChart
                     data={chartdata}
                     index="name"
