@@ -14,6 +14,12 @@ target_password = config['target_database']['password']
 conn_str = f"postgresql://{target_user}:{target_password}@{target_host}:{target_port}/{target_database}"
 engine = create_engine(conn_str)
 
+tables_kn = [
+        'языки', 'уровни_владения_ин', 'среды_разработки', 'фреймворки', 'платформы',
+        'отрасли', 'инструменты', 'технологии', 'типы_систем', 'уровни_знаний', 'языки_программирования',
+        'уровни_знаний_в_отрасли', 'уровни_знаний_в_предметной_област', 'предметная_область'
+    ]
+
 def clean_data(df, table_name):
     broken_data = pd.DataFrame()
 
@@ -25,6 +31,13 @@ def clean_data(df, table_name):
         df.drop_duplicates(subset=['id'], keep='first', inplace=True)
         df['активность'] = df['активность'].apply(lambda x: True if x == 'Да' else False if x == 'Нет' else None)
 
+    elif table_name == 'сотрудники_даp':
+        df['Последняя авторизация'] = df['Последняя авторизация'].fillna(pd.Timestamp('1970-01-01'))
+        df['должность'] = df['должность'].replace(['', '-'], 'Не указано')
+        df['активность'] = df['активность'].apply(lambda x: True if x == 'Да' else False if x == 'Нет' else None)
+        df['цфо'] = df['цфо'].replace('', 'Не указано')
+
+        df['активность'] = df['активность'].astype(bool)
 
     elif table_name == 'базы_данных_и_уровень_знаний_сотру':
         df.drop(columns=['Сорт.'], inplace=True)
@@ -36,12 +49,8 @@ def clean_data(df, table_name):
         df['User ID'] = pd.to_numeric(df['User ID'], errors='coerce')
         df = df.dropna(subset=['User ID'])
         df = df[df['User ID'].isin(valid_user_ids)]
-        df.drop(columns=['название'], inplace=True)
-
         df['активность'] = df['активность'].apply(lambda x: True if x == 'Да' else False if x == 'Нет' else None)
-
         df['Уровень знаний'] = df['Уровень знаний'].str.extract(r'(\d+)', expand=False)
-
         df['Базы данных'] = df['Базы данных'].str.extract(r'(\d+)', expand=False)
         df['Базы данных'] = df['Базы данных'].fillna(0).astype(int)
         valid_fr = pd.read_sql("SELECT id FROM dds.базы_данных", engine)['id']
@@ -49,6 +58,7 @@ def clean_data(df, table_name):
         df_sorted = df.sort_values(by=['User ID', 'Уровень знаний', 'Базы данных', 'id'])
         df_unique = df_sorted.drop_duplicates(subset=['User ID', 'Уровень знаний', 'Базы данных'], keep='first')
         df = df_unique.reset_index(drop=True)
+        df.drop(columns=['название'], inplace=True)
 
 
 
@@ -76,12 +86,13 @@ def clean_data(df, table_name):
         df_unique = df_sorted.drop_duplicates(subset=["User ID", "Название учебного заведения", "Уровень образование"], keep='first')
         df = df_unique.reset_index(drop=True)
 
+        df = df.rename(columns={"Уровень образование" : "Уровень образования"})
+
     elif table_name == 'опыт_сотрудника_в_отраслях':
         df = df.drop(columns=['Сорт.'])
         df['отрасли'] = df['отрасли'].str.extract(r'\[(\d+)\]')
         df['отрасли'] = pd.to_numeric(df['отрасли'], errors='coerce')
         df['отрасли'] = df['отрасли'].fillna(0).astype(int)
-
         df['Уровень знаний в отрасли'] = df['Уровень знаний в отрасли'].str.extract(r'(\d+)')
         df['Уровень знаний в отрасли'] = df['Уровень знаний в отрасли'].fillna(0).astype(int)
         valid_kn = pd.read_sql("SELECT id FROM dds.уровни_знаний_в_отрасли", engine)['id']
@@ -92,7 +103,6 @@ def clean_data(df, table_name):
         df.loc[df['дата'] == '', 'дата'] = df['Дата изм.']
         df['Уровень знаний в отрасли'] = df['Уровень знаний в отрасли'].replace('', 'Не указано')
         df['активность'] = df['активность'].apply(lambda x: True if x == 'Да' else False if x == 'Нет' else None)
-
         df_sorted = df.sort_values(by=["User ID", "отрасли", "Уровень знаний в отрасли", 'id'])
         df_unique = df_sorted.drop_duplicates(subset=["User ID", "отрасли", "Уровень знаний в отрасли"], keep='first')
         df = df_unique.reset_index(drop=True)
@@ -122,6 +132,8 @@ def clean_data(df, table_name):
         df_unique = df_sorted.drop_duplicates(subset=["User ID", 'Предментые области', "Уровень знаний в предметной облас"], keep='first')
         df = df_unique.reset_index(drop=True)
 
+        df = df.rename(columns={"Предментые области": "Предметные области"})
+
     elif table_name == 'платформы_и_уровень_знаний_сотруд':
         df.drop(columns=['Сорт.'], inplace=True)
         df['Уровень знаний'] = df['Уровень знаний'].fillna(1)
@@ -150,15 +162,13 @@ def clean_data(df, table_name):
         df['Год сертификата'] = df['Год сертификата'].fillna(1)
         df['Год сертификата'] = df['Год сертификата'].astype(str).str.extract(r'(\d{4})', expand=False).fillna(
             '1').astype(int)
-        print(df.shape)
         df['активность'] = df['активность'].apply(lambda x: True if x == 'Да' else False if x == 'Нет' else None)
         df['Организация, выдавшая сертификат'].replace('', 'Не указано', inplace=True)
-        print(df.shape)
+
         valid_user_ids = pd.read_sql("SELECT id FROM dds.сотрудники_дар", engine)['id']
         df['User ID'] = pd.to_numeric(df['User ID'], errors='coerce')
         df = df.dropna(subset=['User ID'])
         df = df[df['User ID'].isin(valid_user_ids)]
-        print(df.shape)
         df.drop_duplicates(
             subset=['User ID', 'Год сертификата', 'Наименование сертификата', 'Организация, выдавшая сертификат'],
             keep='first', inplace=True)
@@ -171,14 +181,6 @@ def clean_data(df, table_name):
             subset=["User ID", 'Наименование сертификата'], keep='first')
         df = df_unique.reset_index(drop=True)
 
-    elif table_name == 'сотрудники_дар':
-        df['Последняя авторизация'] = df['Последняя авторизация'].replace('', '1')
-        df['должность'] = df['должность'].replace(['', '-'], 'Не указано')
-        df['активность'] = df['активность'].apply(lambda x: True if x == 'Да' else False if x == 'Нет' else None)
-        df['цфо'] = df['цфо'].replace('', 'Не указано')
-        broken_data = df[
-            df['фамилия'].isna() | df['имя'].isna() | df['Дата регистрации'].isna() | df['Дата рождения'].isna() | df['Последняя авторизация'].isna() | df['должность'].isna()]
-
     elif table_name == 'среды_разработки_и_уровень_знаний_':
         df['дата'] = df['дата'].fillna(df['Дата изм.'])
         df.loc[df['дата'] == '', 'дата'] = df['Дата изм.']
@@ -186,15 +188,18 @@ def clean_data(df, table_name):
         df.drop(columns=['Сорт.'], inplace=True)
 
         df['активность'] = df['активность'].apply(lambda x: True if x == 'Да' else False if x == 'Нет' else None)
-        df['User ID'] = df['название'].str.extract(r'User:(\d+)')
-        df['User ID'] = pd.to_numeric(df['User ID'], errors='coerce')
-        df = df.dropna(subset=['User ID'])
-        valid_user_ids = pd.read_sql("SELECT id FROM dds.сотрудники_дар", engine)['id']
-        df = df[df['User ID'].isin(valid_user_ids)]
+
         df['Уровень знаний'] = df['Уровень знаний'].str.extract(r'(\d+)')
         df['Уровень знаний'] = df['Уровень знаний'].fillna(0).astype(int)
         valid_kn = pd.read_sql("SELECT id FROM dds.уровни_знаний", engine)['id']
         df = df[df['Уровень знаний'].isin(valid_kn)]
+        valid_user_ids = pd.read_sql("SELECT id FROM dds.сотрудники_дар", engine)['id']
+
+        df['User ID'] = df['название'].str.extract(r'User:(\d+)')
+        df['User ID'] = pd.to_numeric(df['User ID'], errors='coerce')
+        df = df.dropna(subset=['User ID'])
+        df = df[df['User ID'].isin(valid_user_ids)]
+        df.drop(columns=['название'], inplace=True)
         df['Среды разработки'] = df['Среды разработки'].str.extract(r'\[(\d+)\]')
         df['Среды разработки'] = df['Среды разработки'].fillna(0).astype(int)
 
@@ -204,7 +209,7 @@ def clean_data(df, table_name):
 
     elif table_name == 'Уровень знаний':
         broken_data = df[df['Уровень знаний'].isna()]
-        df.drop(columns=['название', 'Уровень знаний', 'Сорт.'], inplace=True)
+        df.drop(columns=['название','Сорт.'], inplace=True)
         df.dropna(subset=['Уровень знаний'], inplace=True)
 
     elif table_name == 'типы_систем_и_уровень_знаний_сотру':
@@ -239,10 +244,6 @@ def clean_data(df, table_name):
 
     elif table_name == 'фреймворки_и_уровень_знаний_сотру':
         df.drop(columns=['Сорт.'], inplace=True)
-
-        df.drop_duplicates(subset=['название', 'Уровень знаний', 'фреймворки'], keep='first', inplace=True)
-
-        # Заполнение пустых значений в столбце "дата" значениями из столбца "Дата изм."
         df['дата'] = df['дата'].fillna(df['Дата изм.'])
         df.loc[df['дата'] == '', 'дата'] = df['Дата изм.']
 
@@ -252,25 +253,21 @@ def clean_data(df, table_name):
         df = df.dropna(subset=['User ID'])
         df = df[df['User ID'].isin(valid_user_ids)]
 
-        # Преобразование столбца "активность"
         df['активность'] = df['активность'].apply(lambda x: True if x == 'Да' else False if x == 'Нет' else None)
 
-        # Оставить только ID в столбце "Уровень знаний"
         df['Уровень знаний'] = df['Уровень знаний'].str.extract(r'(\d+)', expand=False)
 
-        # Оставить только ID в столбце "фреймворки"
         df['фреймворки'] = df['фреймворки'].str.extract(r'(\d+)', expand=False)
         df['фреймворки'] = df['фреймворки'].fillna(0).astype(int)
 
         valid_fr = pd.read_sql("SELECT id FROM dds.фреймворки", engine)['id']
         df = df[df['фреймворки'].isin(valid_fr)]
 
-        # Удаление дубликатов
-        df.drop_duplicates(subset=['название', 'Уровень знаний', 'фреймворки'], keep='first', inplace=True)
-
-        # Обнаружение строк с пустыми значениями в столбце "фреймворки" и перенос их в отдельную таблицу
-        broken_data = df[df['фреймворки'] == 0]
-        df = df[df['фреймворки'] != 0]
+        df_sorted = df.sort_values(by=["User ID", 'фреймворки', "Уровень знаний", 'id'])
+        df_unique = df_sorted.drop_duplicates(
+            subset=["User ID", 'фреймворки', "Уровень знаний"], keep='first')
+        df = df_unique.reset_index(drop=True)
+        df.drop(columns=['название'], inplace=True)
 
     elif table_name == 'языки_пользователей':
         df['язык'] = df['язык'].str.extract(r'\[(\d+)\]')
@@ -332,7 +329,6 @@ def clean_data(df, table_name):
         df['User ID'] = pd.to_numeric(df['User ID'], errors='coerce')
         df = df.dropna(subset=['User ID'])
         df = df[df['User ID'].isin(valid_user_ids)]
-        df.drop(columns=['название'], inplace=True)
 
         df['активность'] = df['активность'].apply(lambda x: True if x == 'Да' else False if x == 'Нет' else None)
         df['Уровень знаний'] = df['Уровень знаний'].str.extract(r'(\d+)', expand=False)
@@ -345,6 +341,7 @@ def clean_data(df, table_name):
         df_unique = df_sorted.drop_duplicates(subset=['User ID', 'Уровень знаний', 'инструменты'], keep='first')
         df = df_unique.reset_index(drop=True)
         df = df.dropna(subset=['Уровень знаний'])
+        df.drop(columns=['название'], inplace=True)
 
     elif table_name == 'технологии_и_уровень_знаний_сотру':
         if 'Сорт.' in df.columns:
@@ -362,15 +359,14 @@ def clean_data(df, table_name):
         df['технологии'] = df['технологии'].str.extract(r'(\d+)', expand=False)
 
         df['Уровень знаний'] = df['Уровень знаний'].str.extract(r'(\d+)', expand=False)
+        df_sorted = df.sort_values(by=['User ID', 'Уровень знаний', 'технологии', 'id'])
+        df_unique = df_sorted.drop_duplicates(subset=['User ID', 'Уровень знаний', 'технологии'], keep='first')
+        df = df_unique.reset_index(drop=True)
+        df = df.dropna(subset=['Уровень знаний'])
+        df.drop(columns=['название'], inplace=True)
 
-    tables_kn = [
-        'языки', 'уровни_владения_ин', 'среды_разработки', 'фреймворки', 'платформы',
-        'отрасли', 'технологии', 'типы_систем', 'уровни_знаний', 'языки_программирования',
-        'уровни_знаний_в_отрасли', 'уровни_знаний_в_предметной_област', 'предметная_область'
-    ]
-    if table_name in tables_kn:
+    elif table_name in tables_kn:
         df.drop(columns=['Сорт.'], inplace=True)
-
         df['активность'] = df['активность'].apply(lambda x: True if x == 'Да' else False if x == 'Нет' else None)
 
     return df, broken_data
@@ -394,41 +390,39 @@ def load_and_clean_table(table_name):
         print(f"Broken data from {table_name} loaded into {broken_table_name}.")
 
 tables = [
-    # 'базы_данных'
-    # 'базы_данных_и_уровень_знаний_сотру',
-    # 'инструменты',
-    # 'образование_пользователей'
-    # 'опыт_сотрудника_в_отраслях'
-    # 'опыт_сотрудника_в_предметных_обла'
-    # 'сертификаты_пользователей',
-    # 'сотрудники_дар',
-    # 'среды_разработки_и_уровень_знаний_',
-    # 'Уровень знаний',
-    # 'типы_систем_и_уровень_знаний_сотру'
-    # 'уровень_образования',
-    # 'фреймворки_и_уровень_знаний_сотру',
-     'платформы_и_уровень_знаний_сотруд'
-    # 'языки_пользователей',
-    # 'языки_программирования_и_уровень',
-    #'инструменты_и_уровень_знаний_сотр'
-    # 'технологии_и_уровень_знаний_сотру',
-    # 'языки',
-    # 'уровни_владения_ин',
-    # 'среды_разработки',
-    # 'фреймворки',
-    # 'платформы',
-    # 'отрасли',
-    # 'технологии',
-    # 'типы_систем',
-    # 'уровни_знаний',
-    # 'языки_программирования',
-    # 'уровни_знаний_в_отрасли',
-    # 'уровни_знаний_в_предметной_област',
-    # 'предметная_область'
-
-]
+     # 'базы_данных',
+     # 'инструменты',
+     # 'языки',
+     # 'уровни_владения_ин',
+     # 'среды_разработки',
+     # 'фреймворки',
+     # 'платформы',
+     # 'отрасли',
+     # 'технологии',
+     # 'типы_систем',
+     # 'уровни_знаний',
+     # 'языки_программирования',
+     # 'уровни_знаний_в_отрасли',
+     # 'уровни_знаний_в_предметной_област',
+     # 'предметная_область',
+     # 'уровень_образования',
+     # 'сотрудники_дар',
+     'языки_пользователей',
+     'образование_пользователей',
+     'опыт_сотрудника_в_отраслях',
+     'опыт_сотрудника_в_предметных_обла',
+     'сертификаты_пользователей',
+     'среды_разработки_и_уровень_знаний_',
+     'типы_систем_и_уровень_знаний_сотру',
+     'фреймворки_и_уровень_знаний_сотру',
+     'платформы_и_уровень_знаний_сотруд',
+     'языки_программирования_и_уровень',
+    'инструменты_и_уровень_знаний_сотр',
+    'технологии_и_уровень_знаний_сотру',
+     'базы_данных_и_уровень_знаний_сотру'
+    ]
 
 for table in tables:
     load_and_clean_table(table)
 
-print("All tables processed and loaded into DDS successfully.")
+print("All tables processed and loaded into dds successfully.")
