@@ -1,27 +1,24 @@
 CREATE TABLE dds.сотрудники_даp (
     id int8 PRIMARY KEY,
-    "Дата рождения" text,
     активность BOOLEAN,
-    пол text,
-    фамилия text,
-    имя text,
-    "Последняя авторизация" text,
-    должность text,
-    цфо text,
-    "Дата регистрации" text,
-    "Дата изменения" text,
-    подразделения text,
-    "E-Mail" text,
-    логин text,
-    компания text,
-    "Город проживания" text
+    пол VARCHAR(5),
+    фамилия VARCHAR(20),
+    имя VARCHAR(20),
+    "Последняя авторизация" DATE,
+    должность VARCHAR(50),
+    цфо VARCHAR(10),
+    подразделения VARCHAR(50),
+    "E-Mail" VARCHAR(50),
+    логин VARCHAR(50),
+    компания VARCHAR(50),
+    "Город проживания" VARCHAR(50)
 );
 
 CREATE TABLE dds.базы_данных (
     id INT PRIMARY KEY,
     активность BOOLEAN,
     "Дата изм." DATE,
-    название text
+    название VARCHAR(50)
 );
 
 
@@ -29,7 +26,7 @@ CREATE TABLE dds.фреймворки (
     id INT PRIMARY KEY,
     активность BOOLEAN,
     "Дата изм." DATE,
-    название text
+    название VARCHAR(50)
 );
 
 CREATE TABLE dds.уровни_знаний_в_предметной_област
@@ -37,7 +34,7 @@ CREATE TABLE dds.уровни_знаний_в_предметной_област
     id         INT PRIMARY KEY,
     активность BOOLEAN,
     "Дата изм."   DATE,
-    название text
+    название VARCHAR(50)
 );
 
 CREATE TABLE dds.уровни_знаний_в_отрасли
@@ -45,56 +42,56 @@ CREATE TABLE dds.уровни_знаний_в_отрасли
     id         INT PRIMARY KEY,
     активность BOOLEAN,
     "Дата изм."   DATE,
-    название text
+    название VARCHAR(50)
 );
 
 CREATE TABLE dds.уровни_владения_ин (
     id INT PRIMARY KEY,
     активность BOOLEAN,
     "Дата изм." DATE,
-    название text
+    название VARCHAR(50)
 );
 
 CREATE TABLE dds.языки (
     id INT PRIMARY KEY,
     активность BOOLEAN,
     "Дата изм." DATE,
-    название text
+    название VARCHAR(50)
 );
 
 CREATE TABLE dds.типы_систем (
     id INT PRIMARY KEY,
     активность BOOLEAN,
     "Дата изм." DATE,
-    название text
+    название VARCHAR(50)
 );
 
 CREATE TABLE dds.языки_программирования (
     id INT PRIMARY KEY,
     активность BOOLEAN,
     "Дата изм." DATE,
-    название text
+    название VARCHAR(50)
 );
 
 CREATE TABLE dds.технологии (
     id INT PRIMARY KEY,
     активность BOOLEAN,
     "Дата изм." DATE,
-    название text
+    название VARCHAR(50)
 );
 
 CREATE TABLE dds.инструменты (
     id INT PRIMARY KEY,
     активность BOOLEAN,
     "Дата изм." DATE,
-    название text
+    название VARCHAR(50)
 );
 
 CREATE TABLE dds.среды_разработки (
     id INT PRIMARY KEY,
     активность BOOLEAN,
     "Дата изм." DATE,
-    название text
+    название VARCHAR(50)
 );
 
 CREATE TABLE dds.платформы (
@@ -108,28 +105,28 @@ CREATE TABLE dds.уровни_знаний (
     id INT PRIMARY KEY,
     активность BOOLEAN,
     "Дата изм." DATE,
-    название text
+    название VARCHAR(50)
 );
 
 CREATE TABLE dds.отрасли (
     id INT PRIMARY KEY,
     активность BOOLEAN,
     "Дата изм." DATE,
-    название text
+    название VARCHAR(50)
 );
 
 CREATE TABLE dds.предметная_область (
     id INT PRIMARY KEY,
     активность BOOLEAN,
     "Дата изм." DATE,
-    название text
+    название VARCHAR(50)
 );
 
 CREATE TABLE dds.уровень_образования (
     id INT PRIMARY KEY,
     активность BOOLEAN,
     "Дата изм." DATE,
-    название text
+    название VARCHAR(50)
 );
 
 CREATE TABLE dds.образование_пользователей (
