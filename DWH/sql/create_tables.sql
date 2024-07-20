@@ -1,6 +1,5 @@
 CREATE TABLE dds.сотрудники_даp (
     id int8 PRIMARY KEY,
-    "Дата рождения" text,
     активность BOOLEAN,
     пол VARCHAR(5),
     фамилия VARCHAR(20),
@@ -8,8 +7,6 @@ CREATE TABLE dds.сотрудники_даp (
     "Последняя авторизация" DATE,
     должность VARCHAR(50),
     цфо VARCHAR(10),
-    "Дата регистрации" text,
-    "Дата изменения" text,
     подразделения VARCHAR(50),
     "E-Mail" VARCHAR(50),
     логин VARCHAR(50),
