@@ -32,7 +32,7 @@ def clean_data(df, table_name):
         df['активность'] = df['активность'].apply(lambda x: True if x == 'Да' else False if x == 'Нет' else None)
 
     elif table_name == 'сотрудники_даp':
-        df['Последняя авторизация'] = df['Последняя авторизация'].fillna(pd.Timestamp('1970-01-01'))
+        df['Последняя авторизация'] = df['Последняя авторизация'].fillna('11.11.1111')
         df['должность'] = df['должность'].replace(['', '-'], 'Не указано')
         df['активность'] = df['активность'].apply(lambda x: True if x == 'Да' else False if x == 'Нет' else None)
         df['цфо'] = df['цфо'].replace('', 'Не указано')
