@@ -36,11 +36,11 @@ def clean_data(df, table_name):
         df['должность'] = df['должность'].replace(['', '-'], 'Не указано')
         df['активность'] = df['активность'].apply(lambda x: True if x == 'Да' else False if x == 'Нет' else None)
         df['цфо'] = df['цфо'].replace('', 'Не указано')
-
+        df.drop(columns=['Сорт.'], inplace=True)
         df['активность'] = df['активность'].astype(bool)
 
     elif table_name == 'базы_данных_и_уровень_знаний_сотру':
-        df.drop(columns=['Сорт.'], inplace=True)
+        df.drop(columns=['Дата изменения','Дата регистрации','Дата рождения'], inplace=True)
         df['дата'] = df['дата'].fillna(df['Дата изм.'])
         df.loc[df['дата'] == '', 'дата'] = df['Дата изм.']
 
