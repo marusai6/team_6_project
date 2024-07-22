@@ -89,7 +89,6 @@ export function DataTable<TData, TValue>({
     //     return rows
     // }
 
-    const [open, setOpen] = useState(false)
 
     return (
         <div className="space-y-4">

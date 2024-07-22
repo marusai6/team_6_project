@@ -1,12 +1,12 @@
-import React, { useState } from 'react'
-import EmployeeTable from '../employees/EmployeeTable'
-import { Employee } from '../employees/columns'
-import Popover from './ui/Popover'
-import { Button } from './ui/Button'
-import { employee } from '../data/data'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/Card'
-import SelectWithSearch from './SelectWithSearch'
-import { X } from 'lucide-react'
+import React, { useEffect, useState } from 'react'
+import EmployeeTable from '../../employees/EmployeeTable'
+import Popover from '../ui/Popover'
+import { Button } from '../ui/Button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/Card'
+import SelectWithSearch from '../ui/SelectWithSearch'
+import PickedSkill from '../PickedSkill'
+import { motion } from 'framer-motion'
+import { urlState } from 'bi-internal/core'
 
 type AllEmployeeData = {
     fullname: string
@@ -90,28 +90,34 @@ const employeeData: AllEmployeeData[] = [
     },
 ]
 
-function remove<T>(array: T[], value: T) {
-    const index = array.indexOf(value);
-    if (index > -1) {
-        array.splice(index, 1)
-    }
-    return array
-}
-
 const skills = ['JavaScript', 'TypeScript', 'Python', 'Rust']
 
+export type GradeType = 'any' | 'Использовал в проекте' | 'Novice' | 'Junior' | 'Middle' | 'Senior' | 'Expert'
+export type SkillType = { name: string, grade: GradeType }
 
-const SecondDashboard = () => {
+const RecruitmentPage = () => {
 
     const [open, setOpen] = useState(false)
-    const [pickedSkills, setPickedSkills] = useState<string[]>([])
+    const [pickedSkills, setPickedSkills] = useState<SkillType[]>([])
+
+    useEffect(() => {
+        const urlPickedSkills = urlState.getModel().pickedSkills
+        if (urlPickedSkills) {
+            setPickedSkills(JSON.parse(urlPickedSkills))
+        }
+    }, [])
+
+    useEffect(() => {
+        urlState.updateModel({ pickedSkills: JSON.stringify(pickedSkills) })
+    }, [pickedSkills])
+
 
     const finalData = employeeData.filter((employee) => filterEmployee(employee)).map((employee) => ({ fullname: employee.fullname, department: employee.department, title: employee.title }))
 
     function filterEmployee(employee: AllEmployeeData) {
         const employeeSkills = employee.skills.map((skill) => skill.name)
         for (let i = 0; i < pickedSkills.length; i++) {
-            if (!employeeSkills.includes(pickedSkills[i])) return false
+            if (!employeeSkills.includes(pickedSkills[i].name)) return false
         }
         return true
     }
@@ -122,32 +128,40 @@ const SecondDashboard = () => {
             <div className='flex gap-4'>
                 <Popover setOpen={setOpen}>
                     <Popover.Trigger setOpen={setOpen}>
-                        <Button variant='outline' className='w-fit'>
+                        <Button variant='outline' className='w-fit h-10'>
                             Выбрать навыки
                         </Button>
                     </Popover.Trigger>
-                    <Popover.Content open={open} top='2.5rem' align='center'>
-                        <SelectWithSearch options={skills} onClick={(value: string) => {
-                            setPickedSkills((prev) => [...prev, value])
-                        }} />
+                    <Popover.Content open={open} top='2.9rem' align='center'>
+                        <SelectWithSearch
+                            options={skills}
+                            onClick={(value: string) => {
+                                setPickedSkills((prev) => [...prev, { name: value, grade: 'any' }])
+                            }}
+                            onReset={() => {
+                                setOpen(false)
+                                setPickedSkills([])
+                            }}
+                        />
                     </Popover.Content>
                 </Popover>
 
-                <div className='flex gap-2 w-fit'>
+                <motion.div
+                    className='flex gap-2 flex-wrap'>
                     {pickedSkills.map((skill) => {
                         return (
-                            <div className='px-2 py-1 flex gap-1 items-center bg-secondary text-primary rounded cursor-pointer' key={`skill-${skill}`} >
-                                <p>{skill}</p>
-                                <X size={18}
-                                    className='cursor-pointer'
-                                    onClick={() => {
-                                        setPickedSkills((prev) => prev.filter(item => item !== skill))
-                                    }}
-                                />
-                            </div>
+                            <PickedSkill
+                                skill={skill}
+                                onClick={() => setPickedSkills((prev) => prev.filter(item => item !== skill))}
+                                updateGrade={(skill: string, grade: GradeType) => {
+                                    setPickedSkills((prev) => {
+                                        return prev.map((pickedSkill) => ({ name: pickedSkill.name, grade: pickedSkill.name == skill ? grade : pickedSkill.grade }))
+                                    })
+                                }}
+                            />
                         )
                     })}
-                </div>
+                </motion.div>
             </div>
 
             <div className='flex gap-2'>
@@ -173,4 +187,4 @@ const SecondDashboard = () => {
     )
 }
 
-export default SecondDashboard
+export default RecruitmentPage

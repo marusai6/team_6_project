@@ -2,7 +2,7 @@ import React, { useRef } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/Card';
 import { BarChart } from '@tremor/react';
 import { defaultDataFormatter } from '../../lib/utils';
-import ExportToPNGButton from '../ExportToPNGButton';
+import ExportToPNGButton from '../exportButtons/ExportToPNGButton';
 
 
 const chartdata = [

@@ -15,7 +15,7 @@ const Badge = ({ number }: { number: number }) => {
     return (
         <div className='flex gap-1 h-fit items-center bg-rose-100 rounded-full px-2 py-0.5 text-rose-700'>
             <TrendingDown size={18} strokeWidth={1.5} />
-            <p>{`${number}%`}</p>
+            <p className='m-auto'>{`${number}%`}</p>
         </div>
     )
 }

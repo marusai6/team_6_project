@@ -1,15 +1,14 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
-import { RootState } from '../state/store'
-import { cn } from '../lib/utils'
-import Badge from './ui/Badge'
-import { ScrollArea } from './ui/scroll-area'
-import DonutDashlet from './dashlets/DonutDashlet'
-import BarChartDashlet from './dashlets/BarChartDashlet'
+import { RootState } from '../../state/store'
+import { cn } from '../../lib/utils'
+import { ScrollArea } from '../ui/scroll-area'
+import DonutDashlet from '../dashlets/DonutDashlet'
+import BarChartDashlet from '../dashlets/BarChartDashlet'
 import { motion } from 'framer-motion'
-import DynamicsByDepartmentDashlet from './dashlets/DynamicsByDepartmentDashlet'
-import DynamicsBySkillSetDashlet from './dashlets/DynamicsBySkillSetDashlet'
-import DynamicsBySkillDashlet from './dashlets/DynamicsBySkillDashlet'
+import GeneralDynamicsDashlet from '../dashlets/GeneralDynamicsDashlet'
+import HiringDynamicsDashlet from '../dashlets/HiringDynamicsDashlet'
+import TrainingDynamicsDashlet from '../dashlets/TrainingDynamicsDashlet'
 
 function MainDashboard() {
 
@@ -43,15 +42,15 @@ function MainDashboard() {
                     >
 
                         <motion.div variants={cardVariants}>
-                            <DynamicsByDepartmentDashlet />
+                            <GeneralDynamicsDashlet />
                         </motion.div>
 
                         <motion.div variants={cardVariants}>
-                            <DynamicsBySkillSetDashlet />
+                            <HiringDynamicsDashlet />
                         </motion.div>
 
                         <motion.div variants={cardVariants}>
-                            <DynamicsBySkillDashlet />
+                            <TrainingDynamicsDashlet />
                         </motion.div>
 
                     </motion.div>

@@ -1,5 +1,5 @@
 import React from 'react'
-import Logo from './Logo'
+import Logo from './svgs/Logo'
 import Filters from './Filters'
 import Menu from './Menu'
 import { Link } from 'react-router-dom'

@@ -6,8 +6,8 @@ import { Provider } from "react-redux"
 import { store } from "./src/state/store"
 import { HashRouter, Route, Routes } from "react-router-dom"
 import Layout from './Layout'
-import MainDashboard from './src/components/MainDashboard'
-import SecondDashboard from './src/components/SecondDashboard'
+import MainDashboard from './src/components/dashboards/MainDashboard'
+import RecruitmentPage from './src/components/dashboards/RecruitmentPage'
 
 export const BASE_URL = '/ds/ds_10/dashboards'
 
@@ -19,7 +19,7 @@ function App() {
         <Routes>
           <Route path={BASE_URL} element={<Layout />}>
             <Route index element={<MainDashboard />} />
-            <Route path={'employees'} element={<SecondDashboard />} />
+            <Route path={'employees'} element={<RecruitmentPage />} />
             <Route path={'settings'} element={<h1>Настройки</h1>} />
             <Route path={'*'} element={<h1>Not Found</h1>} />
           </Route>

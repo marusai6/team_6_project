@@ -1,8 +1,8 @@
-import { Search, X } from 'lucide-react'
-import React, { RefObject, useRef, useState } from 'react'
-import { ScrollArea } from './ui/scroll-area'
+import { Eraser, Search, X } from 'lucide-react'
+import React, { useRef, useState } from 'react'
+import { ScrollArea } from './scroll-area'
 
-const SelectWithSearch = ({ options, onClick }: { options: string[], onClick: (value: string) => void }) => {
+const SelectWithSearch = ({ options, onClick, onReset }: { options: string[], onClick: (value: string) => void, onReset: () => void }) => {
 
     const [filteredOptions, setFilteredOptions] = useState<string[]>(options)
 
@@ -35,6 +35,10 @@ const SelectWithSearch = ({ options, onClick }: { options: string[], onClick: (v
                     )
                 })}
             </ScrollArea>
+            <div onClick={onReset} className='flex gap-1 items-center m-1 p-1 px-3 cursor-pointer hover:bg-accent rounded transition-all bg-rose-400 hover:bg-rose-600 text-white'>
+                <Eraser />
+                Сбросить
+            </div>
         </div>
     )
 }

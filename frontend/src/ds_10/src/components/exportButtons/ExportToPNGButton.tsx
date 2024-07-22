@@ -1,5 +1,4 @@
 import React from 'react'
-import { Button } from './ui/Button'
 import { Download } from 'lucide-react'
 import html2canvas from "html2canvas"
 
@@ -7,6 +6,11 @@ const ExportToPNGButton = ({ exportRef }: { exportRef: React.RefObject<HTMLEleme
 
     const downloadImg = () => {
         const el = exportRef.current
+
+        const style = document.createElement('style');
+        document.head.appendChild(style);
+        style.sheet?.insertRule('body > div:last-child img { display: inline-block; }');
+
         html2canvas(el).then((canvas) => {
             const imgData = canvas.toDataURL('image/png')
             const link = document.createElement('a');
@@ -15,13 +19,14 @@ const ExportToPNGButton = ({ exportRef }: { exportRef: React.RefObject<HTMLEleme
             document.body.appendChild(link)
             link.click()
             document.body.removeChild(link)
+            style.remove()
         })
     }
 
     return (
-        <Button variant={'outline'} size='icon' className='shrink-0' onClick={downloadImg}>
-            <Download size={18} />
-        </Button>
+        <div className='size-[1.6rem] p-1 rounded border hover:background transition-all cursor-pointer'>
+            <Download className='w-full h-full' onClick={downloadImg} />
+        </div>
     )
 }
 

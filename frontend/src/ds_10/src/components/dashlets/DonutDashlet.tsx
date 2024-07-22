@@ -2,7 +2,7 @@ import React, { useRef } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/Card';
 import { DonutChart, Legend } from '@tremor/react';
 import { defaultDataFormatter } from '../../lib/utils';
-import ExportToPNGButton from '../ExportToPNGButton';
+import ExportToPNGButton from '../exportButtons/ExportToPNGButton';
 
 
 const sales = [
@@ -52,6 +52,7 @@ const DonutDashlet = () => {
                     index="name"
                     valueFormatter={defaultDataFormatter}
                     className="w-60 h-60 text-3xl"
+                    showLabel={false}
                 />
                 <Legend
                     categories={sales.map((el) => el.name)}

@@ -18,46 +18,25 @@ export const defaultDataFormatter = (number: number) => {
     return Intl.NumberFormat('ru').format(number).toString()
 }
 
-type Order = {
-    order_date: string;
-    order_totalprice: number;
-};
-
-export type GroupedOrder = {
-    month: string;
-    "Суммарная стоимость заказов": number;
-};
-
-export function groupOrdersByMonth(orders: Order[]): GroupedOrder[] {
-    const monthNames = ["ЯНВ", "ФЕВ", "МАР", "АПР", "МАЙ", "ИЮН", "ИЮЛ", "АВГ", "СЕП", "ОКТ", "НОЯ", "ДЕК"];
-
-    const groupedOrders: { [key: string]: number } = monthNames.reduce((acc, month) => {
-        acc[month] = 0
-        return acc
-    }, {} as { [key: string]: number });
-
-    orders.forEach(order => {
-        const monthIndex = new Date(order.order_date).getMonth();
-        const monthName = monthNames[monthIndex];
-        groupedOrders[monthName] += order.order_totalprice;
-
-    });
-
-    return Object.entries(groupedOrders).map(([month, order_totalprice]) => ({
-        month,
-        "Суммарная стоимость заказов": Math.trunc(order_totalprice)
-    }));
-
-}
-
-export const getFilterYearOptions = () => {
-    const startYear = 2004;
-    const currentYear = new Date().getFullYear();
-    const yearOptions: string[] = [];
-
-    for (let year = startYear; year <= currentYear; year++) {
-        yearOptions.push(String(year))
+export function getNoun(number: number, one: string, two: string, five: string) {
+    let n = Math.abs(number);
+    n %= 100;
+    if (n >= 5 && n <= 20) {
+        return five;
     }
-    return yearOptions
+    n %= 10;
+    if (n === 1) {
+        return one;
+    }
+    if (n >= 2 && n <= 4) {
+        return two;
+    }
+    return five;
 }
 
+export function getCurrentPeriod() {
+    return {
+        halfyear: new Date().getMonth() < 6 ? '1' : '2',
+        year: new Date().getFullYear().toString()
+    }
+}
