@@ -1,32 +1,42 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-type KnowledgeCategory = {
-    knowledgeCategory: string
-    skills: string[]
+type SkillsByCategoryType = {
+    [category: string]: string[]
 }
 
 type FilterOptionsState = {
     departments: string[]
     employees: string[]
-    knowledgeCategories: KnowledgeCategory[]
+    knowledgeCategories: string[]
+    skillsByCategories: SkillsByCategoryType
 }
 
 const initialState: FilterOptionsState = {
     departments: [],
     employees: [],
-    knowledgeCategories: []
+    knowledgeCategories: [],
+    skillsByCategories: {},
 }
 
 const filterOptionsSlice = createSlice({
     name: "filterOptions",
     initialState,
     reducers: {
-        changefilterOptions: (state, action: PayloadAction<boolean>) => {
-            console.log('check')
+        updateSkillsByCategories: (state, action: PayloadAction<SkillsByCategoryType>) => {
+            state.skillsByCategories = action.payload
+        },
+        updateKnowledgeCategories: (state, action: PayloadAction<string[]>) => {
+            state.knowledgeCategories = action.payload
+        },
+        updateDepartments: (state, action: PayloadAction<string[]>) => {
+            state.departments = action.payload
+        },
+        updateEmployees: (state, action: PayloadAction<string[]>) => {
+            state.employees = action.payload
         },
     },
 })
 
-export const { changefilterOptions } = filterOptionsSlice.actions
+export const { updateSkillsByCategories, updateKnowledgeCategories, updateDepartments, updateEmployees } = filterOptionsSlice.actions
 
 export default filterOptionsSlice.reducer

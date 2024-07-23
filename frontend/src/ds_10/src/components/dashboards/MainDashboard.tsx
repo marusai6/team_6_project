@@ -10,7 +10,7 @@ import GeneralDynamicsDashlet from '../dashlets/GeneralDynamicsDashlet'
 import HiringDynamicsDashlet from '../dashlets/HiringDynamicsDashlet'
 import TrainingDynamicsDashlet from '../dashlets/TrainingDynamicsDashlet'
 import { UrlState } from 'bi-internal/core'
-import { changePeriod } from '../../state/filters/filtersSlice'
+import { changeCategory, changeDepartment, changePeriod, changeSkill } from '../../state/filters/filtersSlice'
 
 function MainDashboard() {
 
@@ -26,7 +26,7 @@ function MainDashboard() {
 
     // Filters Handling
 
-    const { year, halfyear } = useSelector((state: RootState) => state.filters)
+    const { year, halfyear, category, skill, department } = useSelector((state: RootState) => state.filters)
 
     const dispatch = useDispatch()
 
@@ -34,7 +34,16 @@ function MainDashboard() {
         if (year != model.year || halfyear != model.halfyear) {
             dispatch(changePeriod({ year: model.year, halfyear: model.halfyear }))
         }
-    }, [year, halfyear])
+        if (category != model.knowledgeField) {
+            dispatch(changeCategory(model.knowledgeField))
+        }
+        if (skill != model.skill) {
+            dispatch(changeSkill(model.skill))
+        }
+        if (department != model.department) {
+            dispatch(changeDepartment(model.department))
+        }
+    }, [year, halfyear, category, skill, department])
 
     useEffect((): (() => void) => {
         UrlState.subscribeUpdatesAndNotify(callback)

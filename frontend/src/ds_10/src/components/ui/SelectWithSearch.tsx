@@ -1,10 +1,14 @@
 import { Eraser, Search, X } from 'lucide-react'
-import React, { useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { ScrollArea } from './scroll-area'
 
 const SelectWithSearch = ({ options, onClick, onReset }: { options: string[], onClick: (value: string) => void, onReset: () => void }) => {
 
     const [filteredOptions, setFilteredOptions] = useState<string[]>(options)
+
+    useEffect(() => {
+        setFilteredOptions(options)
+    }, [options])
 
     const updateFilteredOptions = (event: React.ChangeEvent<HTMLInputElement>) => {
         const searchInput = event.target.value
@@ -31,7 +35,7 @@ const SelectWithSearch = ({ options, onClick, onReset }: { options: string[], on
                 {filteredOptions.length == 0 && <div className='p-1 px-3 text-center text-accent-foreground'>Нет результатов</div>}
                 {filteredOptions.map((option) => {
                     return (
-                        <div key={`option-${options}`} className='p-1 px-3 cursor-pointer hover:bg-accent rounded transition-all' onClick={() => onClick(option)}>{option}</div>
+                        <div key={`option-${option}`} className='p-1 px-3 cursor-pointer hover:bg-accent rounded transition-all' onClick={() => onClick(option)}>{option}</div>
                     )
                 })}
             </ScrollArea>

@@ -1,11 +1,13 @@
 import { configureStore } from "@reduxjs/toolkit"
 import blurEffectReducer from "./blurEffect/blurEffectSlice"
 import filtersReducer from "./filters/filtersSlice"
+import filterOptionsReducer from "./filterOpitons/filterOptionsSlice"
 
 export const store = configureStore({
     reducer: {
         blurEffect: blurEffectReducer,
-        filters: filtersReducer
+        filters: filtersReducer,
+        filterOptions: filterOptionsReducer,
     }
 })
 

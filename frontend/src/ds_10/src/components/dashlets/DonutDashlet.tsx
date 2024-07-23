@@ -10,18 +10,26 @@ import { RootState } from '../../state/store';
 
 const DonutDashlet = () => {
 
-    const ref = useRef()
 
-    const { year, halfyear } = useSelector((state: RootState) => state.filters)
+
+    // Filters
+    const { year, halfyear, category, skill, department } = useSelector((state: RootState) => state.filters)
     const periodFilter = { 'period_название': ['=', halfyear === '1' ? `1п - ${year}` : `2п -${year}`] }
+    const categoryFilter = category ? { 'category_know_название': ['=', category] } : null
+    const skillFilter = skill ? { 'knowledge_название': ['=', skill] } : null
+    const departmentFilter = department ? { 'подразделения': ['=', department] } : null
 
-    const { data: levelsData, loading: loadingLevelsData, fetchData: fetchLevelsData } = useFetch<{ lables_название: string, lables_id: number }>({ dimensions: ['lables_название'], measures: ['lables_название', 'count(lables_id)'], filters: { lables_n_level: ['!=', null], ...periodFilter } })
+    const { data: levelsData, loading: loadingLevelsData, fetchData: fetchLevelsData } = useFetch<{ lables_название: string, lables_id: number }>({ dimensions: ['lables_название'], measures: ['lables_название', 'count(lables_id)'], filters: { lables_n_level: ['!=', null], ...periodFilter, ...categoryFilter, ...skillFilter, ...departmentFilter } })
     const finalLevelsData = levelsData.map((level) => ({ level: level.lables_название, count: level.lables_id }))
 
     useEffect(() => {
-        fetchLevelsData()
-    }, [year, halfyear])
+        if (year && halfyear) {
+            fetchLevelsData()
+        }
+    }, [year, halfyear, category, skill, department])
 
+    // Refs
+    const ref = useRef()
 
     return (
         <Card className='h-full flex flex-col'>
@@ -39,7 +47,7 @@ const DonutDashlet = () => {
                     index="level"
                     valueFormatter={defaultDataFormatter}
                     className="w-60 h-60 text-3xl"
-                    showLabel={false}
+                    // showLabel={false}
                     showAnimation={true}
                     noDataText='Нет данных'
                 />

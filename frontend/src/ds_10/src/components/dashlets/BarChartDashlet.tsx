@@ -23,15 +23,18 @@ const BarChartDashlet = () => {
 
     const ref = useRef()
 
-    const { year, halfyear } = useSelector((state: RootState) => state.filters)
+    const { year, halfyear, department } = useSelector((state: RootState) => state.filters)
     const periodFilter = { 'period_название': ['=', halfyear === '1' ? `1п - ${year}` : `2п -${year}`] }
+    const departmentFilter = department ? { 'подразделения': ['=', department] } : null
 
-    const { data: skillsByCategoryData, loading: loadingSkillsByCategoryData, fetchData: fetchSkillsByCategoryData } = useFetch<{ category_know_название: string, growth: number }>({ dimensions: ['category_know_название'], measures: ['category_know_название', 'sum(growth)'], filters: { lables_n_level: ['!=', null], ...periodFilter } })
+    const { data: skillsByCategoryData, loading: loadingSkillsByCategoryData, fetchData: fetchSkillsByCategoryData } = useFetch<{ category_know_название: string, growth: number }>({ dimensions: ['category_know_название'], measures: ['category_know_название', 'sum(growth)'], filters: { lables_n_level: ['!=', null], ...periodFilter, ...departmentFilter } })
     const finalData = skillsByCategoryData.map((skill) => ({ category: shortCategoryVariants.get(skill.category_know_название), Рост: skill.growth })).sort((a, b) => b.Рост - a.Рост)
 
     useEffect(() => {
-        fetchSkillsByCategoryData()
-    }, [year, halfyear])
+        if (year && halfyear) {
+            fetchSkillsByCategoryData()
+        }
+    }, [year, halfyear, department])
 
     return (
         <Card className='h-full'>
