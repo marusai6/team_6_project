@@ -1,5 +1,5 @@
-import React from 'react'
-import { useSelector } from 'react-redux'
+import React, { useCallback, useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from '../../state/store'
 import { cn } from '../../lib/utils'
 import { ScrollArea } from '../ui/scroll-area'
@@ -9,9 +9,13 @@ import { motion } from 'framer-motion'
 import GeneralDynamicsDashlet from '../dashlets/GeneralDynamicsDashlet'
 import HiringDynamicsDashlet from '../dashlets/HiringDynamicsDashlet'
 import TrainingDynamicsDashlet from '../dashlets/TrainingDynamicsDashlet'
+import { UrlState } from 'bi-internal/core'
+import { changePeriod } from '../../state/filters/filtersSlice'
 
 function MainDashboard() {
 
+
+    // UI Code
     const { blurEffect } = useSelector((state: RootState) => state.blurEffect)
 
     const staggerDalayAnimation = 0.05
@@ -19,6 +23,23 @@ function MainDashboard() {
         show: { opacity: 1, transition: { duration: 0.5 } },
         hidden: { opacity: 0 }
     }
+
+    // Filters Handling
+
+    const { year, halfyear } = useSelector((state: RootState) => state.filters)
+
+    const dispatch = useDispatch()
+
+    const callback = useCallback((model) => {
+        if (year != model.year || halfyear != model.halfyear) {
+            dispatch(changePeriod({ year: model.year, halfyear: model.halfyear }))
+        }
+    }, [year, halfyear])
+
+    useEffect((): (() => void) => {
+        UrlState.subscribeUpdatesAndNotify(callback)
+        return () => UrlState.unsubscribe(callback)
+    }, [])
 
     return (
         <ScrollArea className="px-20 flex-1 w-full bg-background py-4">

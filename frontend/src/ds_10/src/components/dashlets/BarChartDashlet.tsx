@@ -1,44 +1,37 @@
-import React, { useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/Card';
 import { BarChart } from '@tremor/react';
-import { defaultDataFormatter } from '../../lib/utils';
+import { defaultDataFormatter, getCurrentPeriod } from '../../lib/utils';
 import ExportToPNGButton from '../exportButtons/ExportToPNGButton';
+import useFetch from '../../hooks/useFetch';
+import { UrlState, urlState } from 'bi-internal/core';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../state/store';
 
-
-const chartdata = [
-    {
-        name: 'Платформы',
-        Рост: 2488,
-    },
-    {
-        name: 'Инструменты',
-        Рост: 1445,
-    },
-    {
-        name: 'Базы данных',
-        Рост: 743,
-    },
-    {
-        name: 'Среда разраб.',
-        Рост: 281,
-    },
-    {
-        name: 'Фреймворки',
-        Рост: 251,
-    },
-    {
-        name: 'Языки прогр.',
-        Рост: 232,
-    },
-    {
-        name: 'Типы систем',
-        Рост: 98,
-    },
-];
+const shortCategoryVariants = new Map([
+    ['Инструменты ', 'Инструм.'],
+    ['Технологии ', 'Технологии'],
+    ['Язык программирования ', 'Язык прогр.'],
+    ['Фреймворки ', 'Фреймворки'],
+    ['Типы систем ', 'Типы систем'],
+    ['Среда разработки ', 'Среда разр.'],
+    ['Платформы ', 'Платформы'],
+    ['Базы данных ', 'Базы дан.'],
+])
 
 const BarChartDashlet = () => {
 
     const ref = useRef()
+
+    const { year, halfyear } = useSelector((state: RootState) => state.filters)
+    const periodFilter = { 'period_название': ['=', halfyear === '1' ? `1п - ${year}` : `2п -${year}`] }
+
+    const { data: skillsByCategoryData, loading: loadingSkillsByCategoryData, fetchData: fetchSkillsByCategoryData } = useFetch<{ category_know_название: string, growth: number }>({ dimensions: ['category_know_название'], measures: ['category_know_название', 'sum(growth)'], filters: { lables_n_level: ['!=', null], ...periodFilter } })
+    const finalData = skillsByCategoryData.map((skill) => ({ category: shortCategoryVariants.get(skill.category_know_название), Рост: skill.growth })).sort((a, b) => b.Рост - a.Рост)
+
+    useEffect(() => {
+        fetchSkillsByCategoryData()
+    }, [year, halfyear])
 
     return (
         <Card className='h-full'>
@@ -51,14 +44,16 @@ const BarChartDashlet = () => {
             </CardHeader>
             <CardContent ref={ref}>
                 <BarChart
-                    data={chartdata}
-                    index="name"
+                    data={finalData}
+                    index="category"
                     categories={["Рост"]}
                     colors={['blue']}
                     valueFormatter={defaultDataFormatter}
                     yAxisWidth={48}
                     showLegend={false}
                     className='text-sm'
+                    noDataText='Нет данных'
+                    showAnimation={true}
                 />
             </CardContent>
         </Card>

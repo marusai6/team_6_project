@@ -25,7 +25,7 @@ const DatePicker = () => {
             <div className="flex select-none items-center justify-between bg-primary px-4 py-2 text-white">
                 <ChevronLeft
                     onClick={() => {
-                        urlState.updateModel({ year: +urlYear - 1 });
+                        urlState.updateModel({ year: String(+urlYear - 1) });
                     }}
                     size={30}
                     className="cursor-pointer rounded-full p-1 transition-all hover:bg-secondary hover:text-primary"
@@ -33,7 +33,7 @@ const DatePicker = () => {
                 <p>{urlYear}</p>
                 <ChevronRight
                     onClick={() => {
-                        urlState.updateModel({ year: +urlYear + 1 });
+                        urlState.updateModel({ year: String(+urlYear + 1) });
                     }}
                     size={30}
                     className="cursor-pointer rounded-full p-1 transition-all hover:bg-secondary hover:text-primary"
