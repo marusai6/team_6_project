@@ -6,6 +6,7 @@ type FiltersState = {
     category: string
     skill: string
     department: string
+    employee: string
 }
 
 const initialState: FiltersState = {
@@ -13,7 +14,8 @@ const initialState: FiltersState = {
     halfyear: '',
     category: '',
     skill: '',
-    department: ''
+    department: '',
+    employee: ''
 }
 
 const filtersSlice = createSlice({
@@ -33,9 +35,12 @@ const filtersSlice = createSlice({
         changeDepartment: (state, action: PayloadAction<string>) => {
             state.department = action.payload
         },
+        changeEmployee: (state, action: PayloadAction<string>) => {
+            state.employee = action.payload
+        },
     },
 })
 
-export const { changePeriod, changeCategory, changeSkill, changeDepartment } = filtersSlice.actions
+export const { changePeriod, changeCategory, changeSkill, changeDepartment, changeEmployee } = filtersSlice.actions
 
 export default filtersSlice.reducer

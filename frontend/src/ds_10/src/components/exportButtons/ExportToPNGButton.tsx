@@ -24,7 +24,7 @@ const ExportToPNGButton = ({ exportRef }: { exportRef: React.RefObject<HTMLEleme
     }
 
     return (
-        <div className='size-[1.6rem] p-1 shrink-0 rounded border hover:background transition-all cursor-pointer'>
+        <div className='size-[1.6rem] p-1 shrink-0 rounded border bg-white hover:background transition-all cursor-pointer'>
             <Download className='w-full h-full' onClick={downloadImg} />
         </div>
     )

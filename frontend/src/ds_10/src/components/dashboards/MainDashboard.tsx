@@ -10,7 +10,9 @@ import GeneralDynamicsDashlet from '../dashlets/GeneralDynamicsDashlet'
 import HiringDynamicsDashlet from '../dashlets/HiringDynamicsDashlet'
 import TrainingDynamicsDashlet from '../dashlets/TrainingDynamicsDashlet'
 import { UrlState } from 'bi-internal/core'
-import { changeCategory, changeDepartment, changePeriod, changeSkill } from '../../state/filters/filtersSlice'
+import { changeCategory, changeDepartment, changeEmployee, changePeriod, changeSkill } from '../../state/filters/filtersSlice'
+import GeneralEmpoyeeDashlet from '../dashlets/GeneralEmpoyeeDashlet'
+import EmployeeContactInfoDashlet from '../dashlets/EmployeeContactInfoDashlet'
 
 function MainDashboard() {
 
@@ -26,7 +28,7 @@ function MainDashboard() {
 
     // Filters Handling
 
-    const { year, halfyear, category, skill, department } = useSelector((state: RootState) => state.filters)
+    const { year, halfyear, category, skill, department, employee } = useSelector((state: RootState) => state.filters)
 
     const dispatch = useDispatch()
 
@@ -43,7 +45,13 @@ function MainDashboard() {
         if (department != model.department) {
             dispatch(changeDepartment(model.department))
         }
-    }, [year, halfyear, category, skill, department])
+        if (department != model.department) {
+            dispatch(changeDepartment(model.department))
+        }
+        if (employee != model.employee) {
+            dispatch(changeEmployee(model.employee))
+        }
+    }, [year, halfyear, category, skill, department, employee])
 
     useEffect((): (() => void) => {
         UrlState.subscribeUpdatesAndNotify(callback)
@@ -58,37 +66,51 @@ function MainDashboard() {
                     notBlured: { opacity: 1 }
                 }}
                 animate={blurEffect ? "blured" : "notBlured"}
-                className={cn('z-20 bg-background h-full w-full flex justify-center items-center')}>
+                className={cn('z-20 bg-background h-full w-full flex justify-center items-center')}
+            >
 
                 <motion.div
                     initial={"hidden"}
                     animate={"show"}
                     transition={{ staggerChildren: staggerDalayAnimation * 3 }}
-                    className='max-h-full w-full space-y-2'
+                    className='flex flex-col h-full w-full space-y-2'
                 >
                     <motion.div
                         transition={{ staggerChildren: staggerDalayAnimation }}
                         className='grid grid-cols-3 gap-2 w-full'
                     >
 
-                        <motion.div variants={cardVariants}>
-                            <GeneralDynamicsDashlet />
-                        </motion.div>
+                        {employee ?
+                            <>
+                                <motion.div variants={cardVariants}>
+                                    <GeneralEmpoyeeDashlet />
+                                </motion.div>
 
-                        <motion.div variants={cardVariants}>
-                            <HiringDynamicsDashlet />
-                        </motion.div>
+                                <motion.div variants={cardVariants} className='col-span-2'>
+                                    <EmployeeContactInfoDashlet />
+                                </motion.div>
+                            </> :
+                            <>
+                                <motion.div variants={cardVariants}>
+                                    <GeneralDynamicsDashlet />
+                                </motion.div>
 
-                        <motion.div variants={cardVariants}>
-                            <TrainingDynamicsDashlet />
-                        </motion.div>
+                                <motion.div variants={cardVariants}>
+                                    <HiringDynamicsDashlet />
+                                </motion.div>
+
+                                <motion.div variants={cardVariants}>
+                                    <TrainingDynamicsDashlet />
+                                </motion.div>
+                            </>
+                        }
 
                     </motion.div>
 
 
                     <motion.div
                         transition={{ staggerChildren: staggerDalayAnimation }}
-                        className='grid grid-cols-3 gap-2 w-full'
+                        className='grid grid-cols-3 gap-2 w-full flex-1'
                     >
 
                         <motion.div variants={cardVariants}>

@@ -51,6 +51,7 @@
     "clsx": "^2.1.1",
     "cmdk": "^1.0.0",
     "copy-webpack-plugin": "9.0.1",
+    "date-fns": "^3.6.0",
     "dateformat": "5.0.2",
     "dotenv": "^16.4.5",
     "exceljs": "^4.4.0",
