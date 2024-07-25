@@ -72,3 +72,31 @@ CREATE TABLE dm.summary_tab (
 	FOREIGN KEY (level_id) REFERENCES dm.lables (id) ON UPDATE CASCADE ON DELETE SET NULL,
 	FOREIGN KEY (period_id) REFERENCES dm.period ON UPDATE CASCADE ON DELETE CASCADE
 );
+
+DROP TABLE IF EXISTS temporary_tables.навыки_и_уровни_знаний;
+CREATE TABLE temporary_tables.навыки_и_уровни_знаний (
+	record_id SERIAL PRIMARY KEY,
+	"User ID" INT,
+	date_last DATE,
+	know_id INT,
+	date_first DATE,
+	level_id INT,
+	n_level INT,
+	category_know_id INT,
+	growth INT
+);
+
+DROP TABLE IF EXISTS temporary_tables.for_summary_tab;
+CREATE TABLE temporary_tables.for_summary_tab (
+	id SERIAL PRIMARY KEY,
+	record_id INT,
+	"User ID" INT,
+	date_last DATE,
+	date_first DATE,
+	category_know_id INT,
+	know_id INT,
+	level_id INT,
+	n_level INT,
+	period_id INT,
+	growth INT
+)
