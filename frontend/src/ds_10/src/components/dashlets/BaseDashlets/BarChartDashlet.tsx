@@ -1,12 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/Card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../ui/Card';
 import { BarChart } from '@tremor/react';
-import { defaultDataFormatter, getCurrentPeriod } from '../../lib/utils';
-import ExportToPNGButton from '../exportButtons/ExportToPNGButton';
-import useFetch from '../../hooks/useFetch';
+import { defaultDataFormatter, getCurrentPeriod } from '../../../lib/utils';
+import ExportToPNGButton from '../../exportButtons/ExportToPNGButton';
+import useFetch from '../../../hooks/useFetch';
 import { UrlState, urlState } from 'bi-internal/core';
 import { useSelector } from 'react-redux';
-import { RootState } from '../../state/store';
+import { RootState } from '../../../state/store';
 
 const shortCategoryVariants = new Map([
     ['Инструменты ', 'Инструм.'],
@@ -66,35 +66,34 @@ const BarChartDashlet = () => {
 
     const currentPeriodFilter = { 'period_название': ['=', currentPeriod] }
     const previousPeriodFilter = { 'period_название': ['=', previousPeriod] }
+
     const departmentFilter = department ? { 'подразделения': ['=', department] } : null
 
     const categoryFilter = { 'category_know_название': ['=', category] }
 
     // Category Fetching
-    const { data: currentSkillsByCategoryData, loading: loadingCurrentSkillsByCategoryData, fetchData: fetchCurrentSkillsByCategoryData } = useFetch<{ category_know_название: string, growth: number }>({ dimensions: ['category_know_название'], measures: ['category_know_название', 'sum(growth)'], filters: { lables_n_level: ['!=', null], ...currentPeriodFilter, ...departmentFilter } })
-    const finalCurrentData = currentSkillsByCategoryData.map((skill) => ({ name: shortCategoryVariants.get(skill.category_know_название), Рост: skill.growth })).sort((a, b) => b.Рост - a.Рост)
-
-    const { data: previousSkillsByCategoryData, loading: loadingPreviousSkillsByCategoryData, fetchData: fetchPreviousSkillsByCategoryData } = useFetch<{ category_know_название: string, growth: number }>({ dimensions: ['category_know_название'], measures: ['category_know_название', 'sum(growth)'], filters: { lables_n_level: ['!=', null], ...previousPeriodFilter, ...departmentFilter } })
-    const finalPreviousData = previousSkillsByCategoryData.map((skill) => ({ name: shortCategoryVariants.get(skill.category_know_название), Рост: skill.growth })).sort((a, b) => b.Рост - a.Рост)
+    const { data: currentCategoryData, loading: loadingCurrentCategoryData, fetchData: fetchCurrentCategoryData } = useFetch<{ category_know_название: string, growth: number }>({ dimensions: ['category_know_название'], measures: ['category_know_название', 'sum(growth)'], filters: { lables_n_level: ['!=', null], ...currentPeriodFilter, ...departmentFilter } })
+    const { data: previousCategoryData, loading: loadingPreviousCategoryData, fetchData: fetchPreviousCategoryData } = useFetch<{ category_know_название: string, growth: number }>({ dimensions: ['category_know_название'], measures: ['category_know_название', 'sum(growth)'], filters: { lables_n_level: ['!=', null], ...previousPeriodFilter, ...departmentFilter } })
 
 
     // Knowledge Fetching
     const { data: currentSkillsData, loading: loadingCurrentSkillsData, fetchData: fetchCurrentSkillsData } = useFetch<{ knowledge_название: string, growth: number }>({ dimensions: ['knowledge_название'], measures: ['knowledge_название', 'sum(growth)'], filters: { lables_n_level: ['!=', null], ...currentPeriodFilter, ...departmentFilter, ...categoryFilter } })
-    const finalCurrentSkillsData = currentSkillsData.map((skill) => ({ name: skill.knowledge_название, Рост: skill.growth })).sort((a, b) => b.Рост - a.Рост)
-
     const { data: previousSkillsData, loading: loadingPreviousSkillsData, fetchData: fetchPreviousSkillsData } = useFetch<{ knowledge_название: string, growth: number }>({ dimensions: ['knowledge_название'], measures: ['knowledge_название', 'sum(growth)'], filters: { lables_n_level: ['!=', null], ...previousPeriodFilter, ...departmentFilter, ...categoryFilter } })
-    const finalPreviousSkillsData = previousSkillsData.map((skill) => ({ name: skill.knowledge_название, Рост: skill.growth })).sort((a, b) => b.Рост - a.Рост)
 
     const [finalData, setFinalData] = useState([])
 
     useEffect(() => {
-        if (!loadingCurrentSkillsByCategoryData && !loadingPreviousSkillsByCategoryData) {
+        if (!loadingCurrentCategoryData && !loadingPreviousCategoryData) {
+            const finalCurrentData = currentCategoryData.map((skill) => ({ name: shortCategoryVariants.get(skill.category_know_название), Рост: skill.growth })).sort((a, b) => b.Рост - a.Рост)
+            const finalPreviousData = previousCategoryData.map((skill) => ({ name: shortCategoryVariants.get(skill.category_know_название), Рост: skill.growth })).sort((a, b) => b.Рост - a.Рост)
             setFinalData(mergeArrays(finalCurrentData, finalPreviousData, currentPeriod, previousPeriod))
         }
-    }, [loadingCurrentSkillsByCategoryData, loadingPreviousSkillsByCategoryData])
+    }, [loadingCurrentCategoryData, loadingPreviousCategoryData])
 
     useEffect(() => {
         if (!loadingCurrentSkillsData && !loadingPreviousSkillsData) {
+            const finalCurrentSkillsData = currentSkillsData.map((skill) => ({ name: skill.knowledge_название, Рост: skill.growth })).sort((a, b) => b.Рост - a.Рост)
+            const finalPreviousSkillsData = previousSkillsData.map((skill) => ({ name: skill.knowledge_название, Рост: skill.growth })).sort((a, b) => b.Рост - a.Рост)
             setFinalData(mergeArrays(finalCurrentSkillsData, finalPreviousSkillsData, currentPeriod, previousPeriod))
         }
     }, [loadingCurrentSkillsData, loadingPreviousSkillsData])
@@ -106,8 +105,8 @@ const BarChartDashlet = () => {
                 fetchPreviousSkillsData()
             }
             else {
-                fetchCurrentSkillsByCategoryData()
-                fetchPreviousSkillsByCategoryData()
+                fetchCurrentCategoryData()
+                fetchPreviousCategoryData()
             }
 
         }

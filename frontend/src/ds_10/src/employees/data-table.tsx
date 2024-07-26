@@ -5,6 +5,7 @@ import {
     flexRender,
     SortingState,
     ColumnFiltersState,
+    getPaginationRowModel,
     getCoreRowModel,
     getSortedRowModel,
     getFilteredRowModel,
@@ -20,6 +21,8 @@ import {
     TableRow,
 } from "../components/ui/Table"
 import React, { useState } from "react"
+import { Button } from "../components/ui/Button"
+import { urlState } from "bi-internal/core"
 
 
 interface DataTableProps<TData, TValue> {
@@ -27,13 +30,13 @@ interface DataTableProps<TData, TValue> {
     data: TData[]
 }
 
-export const columnsHeadings = new Map([
-    ["fullname", "Сотрудник"],
-    ["country", "Страна"],
-    ["title", "Должность"],
-    ["salary", "Заработная плата"],
-    ["order_totalprice", "Продажи"],
-])
+// export const columnsHeadings = new Map([
+//     ["fullname", "Сотрудник"],
+//     ["country", "Страна"],
+//     ["title", "Должность"],
+//     ["salary", "Заработная плата"],
+//     ["order_totalprice", "Продажи"],
+// ])
 
 export function DataTable<TData, TValue>({
     columns,
@@ -48,6 +51,7 @@ export function DataTable<TData, TValue>({
         columns,
         getCoreRowModel: getCoreRowModel(),
         onSortingChange: setSorting,
+        getPaginationRowModel: getPaginationRowModel(),
         getSortedRowModel: getSortedRowModel(),
         onColumnFiltersChange: setColumnFilters,
         getFilteredRowModel: getFilteredRowModel(),
@@ -118,7 +122,8 @@ export function DataTable<TData, TValue>({
                             <TableRow
                                 key={row.id}
                                 data-state={row.getIsSelected() && "selected"}
-                                onClick={() => console.log(row.original.fullname)}
+                                onClick={() => { urlState.updateModel({ employee: row.original["User ID"] }) }}
+                                className="cursor-pointer"
                             >
                                 {row.getVisibleCells().map((cell) => (
                                     <TableCell key={cell.id}>
@@ -136,6 +141,22 @@ export function DataTable<TData, TValue>({
                     )}
                 </TableBody>
             </Table>
+            <div className="flex items-center justify-between space-x-2 py-4">
+                <Button
+                    variant="outline"
+                    onClick={() => table.previousPage()}
+                    disabled={!table.getCanPreviousPage()}
+                >
+                    Предыдущая страница
+                </Button>
+                <Button
+                    variant="outline"
+                    onClick={() => table.nextPage()}
+                    disabled={!table.getCanNextPage()}
+                >
+                    Следующая страница
+                </Button>
+            </div>
         </div>
     )
 }

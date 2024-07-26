@@ -1,12 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/Card'
-import Badge from '../ui/Badge'
-import ExportToPNGButton from '../exportButtons/ExportToPNGButton'
-import { defaultDataFormatter, getNoun } from '../../lib/utils'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../ui/Card'
+import Badge from '../../ui/Badge'
+import ExportToPNGButton from '../../exportButtons/ExportToPNGButton'
+import { defaultDataFormatter, getNoun } from '../../../lib/utils'
 import { useSelector } from 'react-redux'
-import { RootState } from '../../state/store'
-import useFetch from '../../hooks/useFetch'
-import { Skeleton } from '../ui/Skeleton'
+import { RootState } from '../../../state/store'
+import useFetch from '../../../hooks/useFetch'
+import { Skeleton } from '../../ui/Skeleton'
 
 
 const HiringDynamicsDashlet = () => {

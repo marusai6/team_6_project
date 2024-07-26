@@ -1,18 +1,18 @@
-import React, { useCallback, useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import React from 'react'
+import { useSelector } from 'react-redux'
 import { RootState } from '../../state/store'
 import { cn } from '../../lib/utils'
 import { ScrollArea } from '../ui/scroll-area'
-import DonutDashlet from '../dashlets/DonutDashlet'
-import BarChartDashlet from '../dashlets/BarChartDashlet'
+import DonutDashlet from '../dashlets/BaseDashlets/DonutDashlet'
+import BarChartDashlet from '../dashlets/BaseDashlets/BarChartDashlet'
 import { motion } from 'framer-motion'
-import GeneralDynamicsDashlet from '../dashlets/GeneralDynamicsDashlet'
-import HiringDynamicsDashlet from '../dashlets/HiringDynamicsDashlet'
-import TrainingDynamicsDashlet from '../dashlets/TrainingDynamicsDashlet'
-import { UrlState } from 'bi-internal/core'
-import { changeCategory, changeDepartment, changeEmployee, changePeriod, changeSkill } from '../../state/filters/filtersSlice'
-import GeneralEmpoyeeDashlet from '../dashlets/GeneralEmpoyeeDashlet'
-import EmployeeContactInfoDashlet from '../dashlets/EmployeeContactInfoDashlet'
+import GeneralDynamicsDashlet from '../dashlets/BaseDashlets/GeneralDynamicsDashlet'
+import HiringDynamicsDashlet from '../dashlets/BaseDashlets/HiringDynamicsDashlet'
+import TrainingDynamicsDashlet from '../dashlets/BaseDashlets/TrainingDynamicsDashlet'
+import GeneralEmpoyeeDashlet from '../dashlets/EmployeeDashlets/EmpoyeeDynamicsDashlet'
+import EmployeeContactInfoDashlet from '../dashlets/EmployeeDashlets/EmployeeContactInfoDashlet'
+import EmployeeBarChartDashlet from '../dashlets/EmployeeDashlets/EmployeeBarChartDashlet'
+import EmployeeDonutDashlet from '../dashlets/EmployeeDashlets/EmployeeDonutDashlet'
 
 function MainDashboard() {
 
@@ -26,37 +26,7 @@ function MainDashboard() {
         hidden: { opacity: 0 }
     }
 
-    // Filters Handling
-
-    const { year, halfyear, category, skill, department, employee } = useSelector((state: RootState) => state.filters)
-
-    const dispatch = useDispatch()
-
-    const callback = useCallback((model) => {
-        if (year != model.year || halfyear != model.halfyear) {
-            dispatch(changePeriod({ year: model.year, halfyear: model.halfyear }))
-        }
-        if (category != model.knowledgeField) {
-            dispatch(changeCategory(model.knowledgeField))
-        }
-        if (skill != model.skill) {
-            dispatch(changeSkill(model.skill))
-        }
-        if (department != model.department) {
-            dispatch(changeDepartment(model.department))
-        }
-        if (department != model.department) {
-            dispatch(changeDepartment(model.department))
-        }
-        if (employee != model.employee) {
-            dispatch(changeEmployee(model.employee))
-        }
-    }, [year, halfyear, category, skill, department, employee])
-
-    useEffect((): (() => void) => {
-        UrlState.subscribeUpdatesAndNotify(callback)
-        return () => UrlState.unsubscribe(callback)
-    }, [])
+    const { employee } = useSelector((state: RootState) => state.filters)
 
     return (
         <ScrollArea className="px-20 flex-1 w-full bg-background py-4">
@@ -114,11 +84,11 @@ function MainDashboard() {
                     >
 
                         <motion.div variants={cardVariants}>
-                            <DonutDashlet />
+                            {employee ? <EmployeeDonutDashlet /> : <DonutDashlet />}
                         </motion.div>
 
                         <motion.div variants={cardVariants} className='col-span-2'>
-                            <BarChartDashlet />
+                            {employee ? <EmployeeBarChartDashlet /> : <BarChartDashlet />}
                         </motion.div>
 
                     </motion.div>

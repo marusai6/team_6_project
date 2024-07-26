@@ -1,16 +1,16 @@
 import React, { useEffect, useRef } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/Card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../ui/Card';
 import { DonutChart, Legend } from '@tremor/react';
-import { defaultDataFormatter } from '../../lib/utils';
-import ExportToPNGButton from '../exportButtons/ExportToPNGButton';
-import useFetch from '../../hooks/useFetch';
+import { defaultDataFormatter } from '../../../lib/utils';
+import ExportToPNGButton from '../../exportButtons/ExportToPNGButton';
+import useFetch from '../../../hooks/useFetch';
 import { useSelector } from 'react-redux';
-import { RootState } from '../../state/store';
+import { RootState } from '../../../state/store';
 
 const DonutDashlet = () => {
 
     // Filters
-    const { year, halfyear, category, skill, department } = useSelector((state: RootState) => state.filters)
+    const { year, halfyear, category, skill, department, employee } = useSelector((state: RootState) => state.filters)
 
     const currentPeriodWithHalfYear = halfyear === '1' ? `1п - ${year}` : `2п - ${year}`
     const currentPeriod = halfyear === 'both' ? year : currentPeriodWithHalfYear

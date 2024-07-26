@@ -1,14 +1,16 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/Card'
-import Badge from '../ui/Badge'
-import ExportToPNGButton from '../exportButtons/ExportToPNGButton'
-import { defaultDataFormatter, getNoun } from '../../lib/utils'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../ui/Card'
+import Badge from '../../ui/Badge'
+import ExportToPNGButton from '../../exportButtons/ExportToPNGButton'
+import { defaultDataFormatter, getNoun } from '../../../lib/utils'
 import { useSelector } from 'react-redux'
-import { RootState } from '../../state/store'
-import useFetch from '../../hooks/useFetch'
-import { Skeleton } from '../ui/Skeleton'
+import { RootState } from '../../../state/store'
+import useFetch from '../../../hooks/useFetch'
+import { Skeleton } from '../../ui/Skeleton'
 
-const GeneralDynamicsDashlet = () => {
+const TrainingDynamicsDashlet = () => {
+
+    const ref = useRef()
 
     // Filters
     const { year, halfyear, category, skill, department } = useSelector((state: RootState) => state.filters)
@@ -29,37 +31,35 @@ const GeneralDynamicsDashlet = () => {
     const skillFilter = skill ? { 'knowledge_название': ['=', skill] } : null
     const departmentFilter = department ? { 'подразделения': ['=', department] } : null
 
-    const { data: currentPeriodGrowthData, loading: loadingCurrentPeriodGrowthData, fetchData: fetchCurrentPeriodGrowthData } = useFetch<{ growth: number }>({ dimensions: [], measures: ['sum(growth)'], filters: { lables_n_level: ['!=', null], ...currentPeriodFilter, ...categoryFilter, ...skillFilter, ...departmentFilter } })
-    const currentPeriodGrowth = !loadingCurrentPeriodGrowthData ? currentPeriodGrowthData[0].growth || '0' : undefined
+    const ishiredFilter = { 'is_hired_in_period': ['=', 'false'] }
 
-    const { data: previousPeriodGrowthData, loading: loadingPreviousPeriodGrowthData, fetchData: fetchPreviousPeriodGrowthData } = useFetch<{ growth: number }>({ dimensions: [], measures: ['sum(growth)'], filters: { lables_n_level: ['!=', null], ...previousPeriodFilter, ...categoryFilter, ...skillFilter, ...departmentFilter } })
-    const previousPeriodGrowth = !loadingPreviousPeriodGrowthData ? previousPeriodGrowthData[0].growth || '0' : undefined
+    const { data: currentPeriodTrainingData, loading: loadingCurrentPeriodTrainingData, fetchData: fetchCurrentPeriodTrainingData } = useFetch<{ growth: number }>({ dimensions: [], measures: ['sum(growth)'], filters: { ...currentPeriodFilter, ...categoryFilter, ...skillFilter, ...departmentFilter, ...ishiredFilter } })
+    const currentPeriodTraining = !loadingCurrentPeriodTrainingData ? currentPeriodTrainingData[0].growth || '0' : undefined
+
+    const { data: previousPeriodTrainingData, loading: loadingPreviousPeriodTrainingData, fetchData: fetchPreviousPeriodTrainingData } = useFetch<{ growth: number }>({ dimensions: [], measures: ['sum(growth)'], filters: { ...previousPeriodFilter, ...categoryFilter, ...skillFilter, ...departmentFilter, ...ishiredFilter } })
+    const previousPeriodTraining = !loadingPreviousPeriodTrainingData ? previousPeriodTrainingData[0].growth || '0' : undefined
 
     useEffect(() => {
         if (year) {
-            fetchCurrentPeriodGrowthData()
-            fetchPreviousPeriodGrowthData()
+            fetchCurrentPeriodTrainingData()
+            fetchPreviousPeriodTrainingData()
         }
     }, [year, halfyear, category, skill, department])
-
 
     // Dynamics Calculation
     const [dynamics, setDynamics] = useState(0)
 
     useEffect(() => {
-        if (!loadingCurrentPeriodGrowthData && !loadingPreviousPeriodGrowthData) {
-            setDynamics(+((+currentPeriodGrowth - +previousPeriodGrowth) / +previousPeriodGrowth * 100).toFixed(2))
+        if (!loadingCurrentPeriodTrainingData && !loadingPreviousPeriodTrainingData) {
+            setDynamics(+((+currentPeriodTraining - +previousPeriodTraining) / +previousPeriodTraining * 100).toFixed(2))
         }
-    }, [loadingCurrentPeriodGrowthData, loadingPreviousPeriodGrowthData])
-
-
-    const ref = useRef()
+    }, [loadingCurrentPeriodTrainingData, loadingPreviousPeriodTrainingData])
 
     return (
         <Card ref={ref} className='h-full'>
             <CardHeader className='flex flex-col items-center'>
                 <CardTitle className='flex justify-between w-full'>
-                    Общая динамика
+                    Динамика обучения сотрудников
                     <ExportToPNGButton exportRef={ref} />
                 </CardTitle>
                 <CardDescription className='flex justify-between w-full pt-1'>
@@ -70,19 +70,19 @@ const GeneralDynamicsDashlet = () => {
             <CardContent>
                 <div className='flex items-center justify-between'>
                     <div className='flex items-end gap-2'>
-                        {currentPeriodGrowth ?
+                        {currentPeriodTraining ?
                             <>
-                                <h2 className='text-3xl font-semibold'>{defaultDataFormatter(+currentPeriodGrowth)}</h2>
-                                <span className='text-xl font-medium'>{getNoun(+currentPeriodGrowth, 'грейд', 'грейда', 'грейдов')}</span>
+                                <h2 className='text-3xl font-semibold'>{defaultDataFormatter(+currentPeriodTraining)}</h2>
+                                <span className='text-xl font-medium'>{getNoun(+currentPeriodTraining, 'грейд', 'грейда', 'грейдов')}</span>
                             </> :
                             <Skeleton className='w-32 h-9' />
                         }
                     </div>
-                    <Badge number={dynamics} isLoading={loadingCurrentPeriodGrowthData || loadingPreviousPeriodGrowthData} />
+                    <Badge number={dynamics} isLoading={loadingCurrentPeriodTrainingData || loadingPreviousPeriodTrainingData} />
                 </div>
             </CardContent>
         </Card>
     )
 }
 
-export default GeneralDynamicsDashlet
+export default TrainingDynamicsDashlet

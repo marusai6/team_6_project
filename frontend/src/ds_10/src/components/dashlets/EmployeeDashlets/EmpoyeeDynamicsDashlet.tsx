@@ -1,13 +1,12 @@
-import React, { useEffect, useRef, useState } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/Card'
-import ExportToPNGButton from '../exportButtons/ExportToPNGButton'
+import React, { useEffect, useState } from 'react'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../ui/Card'
 import { useSelector } from 'react-redux'
-import { RootState } from '../../state/store'
-import useFetch from '../../hooks/useFetch'
-import { defaultDataFormatter, getNoun } from '../../lib/utils'
+import { RootState } from '../../../state/store'
+import useFetch from '../../../hooks/useFetch'
+import { defaultDataFormatter, getNoun } from '../../../lib/utils'
 import { parseISO, format } from 'date-fns'
 import { ru } from 'date-fns/locale'
-import { Skeleton } from '../ui/Skeleton'
+import { Skeleton } from '../../ui/Skeleton'
 
 type EmployeeFetchData = {
     'User ID': string
@@ -24,7 +23,7 @@ type EmployeeData = {
     isFired: boolean
 }
 
-const GeneralEmpoyeeDashlet = () => {
+const EmployeeDynamicsDashlet = () => {
 
     // Filters
     const { employee } = useSelector((state: RootState) => state.filters)
@@ -69,15 +68,11 @@ const GeneralEmpoyeeDashlet = () => {
         fetchEmployeeData()
     }, [employee])
 
-    // Refs
-    const ref = useRef()
-
     return (
-        <Card ref={ref} className='h-full'>
+        <Card className='h-full'>
             <CardHeader className='flex flex-col items-center'>
                 <CardTitle className='flex justify-between w-full'>
                     Динамика развития
-                    <ExportToPNGButton exportRef={ref} />
                 </CardTitle>
                 <CardDescription className='flex justify-between w-full pt-1'>
                     {generalEmployeeData ? (
@@ -109,4 +104,4 @@ const GeneralEmpoyeeDashlet = () => {
     )
 }
 
-export default GeneralEmpoyeeDashlet
+export default EmployeeDynamicsDashlet

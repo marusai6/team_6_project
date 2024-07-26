@@ -19,7 +19,7 @@ const Popover = ({ children, setOpen }: { children: React.ReactNode, setOpen: Re
 }
 
 Popover.Trigger = ({ children, setOpen }: { children: React.ReactNode, setOpen: React.Dispatch<React.SetStateAction<boolean>> }) => {
-    return <div onClick={() => setOpen((prev) => !prev)}>{children}</div>
+    return <div className="h-full" onClick={() => setOpen((prev) => !prev)}>{children}</div>
 }
 
 Popover.Content = ({ children, open, align = 'right', activateBlur = true, top = '3.75rem' }: { children: React.ReactNode, open: boolean, align?: 'right' | 'left' | 'center', activateBlur?: boolean, top?: string }) => {
