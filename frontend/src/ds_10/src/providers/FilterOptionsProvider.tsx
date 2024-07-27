@@ -12,7 +12,7 @@ const FilterOptionsProvider = ({ children }: { children: React.ReactNode }) => {
     function groupByCategory(array) {
         return array.reduce((result, item) => {
             const category = item.category_know_название;
-            const knowledge = item.knowledge_название;
+            const knowledge = item.knows_название;
 
             if (!result[category]) {
                 result[category] = [];
@@ -27,9 +27,9 @@ const FilterOptionsProvider = ({ children }: { children: React.ReactNode }) => {
     const fetchCategories = async () => {
         koobDataRequest3(
             'etl_db_6.team_6',
-            ['category_know_название', 'knowledge_название'],
+            ['category_know_название', 'knows_название'],
             [],
-            { lables_n_level: ['!=', null] },
+            { levels_n_level: ['!=', null] },
             // @ts-ignore
             { schema_name: 'ds_10' },
             'etl_db_6.team_6',

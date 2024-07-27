@@ -10,18 +10,18 @@ import { RootState } from '../../../state/store';
 const DonutDashlet = () => {
 
     // Filters
-    const { year, halfyear, category, skill, department, employee } = useSelector((state: RootState) => state.filters)
+    const { year, halfyear, category, skill, department } = useSelector((state: RootState) => state.filters)
 
-    const currentPeriodWithHalfYear = halfyear === '1' ? `1п - ${year}` : `2п - ${year}`
+    const currentPeriodWithHalfYear = `${halfyear}п - ${year}`
     const currentPeriod = halfyear === 'both' ? year : currentPeriodWithHalfYear
     const currentPeriodFilter = { 'period_название': ['=', currentPeriod] }
 
     const categoryFilter = category ? { 'category_know_название': ['=', category] } : null
-    const skillFilter = skill ? { 'knowledge_название': ['=', skill] } : null
+    const skillFilter = skill ? { 'knows_название': ['=', skill] } : null
     const departmentFilter = department ? { 'подразделения': ['=', department] } : null
 
-    const { data: levelsData, loading: loadingLevelsData, fetchData: fetchLevelsData } = useFetch<{ lables_название: string, lables_id: number }>({ dimensions: ['lables_название'], measures: ['lables_название', 'count(lables_id)'], filters: { lables_n_level: ['!=', null], ...currentPeriodFilter, ...categoryFilter, ...skillFilter, ...departmentFilter } })
-    const finalLevelsData = levelsData.map((level) => ({ level: level.lables_название, count: level.lables_id }))
+    const { data: levelsData, loading: loadingLevelsData, fetchData: fetchLevelsData } = useFetch<{ levels_название: string, count: number }>({ dimensions: ['levels_название'], measures: ['levels_название', 'count(levels_id)'], filters: { levels_n_level: ['!=', null], ...currentPeriodFilter, ...categoryFilter, ...skillFilter, ...departmentFilter } })
+    const finalLevelsData = levelsData.map((level) => ({ level: level.levels_название, count: level.count }))
 
     useEffect(() => {
         if (year && halfyear) {

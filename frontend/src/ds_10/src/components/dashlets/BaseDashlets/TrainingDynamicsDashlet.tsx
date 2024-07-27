@@ -17,7 +17,7 @@ const TrainingDynamicsDashlet = () => {
 
 
     // Period Filters
-    const currentPeriodWithHalfYear = halfyear === '1' ? `1п - ${year}` : `2п - ${year}`
+    const currentPeriodWithHalfYear = `${halfyear}п - ${year}`
     const previousPeriodWithHalfYear = halfyear === '1' ? `2п - ${+year - 1}` : `1п - ${year}`
 
     const currentPeriod = halfyear === 'both' ? year : currentPeriodWithHalfYear
@@ -28,7 +28,7 @@ const TrainingDynamicsDashlet = () => {
 
 
     const categoryFilter = category ? { 'category_know_название': ['=', category] } : null
-    const skillFilter = skill ? { 'knowledge_название': ['=', skill] } : null
+    const skillFilter = skill ? { 'knows_название': ['=', skill] } : null
     const departmentFilter = department ? { 'подразделения': ['=', department] } : null
 
     const ishiredFilter = { 'is_hired_in_period': ['=', 'false'] }

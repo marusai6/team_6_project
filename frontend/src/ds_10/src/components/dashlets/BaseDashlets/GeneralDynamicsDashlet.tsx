@@ -15,7 +15,7 @@ const GeneralDynamicsDashlet = () => {
 
 
     // Period Filters
-    const currentPeriodWithHalfYear = halfyear === '1' ? `1п - ${year}` : `2п - ${year}`
+    const currentPeriodWithHalfYear = `${halfyear}п - ${year}`
     const previousPeriodWithHalfYear = halfyear === '1' ? `2п - ${+year - 1}` : `1п - ${year}`
 
     const currentPeriod = halfyear === 'both' ? year : currentPeriodWithHalfYear
@@ -26,13 +26,13 @@ const GeneralDynamicsDashlet = () => {
 
 
     const categoryFilter = category ? { 'category_know_название': ['=', category] } : null
-    const skillFilter = skill ? { 'knowledge_название': ['=', skill] } : null
+    const skillFilter = skill ? { 'knows_название': ['=', skill] } : null
     const departmentFilter = department ? { 'подразделения': ['=', department] } : null
 
-    const { data: currentPeriodGrowthData, loading: loadingCurrentPeriodGrowthData, fetchData: fetchCurrentPeriodGrowthData } = useFetch<{ growth: number }>({ dimensions: [], measures: ['sum(growth)'], filters: { lables_n_level: ['!=', null], ...currentPeriodFilter, ...categoryFilter, ...skillFilter, ...departmentFilter } })
+    const { data: currentPeriodGrowthData, loading: loadingCurrentPeriodGrowthData, fetchData: fetchCurrentPeriodGrowthData } = useFetch<{ growth: number }>({ dimensions: [], measures: ['sum(growth)'], filters: { levels_n_level: ['!=', null], ...currentPeriodFilter, ...categoryFilter, ...skillFilter, ...departmentFilter } })
     const currentPeriodGrowth = !loadingCurrentPeriodGrowthData ? currentPeriodGrowthData[0].growth || '0' : undefined
 
-    const { data: previousPeriodGrowthData, loading: loadingPreviousPeriodGrowthData, fetchData: fetchPreviousPeriodGrowthData } = useFetch<{ growth: number }>({ dimensions: [], measures: ['sum(growth)'], filters: { lables_n_level: ['!=', null], ...previousPeriodFilter, ...categoryFilter, ...skillFilter, ...departmentFilter } })
+    const { data: previousPeriodGrowthData, loading: loadingPreviousPeriodGrowthData, fetchData: fetchPreviousPeriodGrowthData } = useFetch<{ growth: number }>({ dimensions: [], measures: ['sum(growth)'], filters: { levels_n_level: ['!=', null], ...previousPeriodFilter, ...categoryFilter, ...skillFilter, ...departmentFilter } })
     const previousPeriodGrowth = !loadingPreviousPeriodGrowthData ? previousPeriodGrowthData[0].growth || '0' : undefined
 
     useEffect(() => {

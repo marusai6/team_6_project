@@ -16,7 +16,7 @@ export type Employee = {
 export const columns: ColumnDef<Employee>[] = [
     {
         accessorKey: "User ID",
-        header: ({ column }) => <FilterHeader column={column} title={'ID Сотрудника'} />,
+        header: ({ column }) => <FilterHeader column={column} title={'ID'} />,
     },
     {
         accessorKey: "должность",

@@ -5,12 +5,13 @@ import { Button } from '../ui/Button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/Card'
 import SelectWithSearch from '../ui/SelectWithSearch'
 import PickedSkill from '../PickedSkill'
-import { AnimatePresence, motion } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { urlState } from 'bi-internal/core'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../state/store'
 import useFetch from '../../hooks/useFetch'
-import { ScrollArea } from '@radix-ui/react-scroll-area'
+import LevelGroupSection from '../LevelGroupSection'
+import { ScrollArea } from '../ui/scroll-area'
 
 type SkillsGroupedByLevelType = {
     [key: string]: string[]
@@ -21,60 +22,57 @@ type SkillsByLevelType = {
     skills: string[];
 }[]
 
-function groupBySkillLevel(arr: GroupedEmployeeSkillData[number]): SkillsByLevelType {
-    const groupedObject: SkillsGroupedByLevelType = arr.reduce((acc, curr) => {
-        if (!acc[curr.level]) {
-            acc[curr.level] = [];
-        }
-        acc[curr.level].push(curr.skill);
-        return acc;
-    }, {})
-    const result = Object.entries(groupedObject).map((el) => {
-        return { level: el[0], skills: el[1] }
-    })
-    console.log(result)
-    return result
+function groupBySkillLevel(employee: GroupedEmployeeSkillData[number]): SkillsByLevelType {
+    if (!employee) return []
+    const result = [
+        { level: 'Использовал в проекте', skills: [] },
+        { level: 'Novice', skills: [] },
+        { level: 'Junior', skills: [] },
+        { level: 'Middle', skills: [] },
+        { level: 'Senior', skills: [] },
+        { level: 'Expert', skills: [] }
+    ]
+    for (const [skill, level] of Object.entries(employee)) {
+        result[level - 1].skills.push(skill)
+    }
+    return result.reverse()
 }
 
 function groupByUserId(arr: EmployeeRowData[]): GroupedEmployeeSkillData {
     return arr.reduce((acc, curr) => {
         if (!acc[curr['User ID']]) {
-            acc[curr['User ID']] = [];
+            acc[curr['User ID']] = {};
         }
-        acc[curr['User ID']].push({
-            skill: curr.knowledge_название,
-            level: curr.lables_n_level
-        });
+        acc[curr['User ID']][curr.knows_название] = curr.levels_n_level
         return acc;
     }, {});
 }
 
 
-type GradeType = 'any' | 'Использовал в проекте' | 'Novice' | 'Junior' | 'Middle' | 'Senior' | 'Expert'
-type SkillType = { name: string, grade: GradeType }
+export type GradeType = 'Использовал в проекте' | 'Novice' | 'Junior' | 'Middle' | 'Senior' | 'Expert'
+export type SkillType = { name: string, level: number }
 
 type EmployeeRowData = {
     'User ID': string
-    knowledge_название: string
-    lables_n_level: number
+    knows_название: string
+    levels_n_level: number
 }
 
-type Skill = {
-    skill: string
-    level: number
+type Skills = {
+    [key: string]: number
 }
 
 type GroupedEmployeeSkillData = {
-    [key: string]: Skill[]
+    [key: string]: Skills
 }
 
-const levelsToTitlesMap = new Map([
-    ['1', 'Использовал на проекте'],
-    ['2', 'Novice'],
-    ['3', 'Junior'],
-    ['4', 'Middle'],
-    ['5', 'Senior'],
-    ['6', 'Expert'],
+export const GradesToLevelMap = new Map([
+    ['Использовал в проекте', 1],
+    ['Novice', 2],
+    ['Junior', 3],
+    ['Middle', 4],
+    ['Senior', 5],
+    ['Expert', 6],
 ])
 
 const RecruitmentPage = () => {
@@ -122,11 +120,12 @@ const RecruitmentPage = () => {
 
     const currentLevelFilter = { 'current_level': ['=', 'true'] }
 
-    const { data: allEmployeesData, loading: loadingAllEmployeesData, fetchData: fetchAllEmployeesData } = useFetch<{ 'User ID': string, lables_n_level: number, knowledge_название: string, period_название: string }>({ dimensions: ['User ID'], measures: ['lables_n_level', 'knowledge_название', 'period_название'], filters: { lables_n_level: ['!=', null], ...currentLevelFilter } })
-    const { data: generalEmployeeData, loading: loadingGeneralEmployeeData, fetchData: fetchGeneralEmployeeData } = useFetch<{ 'User ID': string, подразделения: string, должность: string }>({ dimensions: ['User ID', 'подразделения', 'должность'], measures: [], filters: { lables_n_level: ['!=', null] } })
+    const { data: allEmployeesData, loading: loadingAllEmployeesData, fetchData: fetchAllEmployeesData } = useFetch<{ 'User ID': string, levels_n_level: number, knows_название: string, period_название: string }>({ dimensions: ['User ID'], measures: ['levels_n_level', 'knows_название', 'period_название'], filters: { levels_n_level: ['!=', null], ...currentLevelFilter } })
+    const { data: generalEmployeeData, loading: loadingGeneralEmployeeData, fetchData: fetchGeneralEmployeeData } = useFetch<{ 'User ID': string, подразделения: string, должность: string }>({ dimensions: ['User ID', 'подразделения', 'должность'], measures: [], filters: { levels_n_level: ['!=', null] } })
 
     const [employeeSkillsData, setEmployeeSkillsData] = useState<GroupedEmployeeSkillData>()
 
+    console.log(employeeSkillsData)
     useEffect(() => {
         if (!loadingAllEmployeesData) {
             const result = groupByUserId(allEmployeesData.filter((el) => el.period_название.length == 4))
@@ -139,62 +138,76 @@ const RecruitmentPage = () => {
         fetchGeneralEmployeeData()
     }, [])
 
-    // const finalData = employeeData.filter((employee) => filterEmployee(employee)).map((employee) => ({ fullname: employee.fullname, department: employee.department, title: employee.title }))
+    useEffect(() => {
+        if (employeeSkillsData) {
+            const result = []
+            for (const [key, value] of Object.entries(employeeSkillsData)) {
+                if (filterEmployeeSkills(value)) {
+                    result.push(+key)
+                }
+            }
+            setFilteredEmployees(generalEmployeeData.filter((employee) => result.includes(employee['User ID'])))
+        }
+    }, [employeeSkillsData, pickedSkills])
 
-    // function filterEmployee(employee: AllEmployeeData) {
-    //     const employeeSkills = employee.skills.map((skill) => skill.name)
-    //     for (let i = 0; i < pickedSkills.length; i++) {
-    //         if (!employeeSkills.includes(pickedSkills[i].name)) return false
-    //     }
-    //     return true
-    // }
+    const [filteredEmployees, setFilteredEmployees] = useState([])
+
+    function filterEmployeeSkills(skills: Skills) {
+        for (let i = 0; i < pickedSkills.length; i++) {
+            if (!skills[pickedSkills[i].name] || skills[pickedSkills[i].name] < pickedSkills[i].level) {
+                return false
+            }
+        }
+        return true
+    }
 
     return (
-        <div className='px-20 py-4 flex flex-col flex-1 bg-background space-y-4'>
+        <ScrollArea className="px-20 flex-1 w-full bg-background py-4 overflow-y-hidden">
+            <div className='w-full flex gap-4'>
 
-            <div className='flex gap-4'>
-                <Popover setOpen={setOpen}>
-                    <Popover.Trigger setOpen={setOpen}>
-                        <Button variant='outline' className='w-fit h-10'>
-                            Выбрать навыки
-                        </Button>
-                    </Popover.Trigger>
-                    <Popover.Content open={open} top='2.9rem' align='center'>
-                        <SelectWithSearch
-                            options={allSkillsOptions}
-                            onClick={(value: string) => {
-                                setPickedSkills((prev) => [...prev, { name: value, grade: 'any' }])
-                            }}
-                            onReset={() => {
-                                setOpen(false)
-                                setPickedSkills([])
-                            }}
-                        />
-                    </Popover.Content>
-                </Popover>
+                <div className='flex flex-col gap-4 w-2/3'>
+                    <div className='flex gap-3 w-full'>
+                        <Popover setOpen={setOpen}>
+                            <Popover.Trigger setOpen={setOpen}>
+                                <Button variant='outline' className='w-fit h-10'>
+                                    Выбрать навыки
+                                </Button>
+                            </Popover.Trigger>
+                            <Popover.Content open={open} top='2.9rem' align='left'>
+                                <SelectWithSearch
+                                    options={allSkillsOptions}
+                                    onClick={(value: string) => {
+                                        setPickedSkills((prev) => [...prev, { name: value, level: 1 }])
+                                    }}
+                                    onReset={() => {
+                                        setOpen(false)
+                                        setPickedSkills([])
+                                    }}
+                                />
+                            </Popover.Content>
+                        </Popover>
 
-                <motion.div
-                    className='flex gap-2 flex-wrap'>
-                    {pickedSkills.map((skill) => {
-                        return (
-                            <PickedSkill
-                                skill={skill}
-                                onClick={() => setPickedSkills((prev) => prev.filter(item => item !== skill))}
-                                updateGrade={(skill: string, grade: GradeType) => {
-                                    setPickedSkills((prev) => {
-                                        return prev.map((pickedSkill) => ({ name: pickedSkill.name, grade: pickedSkill.name == skill ? grade : pickedSkill.grade }))
-                                    })
-                                }}
-                            />
-                        )
-                    })}
-                </motion.div>
-            </div>
+                        <motion.div
+                            className='flex gap-2 flex-wrap w-full'>
+                            {pickedSkills.map((skill) => {
+                                return (
+                                    <PickedSkill
+                                        skill={skill}
+                                        onClick={() => setPickedSkills((prev) => prev.filter(item => item !== skill))}
+                                        updateGrade={(skill: string, grade: GradeType) => {
+                                            setPickedSkills((prev) => {
+                                                return prev.map((pickedSkill) => ({ name: pickedSkill.name, level: pickedSkill.name == skill ? GradesToLevelMap.get(grade) : pickedSkill.level }))
+                                            })
+                                        }}
+                                    />
+                                )
+                            })}
+                        </motion.div>
+                    </div>
+                    <EmployeeTable employeeData={filteredEmployees} />
+                </div>
 
-            <div className='flex flex-1 gap-4 overflow-hidden'>
-                <EmployeeTable employeeData={generalEmployeeData} />
-
-                <Card className='w-2/5 h-full'>
+                <Card className='w-1/3 h-fit'>
                     <CardHeader>
                         <CardTitle>
                             Фамилия Имя
@@ -203,45 +216,19 @@ const RecruitmentPage = () => {
                             {employee}
                         </CardDescription>
                     </CardHeader>
-                    <CardContent>
-                        <ScrollArea className='space-y-3'>
+                    <CardContent className='h-full'>
+                        <div className='space-y-3 h-full'>
                             {employee && employeeSkillsData &&
-                                groupBySkillLevel(employeeSkillsData[employee]).map((levelGroup, index) => {
-                                    return (
-                                        <motion.div
-                                            initial={{ opacity: 0 }}
-                                            animate={{ opacity: 1 }}
-                                            key={`${employee}-skill-${index}`}
-                                            className='space-y-1'
-                                        >
-                                            <h3 className='text-lg font-medium'>{levelsToTitlesMap.get(levelGroup.level)}</h3>
-                                            <motion.div
-                                                initial={"hidden"}
-                                                animate={"visible"}
-                                                transition={{ staggerChildren: 0.05 }}
-                                                className='flex gap-1 flex-wrap'
-                                            >
-                                                {levelGroup.skills.map((skill) => {
-                                                    return (
-                                                        <motion.p
-                                                            variants={{
-                                                                hidden: { opacity: 0 },
-                                                                visible: { opacity: 1 }
-                                                            }}
-                                                            className="px-2 py-1 rounded bg-secondary" key={`${employee}-${skill}`}
-                                                        >
-                                                            {skill}
-                                                        </motion.p>)
-                                                })}
-                                            </motion.div>
-                                        </motion.div>
-                                    )
+                                groupBySkillLevel(employeeSkillsData[employee]).map((levelGroup) => {
+                                    return <LevelGroupSection levelGroup={levelGroup} key={`${employee}-${levelGroup.level}`} />
                                 })}
-                        </ScrollArea>
+                        </div>
                     </CardContent>
                 </Card>
+
             </div>
-        </div>
+
+        </ScrollArea>
     )
 }
 

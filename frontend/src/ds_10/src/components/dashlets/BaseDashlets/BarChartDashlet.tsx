@@ -58,7 +58,7 @@ const BarChartDashlet = () => {
     const { year, halfyear, department, category } = useSelector((state: RootState) => state.filters)
 
 
-    const currentPeriodWithHalfYear = halfyear === '1' ? `1п - ${year}` : `2п - ${year}`
+    const currentPeriodWithHalfYear = `${halfyear}п - ${year}`
     const previousPeriodWithHalfYear = halfyear === '1' ? `2п - ${+year - 1}` : `1п - ${year}`
 
     const currentPeriod = halfyear === 'both' ? year : currentPeriodWithHalfYear
@@ -72,13 +72,12 @@ const BarChartDashlet = () => {
     const categoryFilter = { 'category_know_название': ['=', category] }
 
     // Category Fetching
-    const { data: currentCategoryData, loading: loadingCurrentCategoryData, fetchData: fetchCurrentCategoryData } = useFetch<{ category_know_название: string, growth: number }>({ dimensions: ['category_know_название'], measures: ['category_know_название', 'sum(growth)'], filters: { lables_n_level: ['!=', null], ...currentPeriodFilter, ...departmentFilter } })
-    const { data: previousCategoryData, loading: loadingPreviousCategoryData, fetchData: fetchPreviousCategoryData } = useFetch<{ category_know_название: string, growth: number }>({ dimensions: ['category_know_название'], measures: ['category_know_название', 'sum(growth)'], filters: { lables_n_level: ['!=', null], ...previousPeriodFilter, ...departmentFilter } })
-
+    const { data: currentCategoryData, loading: loadingCurrentCategoryData, fetchData: fetchCurrentCategoryData } = useFetch<{ category_know_название: string, growth: number }>({ dimensions: ['category_know_название'], measures: ['category_know_название', 'sum(growth)'], filters: { levels_n_level: ['!=', null], ...currentPeriodFilter, ...departmentFilter } })
+    const { data: previousCategoryData, loading: loadingPreviousCategoryData, fetchData: fetchPreviousCategoryData } = useFetch<{ category_know_название: string, growth: number }>({ dimensions: ['category_know_название'], measures: ['category_know_название', 'sum(growth)'], filters: { levels_n_level: ['!=', null], ...previousPeriodFilter, ...departmentFilter } })
 
     // Knowledge Fetching
-    const { data: currentSkillsData, loading: loadingCurrentSkillsData, fetchData: fetchCurrentSkillsData } = useFetch<{ knowledge_название: string, growth: number }>({ dimensions: ['knowledge_название'], measures: ['knowledge_название', 'sum(growth)'], filters: { lables_n_level: ['!=', null], ...currentPeriodFilter, ...departmentFilter, ...categoryFilter } })
-    const { data: previousSkillsData, loading: loadingPreviousSkillsData, fetchData: fetchPreviousSkillsData } = useFetch<{ knowledge_название: string, growth: number }>({ dimensions: ['knowledge_название'], measures: ['knowledge_название', 'sum(growth)'], filters: { lables_n_level: ['!=', null], ...previousPeriodFilter, ...departmentFilter, ...categoryFilter } })
+    const { data: currentSkillsData, loading: loadingCurrentSkillsData, fetchData: fetchCurrentSkillsData } = useFetch<{ knows_название: string, growth: number }>({ dimensions: ['knows_название'], measures: ['knows_название', 'sum(growth)'], filters: { levels_n_level: ['!=', null], ...currentPeriodFilter, ...departmentFilter, ...categoryFilter } })
+    const { data: previousSkillsData, loading: loadingPreviousSkillsData, fetchData: fetchPreviousSkillsData } = useFetch<{ knows_название: string, growth: number }>({ dimensions: ['knows_название'], measures: ['knows_название', 'sum(growth)'], filters: { levels_n_level: ['!=', null], ...previousPeriodFilter, ...departmentFilter, ...categoryFilter } })
 
     const [finalData, setFinalData] = useState([])
 
@@ -92,8 +91,8 @@ const BarChartDashlet = () => {
 
     useEffect(() => {
         if (!loadingCurrentSkillsData && !loadingPreviousSkillsData) {
-            const finalCurrentSkillsData = currentSkillsData.map((skill) => ({ name: skill.knowledge_название, Рост: skill.growth })).sort((a, b) => b.Рост - a.Рост)
-            const finalPreviousSkillsData = previousSkillsData.map((skill) => ({ name: skill.knowledge_название, Рост: skill.growth })).sort((a, b) => b.Рост - a.Рост)
+            const finalCurrentSkillsData = currentSkillsData.map((skill) => ({ name: skill.knows_название, Рост: skill.growth })).sort((a, b) => b.Рост - a.Рост)
+            const finalPreviousSkillsData = previousSkillsData.map((skill) => ({ name: skill.knows_название, Рост: skill.growth })).sort((a, b) => b.Рост - a.Рост)
             setFinalData(mergeArrays(finalCurrentSkillsData, finalPreviousSkillsData, currentPeriod, previousPeriod))
         }
     }, [loadingCurrentSkillsData, loadingPreviousSkillsData])

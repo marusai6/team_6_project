@@ -13,12 +13,12 @@ const EmployeeDonutDashlet = () => {
     const { category, skill, employee } = useSelector((state: RootState) => state.filters)
 
     const categoryFilter = category ? { 'category_know_название': ['=', category] } : null
-    const skillFilter = skill ? { 'knowledge_название': ['=', skill] } : null
+    const skillFilter = skill ? { 'knows_название': ['=', skill] } : null
 
     const employeeFilter = employee ? { 'User ID': ['=', employee], 'current_level': ['=', 'true'] } : null
 
-    const { data: levelsData, loading: loadingLevelsData, fetchData: fetchLevelsData } = useFetch<{ lables_название: string, lables_id: number, 'period_название': string }>({ dimensions: ['lables_название'], measures: ['count(lables_id)', 'period_название'], filters: { lables_n_level: ['!=', null], ...categoryFilter, ...skillFilter, ...employeeFilter } })
-    const finalLevelsData = levelsData.filter((el) => el.period_название.length === 4).map((level) => ({ level: level.lables_название, count: level.lables_id }))
+    const { data: levelsData, loading: loadingLevelsData, fetchData: fetchLevelsData } = useFetch<{ levels_название: string, count: number, 'period_название': string }>({ dimensions: ['levels_название'], measures: ['count(levels_id)', 'period_название'], filters: { levels_n_level: ['!=', null], ...categoryFilter, ...skillFilter, ...employeeFilter } })
+    const finalLevelsData = levelsData.filter((el) => el.period_название.length === 4).map((level) => ({ level: level.levels_название, count: level.count }))
 
     useEffect(() => {
         fetchLevelsData()
