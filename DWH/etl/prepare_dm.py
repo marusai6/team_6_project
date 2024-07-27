@@ -27,7 +27,8 @@ df=pd.read_sql('SELECT * FROM dds.сотрудники_дар', engine)
 df.to_sql('сотрудники_дар', engine, schema='dm', if_exists='append', index=False)
 
 # Запрос, который объединяет таблицы_справочники по навыкам в одну
-df_5=pd.read_sql('''select * from dds.базы_данных
+df_5=pd.read_sql('''
+select * from dds.базы_данных
 UNION ALL
 select * from dds.инструменты
 UNION ALL
@@ -49,7 +50,7 @@ select * from dds.фреймворки
 UNION ALL
 select * from dds.языки''', engine)
 
-df_5.to_sql('knowledge', engine, schema='dm', if_exists='append', index=False)
+df_5.to_sql('knows', engine, schema='dm', if_exists='append', index=False)
 
 # Запрос, который объединяет таблицы_справочники по уровням знаний в одну
 df_6=pd.read_sql('''SELECT * FROM dds.уровни_знаний_в_отрасли
@@ -70,7 +71,7 @@ df_6.loc[df_6['название'] == 'Junior', 'n_level'] = 3
 df_6.loc[df_6['название'] == 'Middle', 'n_level'] = 4
 df_6.loc[df_6['название'] == 'Senior', 'n_level'] = 5
 df_6.loc[df_6['название'] == 'Expert', 'n_level'] = 6
-df_6.to_sql('lables', engine, schema='dm', if_exists='append', index=False)
+df_6.to_sql('levels', engine, schema='dm', if_exists='append', index=False)
 
 # Запрос, который объединяет таблицы с навыками и уровнями в одну и добавляет колонку period_id, потом
 # соединяется с таблицей lables по общему полю
@@ -120,7 +121,7 @@ select id as record_id, "User ID", NULL as date_first, "Дата изм." as dat
 
 select t1.record_id, t1."User ID", t1.date_last, t1.date_first, t1.know_id, t1.level_id, l.n_level, t1.category_know_id
  from temp_1 t1
-JOIN dm.lables l ON t1.level_id=l.id'''
+JOIN dm.levels l ON t1.level_id=l.id'''
 
 # Далее я не смогла сообразить, как обойтись без дополнительных таблиц, поэтому создала слой temporary_tables
 # и пару таблиц в нём
@@ -144,14 +145,59 @@ and (select конец_периода from dm.period
 df_7.to_sql('for_summary_tab', engine, schema='temporary_tables', if_exists='append', index=False)
 
 # Запрос, который оставляет в итоговой таблице только записи с высшим уровнем в каждой группе
-request='''select id, record_id, "User ID", date_last, date_first, category_know_id, know_id, level_id, n_level, period_id, growth
+request='''CREATE temporary table temp_2 (
+	record_id INT,
+	"User ID" INT,
+	date_first DATE,
+	date_last DATE,
+	category_know_id INT,
+	know_id INT,
+	level_id INT,
+	n_level INT,
+	period_id INT,
+	growth INT
+);
+insert into temp_2 (
+select record_id, "User ID", date_first, date_last, category_know_id, know_id, level_id, n_level, period_id, growth
 from (
     select *,
 	count(*) over (partition by period_id, "User ID", category_know_id, know_id) as "growth",
      row_number() over (partition by period_id, "User ID", category_know_id, know_id order by n_level desc) as num
     from temporary_tables.for_summary_tab
 ) as s
-where num = 1;'''
+where num = 1);
+
+WITH MaxLevels AS (
+    SELECT 
+        "User ID", 
+        category_know_id, 
+        know_id, 
+        MAX(n_level) AS max_n_level
+    FROM 
+        temp_2
+    GROUP BY 
+        "User ID", 
+        category_know_id, 
+        know_id
+)
+SELECT 
+    st.*,
+    CASE 
+        WHEN st.n_level = ml.max_n_level THEN TRUE
+		WHEN st.n_level is NULL THEN NULL
+        ELSE FALSE
+    END AS current_level
+FROM 
+    temp_2 st
+JOIN 
+    MaxLevels ml
+ON 
+    st."User ID" = ml."User ID" AND 
+    st.category_know_id = ml.category_know_id AND 
+    st.know_id = ml.know_id
+UNION ALL
+select NULL as record_id, "User ID", NULL as date_first, NULL as date_last, 1111186 as "category_know_id", NULL as know_id, "Уровень образования" as level_id,
+ NULL as n_level, NULL as period_id, NULL as growth, NULL as current_level from dds.образование_пользователей;'''
 
 df_11=pd.read_sql(request, engine)
 df_11.to_sql('summary_tab', engine, schema='dm', if_exists='append', index=False)
