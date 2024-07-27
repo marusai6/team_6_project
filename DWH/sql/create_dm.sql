@@ -36,16 +36,16 @@ CREATE TABLE dm.сотрудники_дар (
 	"Город проживания" VARCHAR (150)
 );
 
-DROP TABLE IF EXISTS dm.knowledge CASCADE;
-CREATE TABLE dm.knowledge (
+DROP TABLE IF EXISTS dm.knows CASCADE;
+CREATE TABLE dm.knows (
 	id SERIAL PRIMARY KEY,
 	название VARCHAR (250),
 	активность BOOLEAN,
 	"Дата изм." DATE
 );
 
-DROP TABLE IF EXISTS dm.lables CASCADE;
-CREATE TABLE dm.lables (
+DROP TABLE IF EXISTS dm.levels CASCADE;
+CREATE TABLE dm.levels (
 	id SERIAL PRIMARY KEY,
 	название VARCHAR (250),
 	n_level INT,
@@ -64,12 +64,13 @@ CREATE TABLE dm.summary_tab (
 	know_id INT,
 	level_id INT,
 	n_level INT,
+	current_level BOOLEAN,
 	period_id INT,
 	growth INT,
 	FOREIGN KEY ("User ID") REFERENCES dm.сотрудники_дар (id) ON UPDATE CASCADE ON DELETE CASCADE,
 	FOREIGN KEY (category_know_id) REFERENCES dm.category_know (id) ON UPDATE CASCADE ON DELETE SET NULL,
-	FOREIGN KEY (know_id) REFERENCES dm.knowledge (id) ON UPDATE CASCADE ON DELETE CASCADE,
-	FOREIGN KEY (level_id) REFERENCES dm.lables (id) ON UPDATE CASCADE ON DELETE SET NULL,
+	FOREIGN KEY (know_id) REFERENCES dm.knows (id) ON UPDATE CASCADE ON DELETE CASCADE,
+	FOREIGN KEY (level_id) REFERENCES dm.levels (id) ON UPDATE CASCADE ON DELETE SET NULL,
 	FOREIGN KEY (period_id) REFERENCES dm.period ON UPDATE CASCADE ON DELETE CASCADE
 );
 
@@ -82,8 +83,7 @@ CREATE TABLE temporary_tables.навыки_и_уровни_знаний (
 	date_first DATE,
 	level_id INT,
 	n_level INT,
-	category_know_id INT,
-	growth INT
+	category_know_id INT
 );
 
 DROP TABLE IF EXISTS temporary_tables.for_summary_tab;
@@ -97,6 +97,5 @@ CREATE TABLE temporary_tables.for_summary_tab (
 	know_id INT,
 	level_id INT,
 	n_level INT,
-	period_id INT,
-	growth INT
+	period_id INT
 )
