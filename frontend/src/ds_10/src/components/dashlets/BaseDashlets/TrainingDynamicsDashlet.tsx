@@ -7,6 +7,7 @@ import { useSelector } from 'react-redux'
 import { RootState } from '../../../state/store'
 import useFetch from '../../../hooks/useFetch'
 import { Skeleton } from '../../ui/Skeleton'
+import { useFilters } from '../../../hooks/useFilters'
 
 const TrainingDynamicsDashlet = () => {
 
@@ -14,29 +15,12 @@ const TrainingDynamicsDashlet = () => {
 
     // Filters
     const { year, halfyear, category, skill, department } = useSelector((state: RootState) => state.filters)
+    const { currentPeriodFilter, previousPeriodFilter, categoryFilter, skillFilter, departmentFilter, isNotHiredFilter } = useFilters()
 
-
-    // Period Filters
-    const currentPeriodWithHalfYear = `${halfyear}п - ${year}`
-    const previousPeriodWithHalfYear = halfyear === '1' ? `2п - ${+year - 1}` : `1п - ${year}`
-
-    const currentPeriod = halfyear === 'both' ? year : currentPeriodWithHalfYear
-    const previousPeriod = halfyear === 'both' ? String(+year - 1) : previousPeriodWithHalfYear
-
-    const currentPeriodFilter = { 'period_название': ['=', currentPeriod] }
-    const previousPeriodFilter = { 'period_название': ['=', previousPeriod] }
-
-
-    const categoryFilter = category ? { 'category_know_название': ['=', category] } : null
-    const skillFilter = skill ? { 'knows_название': ['=', skill] } : null
-    const departmentFilter = department ? { 'подразделения': ['=', department] } : null
-
-    const ishiredFilter = { 'is_hired_in_period': ['=', 'false'] }
-
-    const { data: currentPeriodTrainingData, loading: loadingCurrentPeriodTrainingData, fetchData: fetchCurrentPeriodTrainingData } = useFetch<{ growth: number }>({ dimensions: [], measures: ['sum(growth)'], filters: { ...currentPeriodFilter, ...categoryFilter, ...skillFilter, ...departmentFilter, ...ishiredFilter } })
+    const { data: currentPeriodTrainingData, loading: loadingCurrentPeriodTrainingData, fetchData: fetchCurrentPeriodTrainingData } = useFetch<{ growth: number }>({ dimensions: [], measures: ['sum(growth)'], filters: { ...currentPeriodFilter, ...categoryFilter, ...skillFilter, ...departmentFilter, ...isNotHiredFilter } })
     const currentPeriodTraining = !loadingCurrentPeriodTrainingData ? currentPeriodTrainingData[0].growth || '0' : undefined
 
-    const { data: previousPeriodTrainingData, loading: loadingPreviousPeriodTrainingData, fetchData: fetchPreviousPeriodTrainingData } = useFetch<{ growth: number }>({ dimensions: [], measures: ['sum(growth)'], filters: { ...previousPeriodFilter, ...categoryFilter, ...skillFilter, ...departmentFilter, ...ishiredFilter } })
+    const { data: previousPeriodTrainingData, loading: loadingPreviousPeriodTrainingData, fetchData: fetchPreviousPeriodTrainingData } = useFetch<{ growth: number }>({ dimensions: [], measures: ['sum(growth)'], filters: { ...previousPeriodFilter, ...categoryFilter, ...skillFilter, ...departmentFilter, ...isNotHiredFilter } })
     const previousPeriodTraining = !loadingPreviousPeriodTrainingData ? previousPeriodTrainingData[0].growth || '0' : undefined
 
     useEffect(() => {

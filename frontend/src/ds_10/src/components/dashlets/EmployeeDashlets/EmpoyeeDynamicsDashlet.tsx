@@ -7,6 +7,7 @@ import { defaultDataFormatter, getNoun } from '../../../lib/utils'
 import { parseISO, format } from 'date-fns'
 import { ru } from 'date-fns/locale'
 import { Skeleton } from '../../ui/Skeleton'
+import { useFilters } from '../../../hooks/useFilters'
 
 type EmployeeFetchData = {
     'User ID': string
@@ -25,10 +26,8 @@ type EmployeeData = {
 
 const EmployeeDynamicsDashlet = () => {
 
-    // Filters
     const { employee } = useSelector((state: RootState) => state.filters)
-
-    const employeeFilter = { 'User ID': ['=', employee] }
+    const { employeeFilter } = useFilters()
 
     const { data: employeeData, loading: loadingEmployeeData, fetchData: fetchEmployeeData } = useFetch<EmployeeFetchData>({ dimensions: ['User ID'], measures: ['date_first', 'сотрудники_дар_активность', 'sum(growth)', 'period_название'], filters: { ...employeeFilter } })
 

@@ -6,19 +6,34 @@ import ExportToPNGButton from '../../exportButtons/ExportToPNGButton';
 import useFetch from '../../../hooks/useFetch';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../state/store';
+import { useFilters } from '../../../hooks/useFilters';
+
+function groupAndSumByLevel(inputArray) {
+    const result = {};
+
+    inputArray.forEach(item => {
+        if (result[item.level]) {
+            result[item.level] += item.count;
+        } else {
+            result[item.level] = item.count;
+        }
+    });
+
+    return Object.keys(result).map(level => ({
+        level: level,
+        count: result[level]
+    }));
+}
 
 const EmployeeDonutDashlet = () => {
 
     // Filters
     const { category, skill, employee } = useSelector((state: RootState) => state.filters)
+    const { categoryFilter, skillFilter, employeeFilter, currentLevelFilter, leveledSkillsFilter } = useFilters()
 
-    const categoryFilter = category ? { 'category_know_название': ['=', category] } : null
-    const skillFilter = skill ? { 'knows_название': ['=', skill] } : null
+    const { data: levelsData, loading: loadingLevelsData, fetchData: fetchLevelsData } = useFetch<{ levels_название: string, count: number, 'period_название': string }>({ dimensions: ['levels_название'], measures: ['count(levels_id)', 'period_название'], filters: { ...leveledSkillsFilter, ...categoryFilter, ...skillFilter, ...employeeFilter, ...currentLevelFilter } })
+    const finalLevelsData = groupAndSumByLevel(levelsData.filter((el) => el.period_название.length === 4).map((level) => ({ level: level.levels_название, count: level.count })))
 
-    const employeeFilter = employee ? { 'User ID': ['=', employee], 'current_level': ['=', 'true'] } : null
-
-    const { data: levelsData, loading: loadingLevelsData, fetchData: fetchLevelsData } = useFetch<{ levels_название: string, count: number, 'period_название': string }>({ dimensions: ['levels_название'], measures: ['count(levels_id)', 'period_название'], filters: { levels_n_level: ['!=', null], ...categoryFilter, ...skillFilter, ...employeeFilter } })
-    const finalLevelsData = levelsData.filter((el) => el.period_название.length === 4).map((level) => ({ level: level.levels_название, count: level.count }))
 
     useEffect(() => {
         fetchLevelsData()

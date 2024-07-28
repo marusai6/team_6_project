@@ -10,8 +10,12 @@ import MainDashboard from './src/components/dashboards/MainDashboard'
 import RecruitmentPage from './src/components/dashboards/RecruitmentPage'
 import FilterOptionsProvider from './src/providers/FilterOptionsProvider'
 import FiltersGlobalStateProvider from './src/providers/FiltersGlobalStateProvider'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 export const BASE_URL = '/ds/ds_10/dashboards'
+
+
+const queryClient = new QueryClient()
 
 function App() {
 
@@ -19,16 +23,18 @@ function App() {
     <Provider store={store}>
       <FilterOptionsProvider>
         <FiltersGlobalStateProvider>
-          <HashRouter>
-            <Routes>
-              <Route path={BASE_URL} element={<Layout />}>
-                <Route index element={<MainDashboard />} />
-                <Route path={'employees'} element={<RecruitmentPage />} />
-                <Route path={'settings'} element={<h1>Настройки</h1>} />
-                <Route path={'*'} element={<h1>Not Found</h1>} />
-              </Route>
-            </Routes>
-          </HashRouter>
+          <QueryClientProvider client={queryClient}>
+            <HashRouter>
+              <Routes>
+                <Route path={BASE_URL} element={<Layout />}>
+                  <Route index element={<MainDashboard />} />
+                  <Route path={'employees'} element={<RecruitmentPage />} />
+                  <Route path={'settings'} element={<h1>Настройки</h1>} />
+                  <Route path={'*'} element={<h1>Not Found</h1>} />
+                </Route>
+              </Routes>
+            </HashRouter>
+          </QueryClientProvider>
         </FiltersGlobalStateProvider>
       </FilterOptionsProvider>
     </Provider>

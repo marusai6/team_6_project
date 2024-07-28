@@ -4,6 +4,7 @@ import { Skeleton } from '../../ui/Skeleton'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../../state/store'
 import useFetch from '../../../hooks/useFetch'
+import { useFilters } from '../../../hooks/useFilters'
 
 type EmployeeDataType = {
     'User ID': string
@@ -17,13 +18,11 @@ type EmployeeDataType = {
 
 const EmployeeContactInfoDashlet = () => {
 
-
     const [generalEmployeeData, setGeneralEmployeeData] = useState<EmployeeDataType | null>()
 
     // Filters
     const { employee } = useSelector((state: RootState) => state.filters)
-
-    const employeeFilter = { 'User ID': ['=', employee] }
+    const { employeeFilter } = useFilters()
 
     const { data: employeeData, loading: loadingEmployeeData, fetchData: fetchEmployeeData } = useFetch<{ "User ID": string, 'должность': string, 'подразделения': string }>({ dimensions: ['User ID'], measures: ['должность', 'подразделения'], filters: { ...employeeFilter } })
 

@@ -6,21 +6,16 @@ import ExportToPNGButton from '../../exportButtons/ExportToPNGButton';
 import useFetch from '../../../hooks/useFetch';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../state/store';
+import { useFilters } from '../../../hooks/useFilters';
 
 const DonutDashlet = () => {
 
     // Filters
     const { year, halfyear, category, skill, department } = useSelector((state: RootState) => state.filters)
 
-    const currentPeriodWithHalfYear = `${halfyear}п - ${year}`
-    const currentPeriod = halfyear === 'both' ? year : currentPeriodWithHalfYear
-    const currentPeriodFilter = { 'period_название': ['=', currentPeriod] }
+    const { leveledSkillsFilter, currentPeriodFilter, categoryFilter, skillFilter, departmentFilter } = useFilters()
 
-    const categoryFilter = category ? { 'category_know_название': ['=', category] } : null
-    const skillFilter = skill ? { 'knows_название': ['=', skill] } : null
-    const departmentFilter = department ? { 'подразделения': ['=', department] } : null
-
-    const { data: levelsData, loading: loadingLevelsData, fetchData: fetchLevelsData } = useFetch<{ levels_название: string, count: number }>({ dimensions: ['levels_название'], measures: ['levels_название', 'count(levels_id)'], filters: { levels_n_level: ['!=', null], ...currentPeriodFilter, ...categoryFilter, ...skillFilter, ...departmentFilter } })
+    const { data: levelsData, loading: loadingLevelsData, fetchData: fetchLevelsData } = useFetch<{ levels_название: string, count: number }>({ dimensions: ['levels_название'], measures: ['levels_название', 'count(levels_id)'], filters: { ...leveledSkillsFilter, ...currentPeriodFilter, ...categoryFilter, ...skillFilter, ...departmentFilter } })
     const finalLevelsData = levelsData.map((level) => ({ level: level.levels_название, count: level.count }))
 
     useEffect(() => {

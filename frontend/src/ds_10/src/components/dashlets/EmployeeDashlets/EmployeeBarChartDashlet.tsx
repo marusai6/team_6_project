@@ -6,6 +6,7 @@ import ExportToPNGButton from '../../exportButtons/ExportToPNGButton';
 import useFetch from '../../../hooks/useFetch';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../state/store';
+import { useFilters } from '../../../hooks/useFilters';
 
 const shortCategoryVariants = new Map([
     ['Инструменты ', 'Инструм.'],
@@ -18,34 +19,48 @@ const shortCategoryVariants = new Map([
     ['Базы данных ', 'Базы дан.'],
 ])
 
+function groupByAndSum(inputArray) {
+    const result = {};
+
+    inputArray.forEach(item => {
+        if (result[item.name]) {
+            result[item.name] += item.Уровень;
+        } else {
+            result[item.name] = item.Уровень;
+        }
+    });
+
+    return Object.keys(result).map(name => ({
+        name: name,
+        Уровень: result[name]
+    }));
+}
+
 const EmployeeBarChartDashlet = () => {
 
     const ref = useRef()
 
     const { category, employee } = useSelector((state: RootState) => state.filters)
-
-    //Filters
-    const categoryFilter = { 'category_know_название': ['=', category] }
-    const employeeFilter = employee ? { 'User ID': ['=', employee], 'current_level': ['=', 'true'] } : null
+    const { leveledSkillsFilter, categoryFilter, employeeFilter, currentLevelFilter } = useFilters()
 
     // Category Fetching
-    const { data: currentCategoryData, loading: loadingCurrentCategoryData, fetchData: fetchCurrentCategoryData } = useFetch<{ category_know_название: string, sum: number, period_название: string }>({ dimensions: ['category_know_название'], measures: ['sum(levels_n_level)', 'period_название'], filters: { levels_n_level: ['!=', null], ...employeeFilter } })
+    const { data: currentCategoryData, loading: loadingCurrentCategoryData, fetchData: fetchCurrentCategoryData } = useFetch<{ category_know_название: string, sum: number, period_название: string }>({ dimensions: ['category_know_название'], measures: ['sum(levels_n_level)', 'period_название'], filters: { ...leveledSkillsFilter, ...employeeFilter, ...currentLevelFilter } })
 
     // Knowledge Fetching
-    const { data: currentSkillsData, loading: loadingCurrentSkillsData, fetchData: fetchCurrentSkillsData } = useFetch<{ knows_название: string, levels_n_level: number, period_название: string }>({ dimensions: ['knows_название'], measures: ['levels_n_level', 'period_название'], filters: { levels_n_level: ['!=', null], ...employeeFilter, ...categoryFilter } })
+    const { data: currentSkillsData, loading: loadingCurrentSkillsData, fetchData: fetchCurrentSkillsData } = useFetch<{ knows_название: string, levels_n_level: number, period_название: string }>({ dimensions: ['knows_название'], measures: ['levels_n_level', 'period_название'], filters: { ...leveledSkillsFilter, ...employeeFilter, ...categoryFilter, ...currentLevelFilter } })
 
     const [finalData, setFinalData] = useState([])
 
     useEffect(() => {
         if (!loadingCurrentCategoryData) {
-            const finalCurrentData = currentCategoryData.filter((el) => el.period_название.length == 4).map((skill) => ({ name: shortCategoryVariants.get(skill.category_know_название), Уровень: skill.sum })).sort((a, b) => b.Уровень - a.Уровень)
+            const finalCurrentData = groupByAndSum(currentCategoryData.filter((el) => el.period_название.length == 4).map((skill) => ({ name: shortCategoryVariants.get(skill.category_know_название), Уровень: skill.sum }))).sort((a, b) => b.Уровень - a.Уровень)
             setFinalData(finalCurrentData)
         }
     }, [loadingCurrentCategoryData])
 
     useEffect(() => {
         if (!loadingCurrentSkillsData) {
-            const finalCurrentSkillsData = currentSkillsData.filter((el) => el.period_название.length == 4).map((skill) => ({ name: skill.knows_название, Уровень: skill.levels_n_level })).sort((a, b) => b.Уровень - a.Уровень)
+            const finalCurrentSkillsData = groupByAndSum(currentSkillsData.filter((el) => el.period_название.length == 4).map((skill) => ({ name: skill.knows_название, Уровень: skill.levels_n_level }))).sort((a, b) => b.Уровень - a.Уровень)
             setFinalData(finalCurrentSkillsData)
         }
     }, [loadingCurrentSkillsData])

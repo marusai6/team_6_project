@@ -7,32 +7,17 @@ import { useSelector } from 'react-redux'
 import { RootState } from '../../../state/store'
 import useFetch from '../../../hooks/useFetch'
 import { Skeleton } from '../../ui/Skeleton'
+import { useFilters } from '../../../hooks/useFilters'
 
 const GeneralDynamicsDashlet = () => {
 
-    // Filters
     const { year, halfyear, category, skill, department } = useSelector((state: RootState) => state.filters)
+    const { leveledSkillsFilter, currentPeriodFilter, previousPeriodFilter, categoryFilter, skillFilter, departmentFilter } = useFilters()
 
-
-    // Period Filters
-    const currentPeriodWithHalfYear = `${halfyear}п - ${year}`
-    const previousPeriodWithHalfYear = halfyear === '1' ? `2п - ${+year - 1}` : `1п - ${year}`
-
-    const currentPeriod = halfyear === 'both' ? year : currentPeriodWithHalfYear
-    const previousPeriod = halfyear === 'both' ? String(+year - 1) : previousPeriodWithHalfYear
-
-    const currentPeriodFilter = { 'period_название': ['=', currentPeriod] }
-    const previousPeriodFilter = { 'period_название': ['=', previousPeriod] }
-
-
-    const categoryFilter = category ? { 'category_know_название': ['=', category] } : null
-    const skillFilter = skill ? { 'knows_название': ['=', skill] } : null
-    const departmentFilter = department ? { 'подразделения': ['=', department] } : null
-
-    const { data: currentPeriodGrowthData, loading: loadingCurrentPeriodGrowthData, fetchData: fetchCurrentPeriodGrowthData } = useFetch<{ growth: number }>({ dimensions: [], measures: ['sum(growth)'], filters: { levels_n_level: ['!=', null], ...currentPeriodFilter, ...categoryFilter, ...skillFilter, ...departmentFilter } })
+    const { data: currentPeriodGrowthData, loading: loadingCurrentPeriodGrowthData, fetchData: fetchCurrentPeriodGrowthData } = useFetch<{ growth: number }>({ dimensions: [], measures: ['sum(growth)'], filters: { ...leveledSkillsFilter, ...currentPeriodFilter, ...categoryFilter, ...skillFilter, ...departmentFilter } })
     const currentPeriodGrowth = !loadingCurrentPeriodGrowthData ? currentPeriodGrowthData[0].growth || '0' : undefined
 
-    const { data: previousPeriodGrowthData, loading: loadingPreviousPeriodGrowthData, fetchData: fetchPreviousPeriodGrowthData } = useFetch<{ growth: number }>({ dimensions: [], measures: ['sum(growth)'], filters: { levels_n_level: ['!=', null], ...previousPeriodFilter, ...categoryFilter, ...skillFilter, ...departmentFilter } })
+    const { data: previousPeriodGrowthData, loading: loadingPreviousPeriodGrowthData, fetchData: fetchPreviousPeriodGrowthData } = useFetch<{ growth: number }>({ dimensions: [], measures: ['sum(growth)'], filters: { ...leveledSkillsFilter, ...previousPeriodFilter, ...categoryFilter, ...skillFilter, ...departmentFilter } })
     const previousPeriodGrowth = !loadingPreviousPeriodGrowthData ? previousPeriodGrowthData[0].growth || '0' : undefined
 
     useEffect(() => {

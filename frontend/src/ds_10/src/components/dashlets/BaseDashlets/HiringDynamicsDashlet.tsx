@@ -7,36 +7,20 @@ import { useSelector } from 'react-redux'
 import { RootState } from '../../../state/store'
 import useFetch from '../../../hooks/useFetch'
 import { Skeleton } from '../../ui/Skeleton'
+import { useFilters } from '../../../hooks/useFilters'
 
 
 const HiringDynamicsDashlet = () => {
 
     const ref = useRef()
 
-    // Filters
     const { year, halfyear, category, skill, department } = useSelector((state: RootState) => state.filters)
+    const { currentPeriodFilter, previousPeriodFilter, categoryFilter, skillFilter, departmentFilter, isHiredFilter } = useFilters()
 
-
-    // Period Filters
-    const currentPeriodWithHalfYear = `${halfyear}п - ${year}`
-    const previousPeriodWithHalfYear = halfyear === '1' ? `2п - ${+year - 1}` : `1п - ${year}`
-
-    const currentPeriod = halfyear === 'both' ? year : currentPeriodWithHalfYear
-    const previousPeriod = halfyear === 'both' ? String(+year - 1) : previousPeriodWithHalfYear
-
-    const currentPeriodFilter = { 'period_название': ['=', currentPeriod] }
-    const previousPeriodFilter = { 'period_название': ['=', previousPeriod] }
-
-    const categoryFilter = category ? { 'category_know_название': ['=', category] } : null
-    const skillFilter = skill ? { 'knows_название': ['=', skill] } : null
-    const departmentFilter = department ? { 'подразделения': ['=', department] } : null
-
-    const ishiredFilter = { 'is_hired_in_period': ['=', 'true'] }
-
-    const { data: currentPeriodHiringData, loading: loadingCurrentPeriodHiringData, fetchData: fetchCurrentPeriodHiringData } = useFetch<{ growth: number }>({ dimensions: ["User ID"], measures: [], filters: { ...currentPeriodFilter, ...categoryFilter, ...skillFilter, ...departmentFilter, ...ishiredFilter } })
+    const { data: currentPeriodHiringData, loading: loadingCurrentPeriodHiringData, fetchData: fetchCurrentPeriodHiringData } = useFetch<{ growth: number }>({ dimensions: ["User ID"], measures: [], filters: { ...currentPeriodFilter, ...categoryFilter, ...skillFilter, ...departmentFilter, ...isHiredFilter } })
     const currentPeriodHiring = !loadingCurrentPeriodHiringData ? currentPeriodHiringData.length || '0' : undefined
 
-    const { data: previousPeriodHiringData, loading: loadingPreviousPeriodHiringData, fetchData: fetchPreviousPeriodHiringData } = useFetch<{ growth: number }>({ dimensions: ["User ID"], measures: [], filters: { ...previousPeriodFilter, ...categoryFilter, ...skillFilter, ...departmentFilter, ...ishiredFilter } })
+    const { data: previousPeriodHiringData, loading: loadingPreviousPeriodHiringData, fetchData: fetchPreviousPeriodHiringData } = useFetch<{ growth: number }>({ dimensions: ["User ID"], measures: [], filters: { ...previousPeriodFilter, ...categoryFilter, ...skillFilter, ...departmentFilter, ...isHiredFilter } })
     const previousPeriodHiring = !loadingPreviousPeriodHiringData ? previousPeriodHiringData.length || '0' : undefined
 
     useEffect(() => {

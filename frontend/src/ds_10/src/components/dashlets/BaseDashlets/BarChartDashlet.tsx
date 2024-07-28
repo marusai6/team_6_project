@@ -7,6 +7,7 @@ import useFetch from '../../../hooks/useFetch';
 import { UrlState, urlState } from 'bi-internal/core';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../state/store';
+import { useFilters } from '../../../hooks/useFilters';
 
 const shortCategoryVariants = new Map([
     ['Инструменты ', 'Инструм.'],
@@ -57,27 +58,15 @@ const BarChartDashlet = () => {
 
     const { year, halfyear, department, category } = useSelector((state: RootState) => state.filters)
 
-
-    const currentPeriodWithHalfYear = `${halfyear}п - ${year}`
-    const previousPeriodWithHalfYear = halfyear === '1' ? `2п - ${+year - 1}` : `1п - ${year}`
-
-    const currentPeriod = halfyear === 'both' ? year : currentPeriodWithHalfYear
-    const previousPeriod = halfyear === 'both' ? String(+year - 1) : previousPeriodWithHalfYear
-
-    const currentPeriodFilter = { 'period_название': ['=', currentPeriod] }
-    const previousPeriodFilter = { 'period_название': ['=', previousPeriod] }
-
-    const departmentFilter = department ? { 'подразделения': ['=', department] } : null
-
-    const categoryFilter = { 'category_know_название': ['=', category] }
+    const { leveledSkillsFilter, currentPeriodFilter, previousPeriodFilter, departmentFilter, categoryFilter, currentPeriod, previousPeriod } = useFilters()
 
     // Category Fetching
-    const { data: currentCategoryData, loading: loadingCurrentCategoryData, fetchData: fetchCurrentCategoryData } = useFetch<{ category_know_название: string, growth: number }>({ dimensions: ['category_know_название'], measures: ['category_know_название', 'sum(growth)'], filters: { levels_n_level: ['!=', null], ...currentPeriodFilter, ...departmentFilter } })
-    const { data: previousCategoryData, loading: loadingPreviousCategoryData, fetchData: fetchPreviousCategoryData } = useFetch<{ category_know_название: string, growth: number }>({ dimensions: ['category_know_название'], measures: ['category_know_название', 'sum(growth)'], filters: { levels_n_level: ['!=', null], ...previousPeriodFilter, ...departmentFilter } })
+    const { data: currentCategoryData, loading: loadingCurrentCategoryData, fetchData: fetchCurrentCategoryData } = useFetch<{ category_know_название: string, growth: number }>({ dimensions: ['category_know_название'], measures: ['category_know_название', 'sum(growth)'], filters: { ...leveledSkillsFilter, ...currentPeriodFilter, ...departmentFilter } })
+    const { data: previousCategoryData, loading: loadingPreviousCategoryData, fetchData: fetchPreviousCategoryData } = useFetch<{ category_know_название: string, growth: number }>({ dimensions: ['category_know_название'], measures: ['category_know_название', 'sum(growth)'], filters: { ...leveledSkillsFilter, ...previousPeriodFilter, ...departmentFilter } })
 
     // Knowledge Fetching
-    const { data: currentSkillsData, loading: loadingCurrentSkillsData, fetchData: fetchCurrentSkillsData } = useFetch<{ knows_название: string, growth: number }>({ dimensions: ['knows_название'], measures: ['knows_название', 'sum(growth)'], filters: { levels_n_level: ['!=', null], ...currentPeriodFilter, ...departmentFilter, ...categoryFilter } })
-    const { data: previousSkillsData, loading: loadingPreviousSkillsData, fetchData: fetchPreviousSkillsData } = useFetch<{ knows_название: string, growth: number }>({ dimensions: ['knows_название'], measures: ['knows_название', 'sum(growth)'], filters: { levels_n_level: ['!=', null], ...previousPeriodFilter, ...departmentFilter, ...categoryFilter } })
+    const { data: currentSkillsData, loading: loadingCurrentSkillsData, fetchData: fetchCurrentSkillsData } = useFetch<{ knows_название: string, growth: number }>({ dimensions: ['knows_название'], measures: ['knows_название', 'sum(growth)'], filters: { ...leveledSkillsFilter, ...currentPeriodFilter, ...departmentFilter, ...categoryFilter } })
+    const { data: previousSkillsData, loading: loadingPreviousSkillsData, fetchData: fetchPreviousSkillsData } = useFetch<{ knows_название: string, growth: number }>({ dimensions: ['knows_название'], measures: ['knows_название', 'sum(growth)'], filters: { ...leveledSkillsFilter, ...previousPeriodFilter, ...departmentFilter, ...categoryFilter } })
 
     const [finalData, setFinalData] = useState([])
 

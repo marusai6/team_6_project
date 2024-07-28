@@ -1,8 +1,9 @@
 import { Eraser, Search, X } from 'lucide-react'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { ScrollArea } from './scroll-area'
+import { cn } from '../../lib/utils'
 
-const SelectWithSearch = ({ options, onClick, onReset }: { options: string[], onClick: (value: string) => void, onReset: () => void }) => {
+const SelectWithSearch = ({ options, onClick, onReset, active }: { options: string[], onClick: (value: string) => void, onReset: () => void, active?: string }) => {
 
     const [filteredOptions, setFilteredOptions] = useState<string[]>(options)
 
@@ -35,7 +36,7 @@ const SelectWithSearch = ({ options, onClick, onReset }: { options: string[], on
                 {filteredOptions.length == 0 && <div className='p-1 px-3 text-center text-accent-foreground'>Нет результатов</div>}
                 {filteredOptions.map((option) => {
                     return (
-                        <div key={`option-${option}`} className='p-1 px-3 cursor-pointer hover:bg-accent rounded transition-all' onClick={() => onClick(option)}>{option}</div>
+                        <div key={`option-${option}`} className={cn('p-1 px-3 cursor-pointer hover:bg-accent rounded transition-all', active === option && 'bg-secondary hover:bg-secondary')} onClick={() => onClick(option)}>{option}</div>
                     )
                 })}
             </ScrollArea>

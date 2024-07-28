@@ -136,7 +136,9 @@ const FilterItem = ({ filterItemData }: { filterItemData: filterItemDataType }) 
                                     urlState.updateModel({ [filterItemData.id]: undefined }, false)
                                 }
                                 setOpen(false);
-                            }} />
+                            }}
+                            active={urlValue}
+                        />
                     }
 
                     {filterItemData.popoverContentType === 'DatePicker' &&
