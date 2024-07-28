@@ -44,10 +44,10 @@ const EmployeeBarChartDashlet = () => {
     const { leveledSkillsFilter, categoryFilter, employeeFilter, currentLevelFilter } = useFilters()
 
     // Category Fetching
-    const { data: currentCategoryData, loading: loadingCurrentCategoryData, fetchData: fetchCurrentCategoryData } = useFetch<{ category_know_название: string, sum: number, period_название: string }>({ dimensions: ['category_know_название'], measures: ['sum(levels_n_level)', 'period_название'], filters: { ...leveledSkillsFilter, ...employeeFilter, ...currentLevelFilter } })
+    const { data: currentCategoryData, loading: loadingCurrentCategoryData } = useFetch<{ category_know_название: string, sum: number, period_название: string }>({ dimensions: ['category_know_название'], measures: ['sum(levels_n_level)', 'period_название'], filters: { ...leveledSkillsFilter, ...employeeFilter, ...currentLevelFilter }, queryKey: 'Employee' })
 
     // Knowledge Fetching
-    const { data: currentSkillsData, loading: loadingCurrentSkillsData, fetchData: fetchCurrentSkillsData } = useFetch<{ knows_название: string, levels_n_level: number, period_название: string }>({ dimensions: ['knows_название'], measures: ['levels_n_level', 'period_название'], filters: { ...leveledSkillsFilter, ...employeeFilter, ...categoryFilter, ...currentLevelFilter } })
+    const { data: currentSkillsData, loading: loadingCurrentSkillsData } = useFetch<{ knows_название: string, levels_n_level: number, period_название: string }>({ dimensions: ['knows_название'], measures: ['levels_n_level', 'period_название'], filters: { ...leveledSkillsFilter, ...employeeFilter, ...categoryFilter, ...currentLevelFilter } })
 
     const [finalData, setFinalData] = useState([])
 

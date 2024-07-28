@@ -14,21 +14,14 @@ const HiringDynamicsDashlet = () => {
 
     const ref = useRef()
 
-    const { year, halfyear, category, skill, department } = useSelector((state: RootState) => state.filters)
-    const { currentPeriodFilter, previousPeriodFilter, categoryFilter, skillFilter, departmentFilter, isHiredFilter } = useFilters()
+    const { year, halfyear } = useSelector((state: RootState) => state.filters)
+    const { currentPeriodFilter, previousPeriodFilter, categoryFilter, skillFilter, departmentFilter, isHiredFilter, filtersAreReady } = useFilters()
 
-    const { data: currentPeriodHiringData, loading: loadingCurrentPeriodHiringData, fetchData: fetchCurrentPeriodHiringData } = useFetch<{ growth: number }>({ dimensions: ["User ID"], measures: [], filters: { ...currentPeriodFilter, ...categoryFilter, ...skillFilter, ...departmentFilter, ...isHiredFilter } })
-    const currentPeriodHiring = !loadingCurrentPeriodHiringData ? currentPeriodHiringData.length || '0' : undefined
+    const { data: currentPeriodHiringData, loading: loadingCurrentPeriodHiringData } = useFetch<{ growth: number }>({ dimensions: ["User ID"], measures: [], filters: { ...currentPeriodFilter, ...categoryFilter, ...skillFilter, ...departmentFilter, ...isHiredFilter }, filtersAreReady, queryKey: 'HiringData' })
+    const currentPeriodHiring = currentPeriodHiringData && !loadingCurrentPeriodHiringData ? currentPeriodHiringData.length || '0' : undefined
 
-    const { data: previousPeriodHiringData, loading: loadingPreviousPeriodHiringData, fetchData: fetchPreviousPeriodHiringData } = useFetch<{ growth: number }>({ dimensions: ["User ID"], measures: [], filters: { ...previousPeriodFilter, ...categoryFilter, ...skillFilter, ...departmentFilter, ...isHiredFilter } })
-    const previousPeriodHiring = !loadingPreviousPeriodHiringData ? previousPeriodHiringData.length || '0' : undefined
-
-    useEffect(() => {
-        if (year) {
-            fetchCurrentPeriodHiringData()
-            fetchPreviousPeriodHiringData()
-        }
-    }, [year, halfyear, category, skill, department])
+    const { data: previousPeriodHiringData, loading: loadingPreviousPeriodHiringData } = useFetch<{ growth: number }>({ dimensions: ["User ID"], measures: [], filters: { ...previousPeriodFilter, ...categoryFilter, ...skillFilter, ...departmentFilter, ...isHiredFilter }, filtersAreReady, queryKey: 'HiringData' })
+    const previousPeriodHiring = previousPeriodHiringData && !loadingPreviousPeriodHiringData ? previousPeriodHiringData.length || '0' : undefined
 
     // Dynamics Calculation
     const [dynamics, setDynamics] = useState(0)
@@ -37,7 +30,7 @@ const HiringDynamicsDashlet = () => {
         if (!loadingCurrentPeriodHiringData && !loadingPreviousPeriodHiringData) {
             setDynamics(+((+currentPeriodHiring - +previousPeriodHiring) / +previousPeriodHiring * 100).toFixed(2))
         }
-    }, [loadingCurrentPeriodHiringData, loadingPreviousPeriodHiringData])
+    }, [currentPeriodHiringData, previousPeriodHiringData])
 
     return (
         <Card ref={ref} className='h-full'>

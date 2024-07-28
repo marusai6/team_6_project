@@ -1,28 +1,17 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useRef } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../ui/Card';
 import { DonutChart, Legend } from '@tremor/react';
 import { defaultDataFormatter } from '../../../lib/utils';
 import ExportToPNGButton from '../../exportButtons/ExportToPNGButton';
 import useFetch from '../../../hooks/useFetch';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../../state/store';
 import { useFilters } from '../../../hooks/useFilters';
 
 const DonutDashlet = () => {
 
-    // Filters
-    const { year, halfyear, category, skill, department } = useSelector((state: RootState) => state.filters)
+    const { leveledSkillsFilter, currentPeriodFilter, categoryFilter, skillFilter, departmentFilter, filtersAreReady } = useFilters()
 
-    const { leveledSkillsFilter, currentPeriodFilter, categoryFilter, skillFilter, departmentFilter } = useFilters()
-
-    const { data: levelsData, loading: loadingLevelsData, fetchData: fetchLevelsData } = useFetch<{ levels_название: string, count: number }>({ dimensions: ['levels_название'], measures: ['levels_название', 'count(levels_id)'], filters: { ...leveledSkillsFilter, ...currentPeriodFilter, ...categoryFilter, ...skillFilter, ...departmentFilter } })
-    const finalLevelsData = levelsData.map((level) => ({ level: level.levels_название, count: level.count }))
-
-    useEffect(() => {
-        if (year && halfyear) {
-            fetchLevelsData()
-        }
-    }, [year, halfyear, category, skill, department])
+    const { data: levelsData, loading: loadingLevelsData } = useFetch<{ levels_название: string, count: number }>({ dimensions: ['levels_название'], measures: ['levels_название', 'count(levels_id)'], filters: { ...leveledSkillsFilter, ...currentPeriodFilter, ...categoryFilter, ...skillFilter, ...departmentFilter }, filtersAreReady, queryKey: 'DonutLevelsData' })
+    const finalLevelsData = levelsData ? levelsData.map((level) => ({ level: level.levels_название, count: level.count })) : []
 
     // Refs
     const ref = useRef()

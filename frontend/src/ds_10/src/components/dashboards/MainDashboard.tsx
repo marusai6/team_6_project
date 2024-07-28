@@ -4,7 +4,7 @@ import { RootState } from '../../state/store'
 import { cn } from '../../lib/utils'
 import { ScrollArea } from '../ui/scroll-area'
 import DonutDashlet from '../dashlets/BaseDashlets/DonutDashlet'
-import BarChartDashlet from '../dashlets/BaseDashlets/BarChartDashlet'
+import BarChartDashlet from '../dashlets/BaseDashlets/BarChartCategoryDashlet'
 import { motion } from 'framer-motion'
 import GeneralDynamicsDashlet from '../dashlets/BaseDashlets/GeneralDynamicsDashlet'
 import HiringDynamicsDashlet from '../dashlets/BaseDashlets/HiringDynamicsDashlet'
@@ -13,6 +13,8 @@ import GeneralEmpoyeeDashlet from '../dashlets/EmployeeDashlets/EmpoyeeDynamicsD
 import EmployeeContactInfoDashlet from '../dashlets/EmployeeDashlets/EmployeeContactInfoDashlet'
 import EmployeeBarChartDashlet from '../dashlets/EmployeeDashlets/EmployeeBarChartDashlet'
 import EmployeeDonutDashlet from '../dashlets/EmployeeDashlets/EmployeeDonutDashlet'
+import BarChartSkillDashlet from '../dashlets/BaseDashlets/BarChartSkillDashlet'
+import BarChartCategoryDashlet from '../dashlets/BaseDashlets/BarChartCategoryDashlet'
 
 function MainDashboard() {
 
@@ -26,7 +28,7 @@ function MainDashboard() {
         hidden: { opacity: 0 }
     }
 
-    const { employee } = useSelector((state: RootState) => state.filters)
+    const { employee, category } = useSelector((state: RootState) => state.filters)
 
     return (
         <ScrollArea className="px-20 flex-1 w-full bg-background py-4">
@@ -82,14 +84,26 @@ function MainDashboard() {
                         transition={{ staggerChildren: staggerDalayAnimation }}
                         className='grid grid-cols-3 gap-2 w-full flex-1'
                     >
+                        {employee ?
+                            <>
+                                <motion.div variants={cardVariants}>
+                                    <EmployeeDonutDashlet />
+                                </motion.div>
 
-                        <motion.div variants={cardVariants}>
-                            {employee ? <EmployeeDonutDashlet /> : <DonutDashlet />}
-                        </motion.div>
+                                <motion.div variants={cardVariants} className='col-span-2'>
+                                    <EmployeeBarChartDashlet />
+                                </motion.div>
+                            </> :
+                            <>
+                                <motion.div variants={cardVariants}>
+                                    <DonutDashlet />
+                                </motion.div>
 
-                        <motion.div variants={cardVariants} className='col-span-2'>
-                            {employee ? <EmployeeBarChartDashlet /> : <BarChartDashlet />}
-                        </motion.div>
+                                <motion.div variants={cardVariants} className='col-span-2'>
+                                    {category ? <BarChartSkillDashlet /> : <BarChartCategoryDashlet />}
+                                </motion.div>
+                            </>
+                        }
 
                     </motion.div>
 

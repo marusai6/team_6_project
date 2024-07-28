@@ -14,21 +14,14 @@ const TrainingDynamicsDashlet = () => {
     const ref = useRef()
 
     // Filters
-    const { year, halfyear, category, skill, department } = useSelector((state: RootState) => state.filters)
-    const { currentPeriodFilter, previousPeriodFilter, categoryFilter, skillFilter, departmentFilter, isNotHiredFilter } = useFilters()
+    const { year, halfyear } = useSelector((state: RootState) => state.filters)
+    const { currentPeriodFilter, previousPeriodFilter, categoryFilter, skillFilter, departmentFilter, isNotHiredFilter, filtersAreReady } = useFilters()
 
-    const { data: currentPeriodTrainingData, loading: loadingCurrentPeriodTrainingData, fetchData: fetchCurrentPeriodTrainingData } = useFetch<{ growth: number }>({ dimensions: [], measures: ['sum(growth)'], filters: { ...currentPeriodFilter, ...categoryFilter, ...skillFilter, ...departmentFilter, ...isNotHiredFilter } })
-    const currentPeriodTraining = !loadingCurrentPeriodTrainingData ? currentPeriodTrainingData[0].growth || '0' : undefined
+    const { data: currentPeriodTrainingData, loading: loadingCurrentPeriodTrainingData } = useFetch<{ growth: number }>({ dimensions: [], measures: ['sum(growth)'], filters: { ...currentPeriodFilter, ...categoryFilter, ...skillFilter, ...departmentFilter, ...isNotHiredFilter }, filtersAreReady, queryKey: 'TrainingData' })
+    const currentPeriodTraining = currentPeriodTrainingData && !loadingCurrentPeriodTrainingData ? currentPeriodTrainingData[0].growth || '0' : undefined
 
-    const { data: previousPeriodTrainingData, loading: loadingPreviousPeriodTrainingData, fetchData: fetchPreviousPeriodTrainingData } = useFetch<{ growth: number }>({ dimensions: [], measures: ['sum(growth)'], filters: { ...previousPeriodFilter, ...categoryFilter, ...skillFilter, ...departmentFilter, ...isNotHiredFilter } })
-    const previousPeriodTraining = !loadingPreviousPeriodTrainingData ? previousPeriodTrainingData[0].growth || '0' : undefined
-
-    useEffect(() => {
-        if (year) {
-            fetchCurrentPeriodTrainingData()
-            fetchPreviousPeriodTrainingData()
-        }
-    }, [year, halfyear, category, skill, department])
+    const { data: previousPeriodTrainingData, loading: loadingPreviousPeriodTrainingData } = useFetch<{ growth: number }>({ dimensions: [], measures: ['sum(growth)'], filters: { ...previousPeriodFilter, ...categoryFilter, ...skillFilter, ...departmentFilter, ...isNotHiredFilter }, filtersAreReady, queryKey: 'TrainingData', })
+    const previousPeriodTraining = previousPeriodTrainingData && !loadingPreviousPeriodTrainingData ? previousPeriodTrainingData[0].growth || '0' : undefined
 
     // Dynamics Calculation
     const [dynamics, setDynamics] = useState(0)
@@ -37,7 +30,7 @@ const TrainingDynamicsDashlet = () => {
         if (!loadingCurrentPeriodTrainingData && !loadingPreviousPeriodTrainingData) {
             setDynamics(+((+currentPeriodTraining - +previousPeriodTraining) / +previousPeriodTraining * 100).toFixed(2))
         }
-    }, [loadingCurrentPeriodTrainingData, loadingPreviousPeriodTrainingData])
+    }, [currentPeriodTrainingData, previousPeriodTrainingData])
 
     return (
         <Card ref={ref} className='h-full'>

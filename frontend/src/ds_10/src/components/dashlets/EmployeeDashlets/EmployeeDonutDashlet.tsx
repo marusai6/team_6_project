@@ -32,7 +32,7 @@ const EmployeeDonutDashlet = () => {
     const { categoryFilter, skillFilter, employeeFilter, currentLevelFilter, leveledSkillsFilter } = useFilters()
 
     const { data: levelsData, loading: loadingLevelsData, fetchData: fetchLevelsData } = useFetch<{ levels_название: string, count: number, 'period_название': string }>({ dimensions: ['levels_название'], measures: ['count(levels_id)', 'period_название'], filters: { ...leveledSkillsFilter, ...categoryFilter, ...skillFilter, ...employeeFilter, ...currentLevelFilter } })
-    const finalLevelsData = groupAndSumByLevel(levelsData.filter((el) => el.period_название.length === 4).map((level) => ({ level: level.levels_название, count: level.count })))
+    const finalLevelsData = levelsData ? groupAndSumByLevel(levelsData.filter((el) => el.period_название.length === 4).map((level) => ({ level: level.levels_название, count: level.count }))) : []
 
 
     useEffect(() => {

@@ -1,20 +1,24 @@
-import { KoobDataService } from "bi-internal/services"
-import { useState } from "react"
+import { useQuery } from '@tanstack/react-query';
+import { KoobDataService } from 'bi-internal/services';
 
-const { koobDataRequest3 } = KoobDataService
+const { koobDataRequest3 } = KoobDataService;
 
-export default function useFetch<DataType>({ dimensions = [], measures = [], filters = {} }: {
-    dimensions: string[],
-    measures: string[],
-    filters: object
+export default function useFetch<DataType>({
+    dimensions = [],
+    measures = [],
+    filters = {},
+    filtersAreReady = false,
+    queryKey = 'FetchData',
+}: {
+    dimensions: string[];
+    measures: string[];
+    filters: object;
+    filtersAreReady?: boolean;
+    queryKey?: string,
 }) {
 
-    const [data, setData] = useState<DataType[]>([])
-    const [loading, setLoading] = useState(true)
-
-    const fetchData = () => {
-        setLoading(true)
-        koobDataRequest3(
+    const fetchData = async () => {
+        const response = await koobDataRequest3(
             'etl_db_6.team_6',
             dimensions,
             measures,
@@ -22,11 +26,16 @@ export default function useFetch<DataType>({ dimensions = [], measures = [], fil
             // @ts-ignore
             { schema_name: 'ds_10' },
             'etl_db_6.team_6'
-        ).then(res => {
-            setData(res)
-            setLoading(false)
-        })
-    }
+        );
+        return response;
+    };
 
-    return { data, loading, fetchData }
+    const { data, isLoading: loading } = useQuery<DataType[], Error>({
+        queryKey: [queryKey, filters],
+        queryFn: () => fetchData(),
+        enabled: filtersAreReady,
+        staleTime: Infinity,
+    });
+
+    return { data, loading };
 }

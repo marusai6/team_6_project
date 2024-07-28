@@ -11,21 +11,14 @@ import { useFilters } from '../../../hooks/useFilters'
 
 const GeneralDynamicsDashlet = () => {
 
-    const { year, halfyear, category, skill, department } = useSelector((state: RootState) => state.filters)
-    const { leveledSkillsFilter, currentPeriodFilter, previousPeriodFilter, categoryFilter, skillFilter, departmentFilter } = useFilters()
+    const { year, halfyear } = useSelector((state: RootState) => state.filters)
+    const { leveledSkillsFilter, currentPeriodFilter, previousPeriodFilter, categoryFilter, skillFilter, departmentFilter, filtersAreReady } = useFilters()
 
-    const { data: currentPeriodGrowthData, loading: loadingCurrentPeriodGrowthData, fetchData: fetchCurrentPeriodGrowthData } = useFetch<{ growth: number }>({ dimensions: [], measures: ['sum(growth)'], filters: { ...leveledSkillsFilter, ...currentPeriodFilter, ...categoryFilter, ...skillFilter, ...departmentFilter } })
-    const currentPeriodGrowth = !loadingCurrentPeriodGrowthData ? currentPeriodGrowthData[0].growth || '0' : undefined
+    const { data: currentPeriodGrowthData, loading: loadingCurrentPeriodGrowthData } = useFetch<{ growth: number }>({ dimensions: [], measures: ['sum(growth)'], filters: { ...leveledSkillsFilter, ...currentPeriodFilter, ...categoryFilter, ...skillFilter, ...departmentFilter }, filtersAreReady, queryKey: 'GeneralData' })
+    const currentPeriodGrowth = currentPeriodGrowthData && !loadingCurrentPeriodGrowthData ? currentPeriodGrowthData[0].growth || '0' : undefined
 
-    const { data: previousPeriodGrowthData, loading: loadingPreviousPeriodGrowthData, fetchData: fetchPreviousPeriodGrowthData } = useFetch<{ growth: number }>({ dimensions: [], measures: ['sum(growth)'], filters: { ...leveledSkillsFilter, ...previousPeriodFilter, ...categoryFilter, ...skillFilter, ...departmentFilter } })
-    const previousPeriodGrowth = !loadingPreviousPeriodGrowthData ? previousPeriodGrowthData[0].growth || '0' : undefined
-
-    useEffect(() => {
-        if (year) {
-            fetchCurrentPeriodGrowthData()
-            fetchPreviousPeriodGrowthData()
-        }
-    }, [year, halfyear, category, skill, department])
+    const { data: previousPeriodGrowthData, loading: loadingPreviousPeriodGrowthData } = useFetch<{ growth: number }>({ dimensions: [], measures: ['sum(growth)'], filters: { ...leveledSkillsFilter, ...previousPeriodFilter, ...categoryFilter, ...skillFilter, ...departmentFilter }, filtersAreReady, queryKey: 'GeneralData' })
+    const previousPeriodGrowth = previousPeriodGrowthData && !loadingPreviousPeriodGrowthData ? previousPeriodGrowthData[0].growth || '0' : undefined
 
 
     // Dynamics Calculation
@@ -35,7 +28,7 @@ const GeneralDynamicsDashlet = () => {
         if (!loadingCurrentPeriodGrowthData && !loadingPreviousPeriodGrowthData) {
             setDynamics(+((+currentPeriodGrowth - +previousPeriodGrowth) / +previousPeriodGrowth * 100).toFixed(2))
         }
-    }, [loadingCurrentPeriodGrowthData, loadingPreviousPeriodGrowthData])
+    }, [currentPeriodGrowthData, previousPeriodGrowthData])
 
 
     const ref = useRef()

@@ -1,6 +1,8 @@
 import { useSelector } from "react-redux"
 import { RootState } from "../state/store"
 
+type FilterTypes = 'currentPeriod' | 'previousPeriod' | 'department' | 'category' | 'skill' | 'employee'
+
 export const useFilters = () => {
     const { year, halfyear, department, category, skill, employee } = useSelector((state: RootState) => state.filters)
 
@@ -23,5 +25,7 @@ export const useFilters = () => {
     const isNotHiredFilter = { 'is_hired_in_period': ['=', 'false'] }
     const leveledSkillsFilter = { 'levels_n_level': ['!=', null] }
 
-    return { leveledSkillsFilter, currentPeriodFilter, previousPeriodFilter, departmentFilter, categoryFilter, currentPeriod, previousPeriod, skillFilter, employeeFilter, isHiredFilter, isNotHiredFilter, currentLevelFilter }
+    const filtersAreReady = !!(year && halfyear)
+
+    return { leveledSkillsFilter, currentPeriodFilter, previousPeriodFilter, departmentFilter, categoryFilter, currentPeriod, previousPeriod, skillFilter, employeeFilter, isHiredFilter, isNotHiredFilter, currentLevelFilter, filtersAreReady }
 }
