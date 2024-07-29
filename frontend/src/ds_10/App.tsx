@@ -11,7 +11,6 @@ import RecruitmentPage from './src/components/dashboards/RecruitmentPage'
 import FilterOptionsProvider from './src/providers/FilterOptionsProvider'
 import FiltersGlobalStateProvider from './src/providers/FiltersGlobalStateProvider'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
 export const BASE_URL = '/ds/ds_10/dashboards'
 
@@ -35,7 +34,6 @@ function App() {
                 </Route>
               </Routes>
             </HashRouter>
-            <ReactQueryDevtools initialIsOpen={true} />
           </QueryClientProvider>
         </FiltersGlobalStateProvider>
       </FilterOptionsProvider>

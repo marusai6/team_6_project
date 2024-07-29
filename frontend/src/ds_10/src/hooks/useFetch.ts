@@ -7,14 +7,14 @@ export default function useFetch<DataType>({
     dimensions = [],
     measures = [],
     filters = {},
-    filtersAreReady = false,
-    queryKey = 'FetchData',
+    queryKey,
+    filtersAreReady = true,
 }: {
     dimensions: string[];
     measures: string[];
     filters: object;
+    queryKey: string,
     filtersAreReady?: boolean;
-    queryKey?: string,
 }) {
 
     const fetchData = async () => {

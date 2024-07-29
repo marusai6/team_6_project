@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../ui/Card'
-import { useSelector } from 'react-redux'
-import { RootState } from '../../../state/store'
 import useFetch from '../../../hooks/useFetch'
 import { defaultDataFormatter, getNoun } from '../../../lib/utils'
 import { parseISO, format } from 'date-fns'
@@ -26,14 +24,13 @@ type EmployeeData = {
 
 const EmployeeDynamicsDashlet = () => {
 
-    const { employee } = useSelector((state: RootState) => state.filters)
     const { employeeFilter } = useFilters()
 
-    const { data: employeeData, loading: loadingEmployeeData, fetchData: fetchEmployeeData } = useFetch<EmployeeFetchData>({ dimensions: ['User ID'], measures: ['date_first', 'сотрудники_дар_активность', 'sum(growth)', 'period_название'], filters: { ...employeeFilter } })
-
+    const { data: employeeData, loading: loadingEmployeeData } = useFetch<EmployeeFetchData>({ dimensions: ['User ID'], measures: ['date_first', 'сотрудники_дар_активность', 'sum(growth)', 'period_название'], filters: { ...employeeFilter }, queryKey: 'EmployeeDynamicsData' })
     const [generalEmployeeData, setGeneralEmployeeData] = useState<EmployeeData | null>()
 
     const getEmployeeData = (data: EmployeeFetchData[]) => {
+        if (!data) return
         let hiredDate = new Date().toISOString().split('T')[0]
         let employeeGrades = 0
         data.forEach((employee) => {
@@ -60,12 +57,7 @@ const EmployeeDynamicsDashlet = () => {
         else {
             setGeneralEmployeeData(null)
         }
-    }, [loadingEmployeeData])
-
-
-    useEffect(() => {
-        fetchEmployeeData()
-    }, [employee])
+    }, [employeeData])
 
     return (
         <Card className='h-full'>

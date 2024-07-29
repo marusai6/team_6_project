@@ -4,17 +4,17 @@ import { RootState } from '../../state/store'
 import { cn } from '../../lib/utils'
 import { ScrollArea } from '../ui/scroll-area'
 import DonutDashlet from '../dashlets/BaseDashlets/DonutDashlet'
-import BarChartDashlet from '../dashlets/BaseDashlets/BarChartCategoryDashlet'
 import { motion } from 'framer-motion'
 import GeneralDynamicsDashlet from '../dashlets/BaseDashlets/GeneralDynamicsDashlet'
 import HiringDynamicsDashlet from '../dashlets/BaseDashlets/HiringDynamicsDashlet'
 import TrainingDynamicsDashlet from '../dashlets/BaseDashlets/TrainingDynamicsDashlet'
-import GeneralEmpoyeeDashlet from '../dashlets/EmployeeDashlets/EmpoyeeDynamicsDashlet'
 import EmployeeContactInfoDashlet from '../dashlets/EmployeeDashlets/EmployeeContactInfoDashlet'
-import EmployeeBarChartDashlet from '../dashlets/EmployeeDashlets/EmployeeBarChartDashlet'
 import EmployeeDonutDashlet from '../dashlets/EmployeeDashlets/EmployeeDonutDashlet'
 import BarChartSkillDashlet from '../dashlets/BaseDashlets/BarChartSkillDashlet'
 import BarChartCategoryDashlet from '../dashlets/BaseDashlets/BarChartCategoryDashlet'
+import EmployeeDynamicsDashlet from '../dashlets/EmployeeDashlets/EmpoyeeDynamicsDashlet'
+import EmployeeSkillBarChartDashlet from '../dashlets/EmployeeDashlets/EmployeeSkillBarChartDashlet copy'
+import EmployeeCategoryBarChartDashlet from '../dashlets/EmployeeDashlets/EmployeeCategoryBarChartDashlet'
 
 function MainDashboard() {
 
@@ -31,14 +31,14 @@ function MainDashboard() {
     const { employee, category } = useSelector((state: RootState) => state.filters)
 
     return (
-        <ScrollArea className="px-20 flex-1 w-full bg-background py-4">
+        <div className='flex flex-1 w-full px-20 h-full justify-center items-center bg-background'>
             <motion.div
                 variants={{
                     blured: { opacity: 0.2 },
                     notBlured: { opacity: 1 }
                 }}
                 animate={blurEffect ? "blured" : "notBlured"}
-                className={cn('z-20 bg-background h-full w-full flex justify-center items-center')}
+                className={cn('z-20 bg-background w-full flex justify-center items-center')}
             >
 
                 <motion.div
@@ -55,7 +55,7 @@ function MainDashboard() {
                         {employee ?
                             <>
                                 <motion.div variants={cardVariants}>
-                                    <GeneralEmpoyeeDashlet />
+                                    <EmployeeDynamicsDashlet />
                                 </motion.div>
 
                                 <motion.div variants={cardVariants} className='col-span-2'>
@@ -89,9 +89,8 @@ function MainDashboard() {
                                 <motion.div variants={cardVariants}>
                                     <EmployeeDonutDashlet />
                                 </motion.div>
-
                                 <motion.div variants={cardVariants} className='col-span-2'>
-                                    <EmployeeBarChartDashlet />
+                                    {category ? <EmployeeSkillBarChartDashlet /> : <EmployeeCategoryBarChartDashlet />}
                                 </motion.div>
                             </> :
                             <>
@@ -109,7 +108,8 @@ function MainDashboard() {
 
                 </motion.div>
             </motion.div>
-        </ScrollArea>
+
+        </div>
 
     )
 }

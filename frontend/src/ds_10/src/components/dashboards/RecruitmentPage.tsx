@@ -12,10 +12,8 @@ import { RootState } from '../../state/store'
 import useFetch from '../../hooks/useFetch'
 import LevelGroupSection from '../LevelGroupSection'
 import { ScrollArea } from '../ui/scroll-area'
-
-type SkillsGroupedByLevelType = {
-    [key: string]: string[]
-}
+import { useFilters } from '../../hooks/useFilters'
+import useAllSkillOptions from '../../hooks/useAllSkillOptions'
 
 type SkillsByLevelType = {
     level: string;
@@ -47,7 +45,6 @@ function groupByUserId(arr: EmployeeRowData[]): GroupedEmployeeSkillData {
         return acc;
     }, {});
 }
-
 
 export type GradeType = 'Использовал в проекте' | 'Novice' | 'Junior' | 'Middle' | 'Senior' | 'Expert'
 export type SkillType = { name: string, level: number }
@@ -81,26 +78,8 @@ const RecruitmentPage = () => {
 
     const { employee } = useSelector((state: RootState) => state.filters)
 
-    // All Skills Options
-    const { skillsByCategories } = useSelector((state: RootState) => state.filterOptions)
-
-    const [allSkillsOptions, setAllSkillsOptions] = useState<string[]>([])
-
-    const getAllSkills = () => {
-        let allSkills = []
-        Object.values(skillsByCategories).forEach((skills) => allSkills = allSkills.concat(skills))
-        const allSkillsSet = new Set(allSkills)
-        return Array.from(allSkillsSet)
-    }
-
-    useEffect(() => {
-        if (skillsByCategories) {
-            setAllSkillsOptions(getAllSkills())
-        }
-    }, [skillsByCategories])
-
-
-    // Handling Picked Skills and their grades
+    const { allSkillsOptions } = useAllSkillOptions()
+    // Handling Picked Skills and their Grades
 
     const [pickedSkills, setPickedSkills] = useState<SkillType[]>([])
 
@@ -118,25 +97,23 @@ const RecruitmentPage = () => {
 
     // Fetching Employee Data
 
-    const currentLevelFilter = { 'current_level': ['=', 'true'] }
+    const { leveledSkillsFilter, currentLevelFilter, yearPeriodsFilter } = useFilters()
 
-    const { data: allEmployeesData, loading: loadingAllEmployeesData, fetchData: fetchAllEmployeesData } = useFetch<{ 'User ID': string, levels_n_level: number, knows_название: string, period_название: string }>({ dimensions: ['User ID'], measures: ['levels_n_level', 'knows_название', 'period_название'], filters: { levels_n_level: ['!=', null], ...currentLevelFilter } })
-    const { data: generalEmployeeData, loading: loadingGeneralEmployeeData, fetchData: fetchGeneralEmployeeData } = useFetch<{ 'User ID': string, подразделения: string, должность: string }>({ dimensions: ['User ID', 'подразделения', 'должность'], measures: [], filters: { levels_n_level: ['!=', null] } })
+    const { data: allEmployeesData, loading: loadingAllEmployeesData } = useFetch<{ 'User ID': string, levels_n_level: number, knows_название: string, period_название: string }>({ dimensions: ['User ID'], measures: ['levels_n_level', 'knows_название', 'period_название'], filters: { ...leveledSkillsFilter, ...currentLevelFilter, ...yearPeriodsFilter }, queryKey: 'AllCurrentEmployeeSkillsData' })
+    const { data: generalEmployeeData, loading: loadingGeneralEmployeeData } = useFetch<{ 'User ID': string, подразделения: string, должность: string }>({ dimensions: ['User ID', 'подразделения', 'должность'], measures: [], filters: { ...leveledSkillsFilter }, queryKey: 'GeneralEmployeeTableData' })
 
     const [employeeSkillsData, setEmployeeSkillsData] = useState<GroupedEmployeeSkillData>()
 
-    console.log(employeeSkillsData)
     useEffect(() => {
         if (!loadingAllEmployeesData) {
-            const result = groupByUserId(allEmployeesData.filter((el) => el.period_название.length == 4))
+            const result = groupByUserId(allEmployeesData)
             setEmployeeSkillsData(result)
         }
-    }, [loadingAllEmployeesData])
+    }, [allEmployeesData])
 
-    useEffect(() => {
-        fetchAllEmployeesData()
-        fetchGeneralEmployeeData()
-    }, [])
+
+    // Preparing Final Employee Data For the table (based on Filters)
+    const [filteredEmployees, setFilteredEmployees] = useState([])
 
     useEffect(() => {
         if (employeeSkillsData) {
@@ -146,11 +123,12 @@ const RecruitmentPage = () => {
                     result.push(+key)
                 }
             }
-            setFilteredEmployees(generalEmployeeData.filter((employee) => result.includes(employee['User ID'])))
+            if (generalEmployeeData) {
+                setFilteredEmployees(generalEmployeeData.filter((employee) => result.includes(employee['User ID'])))
+            }
         }
     }, [employeeSkillsData, pickedSkills])
 
-    const [filteredEmployees, setFilteredEmployees] = useState([])
 
     function filterEmployeeSkills(skills: Skills) {
         for (let i = 0; i < pickedSkills.length; i++) {

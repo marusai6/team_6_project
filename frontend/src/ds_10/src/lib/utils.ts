@@ -5,15 +5,6 @@ export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs))
 }
 
-export const currencyDataFormatter = (number: number) => {
-    if (number > 99999) {
-        const res = Math.trunc(number / 1000)
-        return `${Intl.NumberFormat('ru').format(res).toString()} т.р.`
-    }
-    return `${Intl.NumberFormat('ru').format(Math.trunc(number)).toString()} р.`
-}
-
-
 export const defaultDataFormatter = (number: number) => {
     return Intl.NumberFormat('ru').format(number).toString()
 }
@@ -39,4 +30,21 @@ export function getCurrentPeriod() {
         halfyear: new Date().getMonth() < 6 ? '1' : '2',
         year: new Date().getFullYear().toString()
     }
+}
+
+export function groupByAndSum(inputArray) {
+    const result = {};
+
+    inputArray.forEach(item => {
+        if (result[item.name]) {
+            result[item.name] += item.Уровень;
+        } else {
+            result[item.name] = item.Уровень;
+        }
+    });
+
+    return Object.keys(result).map(name => ({
+        name: name,
+        Уровень: result[name]
+    }));
 }

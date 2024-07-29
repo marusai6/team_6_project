@@ -33,7 +33,7 @@ const DonutDashlet = () => {
                     index="level"
                     colors={['blue', 'lime', 'violet', 'fuchsia', 'teal', 'indigo', 'emerald']}
                     valueFormatter={defaultDataFormatter}
-                    className="w-60 h-60 text-3xl"
+                    className="w-60 h-60"
                     // showLabel={false}
                     showAnimation={true}
                     noDataText='Нет данных'

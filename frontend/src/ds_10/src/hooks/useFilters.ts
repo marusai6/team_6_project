@@ -25,7 +25,11 @@ export const useFilters = () => {
     const isNotHiredFilter = { 'is_hired_in_period': ['=', 'false'] }
     const leveledSkillsFilter = { 'levels_n_level': ['!=', null] }
 
+    const yearPeriodsFilter = { 'LENGTH(period_название)': ['=', 4] }
+
+    const generalSkillsFilter = { 'levels_n_level': ['=', null] }
+
     const filtersAreReady = !!(year && halfyear)
 
-    return { leveledSkillsFilter, currentPeriodFilter, previousPeriodFilter, departmentFilter, categoryFilter, currentPeriod, previousPeriod, skillFilter, employeeFilter, isHiredFilter, isNotHiredFilter, currentLevelFilter, filtersAreReady }
+    return { leveledSkillsFilter, currentPeriodFilter, previousPeriodFilter, departmentFilter, categoryFilter, currentPeriod, previousPeriod, skillFilter, employeeFilter, isHiredFilter, isNotHiredFilter, currentLevelFilter, generalSkillsFilter, filtersAreReady, yearPeriodsFilter }
 }

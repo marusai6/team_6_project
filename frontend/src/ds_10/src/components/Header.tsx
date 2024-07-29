@@ -8,7 +8,7 @@ import { BASE_URL } from '../../App'
 const Header = () => {
     return (
         <header>
-            <div className='relative flex justify-between bg-primary w-full px-10 pt-6 pb-2'>
+            <div className='relative flex justify-between bg-primary w-full px-20 pt-6 pb-2'>
 
                 <Link to={`${BASE_URL}`}>
                     <div className='size-14 cursor-pointer'>
