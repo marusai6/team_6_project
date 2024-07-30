@@ -8,23 +8,23 @@ import { ArrowUpDown } from "lucide-react"
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
 export type Employee = {
-    "User ID": string
-    подразделения: string
-    должность: string
+    id: string
+    name: string
+    email: string
 }
 
 export const columns: ColumnDef<Employee>[] = [
     {
-        accessorKey: "User ID",
+        accessorKey: "id",
         header: ({ column }) => <FilterHeader column={column} title={'ID'} />,
     },
     {
-        accessorKey: "должность",
-        header: ({ column }) => <FilterHeader column={column} title={'Должность'} />,
+        accessorKey: "name",
+        header: ({ column }) => <FilterHeader column={column} title={'Имя'} />,
     },
     {
-        accessorKey: "подразделения",
-        header: ({ column }) => <FilterHeader column={column} title={'Подразделение'} />,
+        accessorKey: "email",
+        header: ({ column }) => <FilterHeader column={column} title={'Почта'} />,
     },
 ]
 

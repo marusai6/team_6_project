@@ -24,22 +24,20 @@ type EmployeeData = {
 
 const EmployeeDynamicsDashlet = () => {
 
-    const { employeeFilter } = useFilters()
+    const { employeeFilter, yearPeriodsFilter, leveledSkillsFilter } = useFilters()
 
-    const { data: employeeData, loading: loadingEmployeeData } = useFetch<EmployeeFetchData>({ dimensions: ['User ID'], measures: ['date_first', 'сотрудники_дар_активность', 'sum(growth)', 'period_название'], filters: { ...employeeFilter }, queryKey: 'EmployeeDynamicsData' })
+    const { data: employeeData, loading: loadingEmployeeData } = useFetch<EmployeeFetchData>({ dimensions: ['User ID'], measures: ['date_first', 'сотрудники_дар_активность', 'sum(growth)', 'period_название'], filters: { ...employeeFilter, ...leveledSkillsFilter, ...yearPeriodsFilter }, queryKey: 'EmployeeDynamicsData' })
     const [generalEmployeeData, setGeneralEmployeeData] = useState<EmployeeData | null>()
 
     const getEmployeeData = (data: EmployeeFetchData[]) => {
-        if (!data) return
+        if (!data.length) return
         let hiredDate = new Date().toISOString().split('T')[0]
         let employeeGrades = 0
         data.forEach((employee) => {
             if (employee.date_first < hiredDate) {
                 hiredDate = employee.date_first
             }
-            if (employee.period_название.length == 4) {
-                employeeGrades += employee.growth
-            }
+            employeeGrades += employee.growth
         })
         setGeneralEmployeeData(
             {

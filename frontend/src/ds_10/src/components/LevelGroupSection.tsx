@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion'
 import React from 'react'
+import { cn } from '../lib/utils'
 
 export const levelsToTitlesMap = new Map([
     [1, 'Использовал на проекте'],
@@ -10,7 +11,7 @@ export const levelsToTitlesMap = new Map([
     [6, 'Expert'],
 ])
 
-const LevelGroupSection = ({ levelGroup }: { levelGroup: { level: string, skills: string[] } }) => {
+const LevelGroupSection = ({ levelGroup, pickedSkillNames }: { levelGroup: { level: string, skills: string[] }, pickedSkillNames: string[] }) => {
 
     if (!levelGroup.skills.length) return
 
@@ -35,7 +36,7 @@ const LevelGroupSection = ({ levelGroup }: { levelGroup: { level: string, skills
                                 hidden: { opacity: 0 },
                                 visible: { opacity: 1 }
                             }}
-                            className="px-2 py-1 rounded bg-secondary" key={`${skill}`}
+                            className={cn("px-2 py-1 rounded bg-accent", pickedSkillNames.includes(skill) && 'bg-secondary')} key={`${skill}`}
                         >
                             {skill}
                         </motion.p>)

@@ -13,7 +13,7 @@ const SelectWithSearch = ({ options, onClick, onReset, active }: { options: stri
 
     const updateFilteredOptions = (event: React.ChangeEvent<HTMLInputElement>) => {
         const searchInput = event.target.value
-        const filteredOptions = options.filter((str) => str.includes(searchInput))
+        const filteredOptions = options.filter((str) => str.toLowerCase().includes(searchInput.toLowerCase()))
         setFilteredOptions(filteredOptions)
     }
 

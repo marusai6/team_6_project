@@ -21,8 +21,8 @@ function mergeArrays(array1: { name: string, Рост: number }[], array2: { nam
         categoriesSet.add(item.name);
         result.push({
             name: item.name,
+            [secondArrayTitle]: array2Dict[item.name] || 0,
             [firstArrayTitle]: item.Рост,
-            [secondArrayTitle]: array2Dict[item.name] || 0
         });
     });
 
@@ -30,8 +30,8 @@ function mergeArrays(array1: { name: string, Рост: number }[], array2: { nam
         if (!categoriesSet.has(item.name)) {
             result.push({
                 name: item.name,
+                [secondArrayTitle]: item.Рост,
                 [firstArrayTitle]: 0,
-                [secondArrayTitle]: item.Рост
             });
         }
     });
@@ -72,7 +72,7 @@ const BarChartSkillDashlet = () => {
                 <BarChart
                     data={skillData}
                     index="name"
-                    categories={[currentPeriod, previousPeriod]}
+                    categories={[previousPeriod, currentPeriod]}
                     colors={['blue', 'rose']}
                     valueFormatter={defaultDataFormatter}
                     yAxisWidth={48}

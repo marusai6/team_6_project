@@ -15,7 +15,7 @@ const PickedSkill = ({ skill, onClick, updateGrade }: { skill: SkillType, onClic
                     className='h-10 px-2 flex gap-1 items-center bg-secondary text-primary rounded cursor-pointer hover:bg-primary hover:text-white transition-all'
                     key={skill.name}
                 >
-                    <p>{skill.name}</p>
+                    <p>{`${skill.name} (${levelsToTitlesMap.get(skill.level)})`}</p>
                     <X size={18}
                         className='cursor-pointer'
                         onClick={(e) => {

@@ -22,21 +22,16 @@ import {
 } from "../components/ui/Table"
 import React, { useState } from "react"
 import { Button } from "../components/ui/Button"
-import { urlState } from "bi-internal/core"
+import { UrlState, urlState } from "bi-internal/core"
+import { cn } from "../lib/utils"
+import { useSelector } from "react-redux"
+import { RootState } from "../state/store"
 
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
     data: TData[]
 }
-
-// export const columnsHeadings = new Map([
-//     ["fullname", "Сотрудник"],
-//     ["country", "Страна"],
-//     ["title", "Должность"],
-//     ["salary", "Заработная плата"],
-//     ["order_totalprice", "Продажи"],
-// ])
 
 export function DataTable<TData, TValue>({
     columns,
@@ -93,7 +88,6 @@ export function DataTable<TData, TValue>({
     //     return rows
     // }
 
-
     return (
         <div className="space-y-4">
 
@@ -122,8 +116,8 @@ export function DataTable<TData, TValue>({
                             <TableRow
                                 key={row.id}
                                 data-state={row.getIsSelected() && "selected"}
-                                onClick={() => { urlState.updateModel({ employee: row.original["User ID"] }) }}
-                                className="cursor-pointer"
+                                onClick={() => { urlState.updateModel({ employee: row.original["id"] }) }}
+                                className={cn("cursor-pointer", UrlState.getModel().employee === row.original["id"] && 'bg-secondary hover:bg-secondary')}
                             >
                                 {row.getVisibleCells().map((cell) => (
                                     <TableCell key={cell.id}>

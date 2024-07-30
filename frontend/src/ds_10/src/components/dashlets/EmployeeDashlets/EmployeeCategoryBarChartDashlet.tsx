@@ -17,21 +17,69 @@ const shortCategoryVariants = new Map([
     ['Базы данных ', 'Базы дан.'],
 ])
 
+function mergeArrays(array1: { category_know_название: string, sum: number, подразделения: string }[], array2: { category_know_название: string, sum: number, "User ID": number }[], firstArrayTitle: string, secondArrayTitle: string) {
+    const result = [];
+
+    array1 = array1.sort((a, b) => b.sum - a.sum)
+
+    const array2Dict = array2.reduce((acc, item) => {
+        acc[item.category_know_название] = +(item.sum / item['User ID']).toFixed(1);
+        return acc;
+    }, {});
+
+    const categoriesSet = new Set();
+
+    array1.forEach(item => {
+        categoriesSet.add(item.category_know_название);
+        result.push({
+            name: item.category_know_название,
+            [secondArrayTitle]: array2Dict[item.category_know_название] || 0,
+            [firstArrayTitle]: item.sum,
+        });
+    });
+
+    array2.forEach(item => {
+        if (!categoriesSet.has(item.category_know_название)) {
+            result.push({
+                name: item.category_know_название,
+                [secondArrayTitle]: +(item.sum / item['User ID']).toFixed(1),
+                [firstArrayTitle]: 0,
+            });
+        }
+    });
+
+    return result.map((el) => ({ ...el, name: shortCategoryVariants.get(el.name) }));
+}
+
 const EmployeeCategoryBarChartDashlet = () => {
 
     const ref = useRef()
 
-    const { leveledSkillsFilter, employeeFilter, currentLevelFilter } = useFilters()
+    const { leveledSkillsFilter, employeeFilter, currentLevelFilter, yearPeriodsFilter } = useFilters()
 
     // Category Fetching
-    const { data: currentCategoryData, loading: loadingCurrentCategoryData } = useFetch<{ category_know_название: string, sum: number, period_название: string }>({ dimensions: ['category_know_название'], measures: ['sum(levels_n_level)', 'period_название'], filters: { ...leveledSkillsFilter, ...employeeFilter, ...currentLevelFilter }, queryKey: 'EmployeeBarChartCategory' })
+    const { data: currentCategoryData, loading: loadingCurrentCategoryData } = useFetch<{ category_know_название: string, sum: number, подразделения: string }>({ dimensions: ['category_know_название'], measures: ['sum(levels_n_level)', 'подразделения'], filters: { ...leveledSkillsFilter, ...employeeFilter, ...currentLevelFilter, ...yearPeriodsFilter }, queryKey: 'EmployeeBarChartCategory' })
+    const [employeeDepartment, setEmployeeDepartment] = useState('')
+
+    // Fetching Average Department value
+    const { data: sumByDepartmentData, loading: loadingSumByDepartmentData } = useFetch<{ category_know_название: string, sum: number, "User ID": number }>({ dimensions: ['category_know_название'], measures: ['sum(levels_n_level)', 'uniq("User ID")'], filters: { ...leveledSkillsFilter, ...currentLevelFilter, ...yearPeriodsFilter, 'подразделения': ['=', employeeDepartment] }, filtersAreReady: !!employeeDepartment, queryKey: 'AverageDepartmentCategories' })
 
     const [finalData, setFinalData] = useState([])
 
     useEffect(() => {
-        if (!loadingCurrentCategoryData) {
-            const finalCurrentData = groupByAndSum(currentCategoryData.filter((el) => el.period_название.length == 4).map((skill) => ({ name: shortCategoryVariants.get(skill.category_know_название), Уровень: skill.sum }))).sort((a, b) => b.Уровень - a.Уровень)
-            setFinalData(finalCurrentData)
+        if (sumByDepartmentData && currentCategoryData) {
+            if (currentCategoryData.length) {
+                setFinalData(mergeArrays(currentCategoryData, sumByDepartmentData, 'Сотрудник', 'Среднее по отделу'))
+            }
+            else {
+                setFinalData([])
+            }
+        }
+    }, [sumByDepartmentData, currentCategoryData])
+
+    useEffect(() => {
+        if (currentCategoryData?.length) {
+            setEmployeeDepartment(currentCategoryData[0].подразделения)
         }
     }, [currentCategoryData])
 
@@ -49,8 +97,8 @@ const EmployeeCategoryBarChartDashlet = () => {
                 <BarChart
                     data={finalData}
                     index="name"
-                    categories={["Уровень"]}
-                    colors={['blue']}
+                    categories={["Среднее по отделу", "Сотрудник"]}
+                    colors={['blue', 'rose']}
                     valueFormatter={defaultDataFormatter}
                     yAxisWidth={48}
                     className='text-sm'

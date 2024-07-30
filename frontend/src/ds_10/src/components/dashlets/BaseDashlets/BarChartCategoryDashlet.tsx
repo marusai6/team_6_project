@@ -31,8 +31,8 @@ function mergeArrays(array1: { name: string, Рост: number }[], array2: { nam
         categoriesSet.add(item.name);
         result.push({
             name: item.name,
+            [secondArrayTitle]: array2Dict[item.name] || 0,
             [firstArrayTitle]: item.Рост,
-            [secondArrayTitle]: array2Dict[item.name] || 0
         });
     });
 
@@ -40,8 +40,8 @@ function mergeArrays(array1: { name: string, Рост: number }[], array2: { nam
         if (!categoriesSet.has(item.name)) {
             result.push({
                 name: item.name,
+                [secondArrayTitle]: item.Рост,
                 [firstArrayTitle]: 0,
-                [secondArrayTitle]: item.Рост
             });
         }
     });
@@ -83,10 +83,12 @@ const BarChartCategoryDashlet = () => {
                 <BarChart
                     data={categoryData}
                     index="name"
-                    categories={[currentPeriod, previousPeriod]}
+                    categories={[previousPeriod, currentPeriod]}
                     colors={['blue', 'rose']}
                     valueFormatter={defaultDataFormatter}
                     yAxisWidth={48}
+                    showYAxis={true}
+                    yAxisLabel='Грейды'
                     className='text-sm'
                     noDataText='Нет данных'
                     showAnimation={true}

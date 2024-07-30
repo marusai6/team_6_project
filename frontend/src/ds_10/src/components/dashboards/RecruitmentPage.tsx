@@ -14,6 +14,7 @@ import LevelGroupSection from '../LevelGroupSection'
 import { ScrollArea } from '../ui/scroll-area'
 import { useFilters } from '../../hooks/useFilters'
 import useAllSkillOptions from '../../hooks/useAllSkillOptions'
+import { faker } from '@faker-js/faker/locale/ru'
 
 type SkillsByLevelType = {
     level: string;
@@ -82,6 +83,7 @@ const RecruitmentPage = () => {
     // Handling Picked Skills and their Grades
 
     const [pickedSkills, setPickedSkills] = useState<SkillType[]>([])
+    const pickedSkillNames = pickedSkills.map((el) => el.name)
 
     useEffect(() => {
         const urlPickedSkills = urlState.getModel().pickedSkills
@@ -99,24 +101,37 @@ const RecruitmentPage = () => {
 
     const { leveledSkillsFilter, currentLevelFilter, yearPeriodsFilter } = useFilters()
 
-    const { data: allEmployeesData, loading: loadingAllEmployeesData } = useFetch<{ 'User ID': string, levels_n_level: number, knows_название: string, period_название: string }>({ dimensions: ['User ID'], measures: ['levels_n_level', 'knows_название', 'period_название'], filters: { ...leveledSkillsFilter, ...currentLevelFilter, ...yearPeriodsFilter }, queryKey: 'AllCurrentEmployeeSkillsData' })
+    const { data: allEmployeesRawData, loading: loadingAllEmployeesRawData } = useFetch<{ 'User ID': string, levels_n_level: number, knows_название: string, period_название: string }>({ dimensions: ['User ID'], measures: ['levels_n_level', 'knows_название', 'period_название'], filters: { ...leveledSkillsFilter, ...currentLevelFilter, ...yearPeriodsFilter }, queryKey: 'AllCurrentEmployeeSkillsData' })
     const { data: generalEmployeeData, loading: loadingGeneralEmployeeData } = useFetch<{ 'User ID': string, подразделения: string, должность: string }>({ dimensions: ['User ID', 'подразделения', 'должность'], measures: [], filters: { ...leveledSkillsFilter }, queryKey: 'GeneralEmployeeTableData' })
 
     const [employeeSkillsData, setEmployeeSkillsData] = useState<GroupedEmployeeSkillData>()
+    const [generalEmployee, setGeneralEmployee] = useState<{ id: string, name: string, email: string }[]>([])
 
     useEffect(() => {
-        if (!loadingAllEmployeesData) {
-            const result = groupByUserId(allEmployeesData)
+        if (!loadingAllEmployeesRawData) {
+            const result = groupByUserId(allEmployeesRawData)
             setEmployeeSkillsData(result)
         }
-    }, [allEmployeesData])
+    }, [allEmployeesRawData])
+
+    useEffect(() => {
+        if (!loadingGeneralEmployeeData) {
+            setGeneralEmployee(generalEmployeeData.map((employee) => {
+                return ({
+                    id: employee['User ID'],
+                    name: faker.person.firstName(),
+                    email: faker.internet.email()
+                })
+            }))
+        }
+    }, [generalEmployeeData])
 
 
     // Preparing Final Employee Data For the table (based on Filters)
     const [filteredEmployees, setFilteredEmployees] = useState([])
 
     useEffect(() => {
-        if (employeeSkillsData) {
+        if (employeeSkillsData && generalEmployee.length) {
             const result = []
             for (const [key, value] of Object.entries(employeeSkillsData)) {
                 if (filterEmployeeSkills(value)) {
@@ -124,10 +139,10 @@ const RecruitmentPage = () => {
                 }
             }
             if (generalEmployeeData) {
-                setFilteredEmployees(generalEmployeeData.filter((employee) => result.includes(employee['User ID'])))
+                setFilteredEmployees(generalEmployee.filter((employee) => result.includes(employee.id)))
             }
         }
-    }, [employeeSkillsData, pickedSkills])
+    }, [employeeSkillsData, pickedSkills, generalEmployee])
 
 
     function filterEmployeeSkills(skills: Skills) {
@@ -143,7 +158,7 @@ const RecruitmentPage = () => {
         <ScrollArea className="px-20 flex-1 w-full bg-background py-4 overflow-y-hidden">
             <div className='w-full flex gap-4'>
 
-                <div className='flex flex-col gap-4 w-2/3'>
+                <div className='flex flex-col gap-4 w-1/2'>
                     <div className='flex gap-3 w-full'>
                         <Popover setOpen={setOpen}>
                             <Popover.Trigger setOpen={setOpen}>
@@ -155,7 +170,7 @@ const RecruitmentPage = () => {
                                 <SelectWithSearch
                                     options={allSkillsOptions}
                                     onClick={(value: string) => {
-                                        setPickedSkills((prev) => [...prev, { name: value, level: 1 }])
+                                        setPickedSkills((prev) => [...prev, { name: value, level: 3 }])
                                     }}
                                     onReset={() => {
                                         setOpen(false)
@@ -185,7 +200,7 @@ const RecruitmentPage = () => {
                     <EmployeeTable employeeData={filteredEmployees} />
                 </div>
 
-                <Card className='w-1/3 h-fit'>
+                <Card className='w-1/2 h-fit'>
                     <CardHeader>
                         <CardTitle>
                             Фамилия Имя
@@ -198,7 +213,7 @@ const RecruitmentPage = () => {
                         <div className='space-y-3 h-full'>
                             {employee && employeeSkillsData &&
                                 groupBySkillLevel(employeeSkillsData[employee]).map((levelGroup) => {
-                                    return <LevelGroupSection levelGroup={levelGroup} key={`${employee}-${levelGroup.level}`} />
+                                    return <LevelGroupSection levelGroup={levelGroup} pickedSkillNames={pickedSkillNames} key={`${employee}-${levelGroup.level}`} />
                                 })}
                         </div>
                     </CardContent>

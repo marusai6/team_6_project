@@ -55,11 +55,8 @@ const EmployeeContactInfoDashlet = () => {
 
     const { data: employeeData, loading: loadingEmployeeData } = useFetch<{ "User ID": string, 'должность': string, 'подразделения': string }>({ dimensions: ['User ID', 'должность', 'подразделения'], measures: [], filters: { ...employeeFilter }, queryKey: 'EmployeeContactData' })
     const { data: employeeGeneralSkillsData, loading: loadingEmployeeGeneralSkillsData } = useFetch<EmployeeGeneralSkills>({ dimensions: ['category_know_название'], measures: ['knows_название', 'levels_название'], filters: { ...employeeFilter, ...generalSkillsFilter, ...yearPeriodsFilter }, queryKey: 'EmployeeContactData' })
-    console.log(employeeData)
-    console.log(employeeGeneralSkillsData)
 
     const [groupedGeneralSkillData, setGroupedGeneralSkillData] = useState<groupedEmployeeSkills>({})
-    console.log(groupedGeneralSkillData)
     useEffect(() => {
         if (!loadingEmployeeGeneralSkillsData) {
             setGroupedGeneralSkillData(groupByCategory(employeeGeneralSkillsData))
@@ -68,7 +65,6 @@ const EmployeeContactInfoDashlet = () => {
 
     useEffect(() => {
         const person = faker.person
-        console.log(person)
         if (!loadingEmployeeData) {
             setGeneralEmployeeData({
                 'User ID': employeeData[0]['User ID'],
