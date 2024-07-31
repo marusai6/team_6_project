@@ -24,8 +24,7 @@ import React, { useState } from "react"
 import { Button } from "../components/ui/Button"
 import { UrlState, urlState } from "bi-internal/core"
 import { cn } from "../lib/utils"
-import { useSelector } from "react-redux"
-import { RootState } from "../state/store"
+import ExportToSLSXButton from "../components/exportButtons/ExportToXLSXButton"
 
 
 interface DataTableProps<TData, TValue> {
@@ -55,38 +54,6 @@ export function DataTable<TData, TValue>({
             columnFilters,
         },
     })
-
-
-    // Updating Global State - TableData
-    // useEffect(() => {
-    //     const rows = getRowsForExport()
-    //     if (rows.length) {
-    //         const columns = generateColumsForExport(rows[0])
-    //         dispatch(changeTableData({ rows, columns }))
-    //     }
-
-    // }, [sorting, columnFilters, columnVisibility, data])
-
-    // function generateColumsForExport(object: object) {
-    //     const columns = []
-    //     for (const key of Object.keys(object)) {
-    //         columns.push({ header: columnsHeadings.get(key), key, width: 30 })
-    //     }
-    //     return columns
-    // }
-
-    // function getRowsForExport() {
-    //     const rows = []
-    //     table.getRowModel().rows.map((row) => {
-    //         let currentRow = {}
-    //         row.getVisibleCells().map((cell) => {
-    //             const context = cell.getContext()
-    //             currentRow = { ...currentRow, [context.column.id]: context.getValue() }
-    //         })
-    //         rows.push(currentRow)
-    //     })
-    //     return rows
-    // }
 
     return (
         <div className="space-y-4">
@@ -143,13 +110,15 @@ export function DataTable<TData, TValue>({
                 >
                     Предыдущая страница
                 </Button>
-                <Button
-                    variant="outline"
-                    onClick={() => table.nextPage()}
-                    disabled={!table.getCanNextPage()}
-                >
-                    Следующая страница
-                </Button>
+                <div className="space-x-2">
+                    <Button
+                        variant="outline"
+                        onClick={() => table.nextPage()}
+                        disabled={!table.getCanNextPage()}
+                    >
+                        Следующая страница
+                    </Button>
+                </div>
             </div>
         </div>
     )

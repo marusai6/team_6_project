@@ -31,14 +31,14 @@ function MainDashboard() {
     const { employee, category } = useSelector((state: RootState) => state.filters)
 
     return (
-        <div className='flex flex-1 w-full px-20 h-full justify-center items-center bg-background'>
+        <div className='flex flex-1 w-full px-20 py-4 3xl:py-10 h-full justify-center items-center bg-background'>
             <motion.div
                 variants={{
                     blured: { opacity: 0.2 },
                     notBlured: { opacity: 1 }
                 }}
                 animate={blurEffect ? "blured" : "notBlured"}
-                className={cn('z-20 bg-background w-full flex justify-center items-center')}
+                className={cn('z-20 bg-background w-full h-full flex justify-center items-center')}
             >
 
                 <motion.div

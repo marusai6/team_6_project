@@ -25,20 +25,21 @@ const DonutDashlet = () => {
                 </div>
                 <ExportToPNGButton exportRef={ref} />
             </CardHeader>
-            <CardContent ref={ref} className='flex flex-col justify-center items-center gap-2 flex-1'>
-                <DonutChart
-                    data={finalLevelsData}
-                    variant='pie'
-                    category="count"
-                    index="level"
-                    colors={['blue', 'lime', 'violet', 'fuchsia', 'teal', 'indigo', 'emerald']}
-                    valueFormatter={defaultDataFormatter}
-                    className="w-60 h-60"
-                    // showLabel={false}
-                    showAnimation={true}
-                    noDataText='Нет данных'
-                    showLabel={false}
-                />
+            <CardContent ref={ref} className='flex flex-col justify-center items-center gap-2 flex-1 px-20'>
+                <div className='h-56 3xl:h-96 w-full'>
+                    <DonutChart
+                        data={finalLevelsData}
+                        variant='pie'
+                        category="count"
+                        index="level"
+                        colors={['blue', 'lime', 'violet', 'fuchsia', 'teal', 'indigo', 'emerald']}
+                        valueFormatter={defaultDataFormatter}
+                        className="h-full"
+                        showAnimation={true}
+                        noDataText='Нет данных'
+                        showLabel={false}
+                    />
+                </div>
                 <Legend
                     categories={finalLevelsData.map((el) => el.level)}
                     colors={['blue', 'lime', 'violet', 'fuchsia', 'teal', 'indigo', 'emerald']}
@@ -46,7 +47,7 @@ const DonutDashlet = () => {
                 />
 
             </CardContent>
-        </Card>
+        </Card >
     )
 }
 

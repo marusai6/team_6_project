@@ -31,7 +31,7 @@ const DatePicker = ({ setOpen }: { setOpen: React.Dispatch<React.SetStateAction<
 
     const halfyearOptions = [
         {
-            title: 'Не важно',
+            title: 'Весь год',
             value: 'both'
         },
         {

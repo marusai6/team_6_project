@@ -96,7 +96,7 @@ const EmployeeSkillBarChartDashlet = () => {
 
 
     return (
-        <Card className='h-full'>
+        <Card className='flex flex-col h-full'>
             <CardHeader className='flex flex-row justify-between items-center'>
                 <div>
                     <CardTitle>Категории навыков</CardTitle>
@@ -104,8 +104,8 @@ const EmployeeSkillBarChartDashlet = () => {
                 </div>
                 <ExportToPNGButton exportRef={ref} />
             </CardHeader>
-            <CardContent ref={ref} className='flex gap-2'>
-                <div className={cn('visible flex flex-col justify-between pt-[2.1rem] pb-[6.35rem]', finalData.length === 0 && 'invisible')}>
+            <CardContent ref={ref} className='flex flex-1 gap-2'>
+                <div className={cn('visible flex flex-col justify-between pt-[2.1rem] h-[67.5%]', finalData.length === 0 && 'invisible')}>
                     <p>Expert</p>
                     <p>Senior</p>
                     <p>Middle</p>
@@ -122,7 +122,7 @@ const EmployeeSkillBarChartDashlet = () => {
                     showYAxis={false}
                     minValue={0}
                     maxValue={6}
-                    className='text-sm'
+                    className='text-sm h-full'
                     noDataText='Нет данных'
                     showAnimation={true}
                 />

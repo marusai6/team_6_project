@@ -60,7 +60,7 @@ const BarChartSkillDashlet = () => {
     }, [currentSkillsData, previousSkillsData])
 
     return (
-        <Card className='h-full'>
+        <Card className='h-full flex flex-col'>
             <CardHeader className='flex flex-row justify-between items-center'>
                 <div>
                     <CardTitle>Категории навыков</CardTitle>
@@ -68,7 +68,7 @@ const BarChartSkillDashlet = () => {
                 </div>
                 <ExportToPNGButton exportRef={ref} />
             </CardHeader>
-            <CardContent ref={ref}>
+            <CardContent ref={ref} className='flex-1'>
                 <BarChart
                     data={skillData}
                     index="name"
@@ -76,7 +76,9 @@ const BarChartSkillDashlet = () => {
                     colors={['blue', 'rose']}
                     valueFormatter={defaultDataFormatter}
                     yAxisWidth={48}
-                    className='text-sm'
+                    showYAxis={true}
+                    yAxisLabel='Грейды'
+                    className='text-sm h-full'
                     noDataText='Нет данных'
                     showAnimation={true}
                 />

@@ -71,7 +71,7 @@ const BarChartCategoryDashlet = () => {
 
 
     return (
-        <Card className='h-full'>
+        <Card className='h-full flex flex-col'>
             <CardHeader className='flex flex-row justify-between items-center'>
                 <div>
                     <CardTitle>Категории навыков</CardTitle>
@@ -79,7 +79,7 @@ const BarChartCategoryDashlet = () => {
                 </div>
                 <ExportToPNGButton exportRef={ref} />
             </CardHeader>
-            <CardContent ref={ref}>
+            <CardContent ref={ref} className='flex-1'>
                 <BarChart
                     data={categoryData}
                     index="name"
@@ -89,7 +89,7 @@ const BarChartCategoryDashlet = () => {
                     yAxisWidth={48}
                     showYAxis={true}
                     yAxisLabel='Грейды'
-                    className='text-sm'
+                    className='text-sm h-full'
                     noDataText='Нет данных'
                     showAnimation={true}
                 />
