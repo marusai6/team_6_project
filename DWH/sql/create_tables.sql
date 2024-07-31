@@ -1,3 +1,4 @@
+DROP TABLE IF EXISTS dds.сотрудники_даp CASCADE;
 CREATE TABLE dds.сотрудники_даp (
     id int8 PRIMARY KEY,
     активность BOOLEAN,
@@ -14,6 +15,7 @@ CREATE TABLE dds.сотрудники_даp (
     "Город проживания" VARCHAR(50)
 );
 
+DROP TABLE IF EXISTS dds.сотрудники_даp CASCADE;
 CREATE TABLE dds.базы_данных (
     id INT PRIMARY KEY,
     активность BOOLEAN,
@@ -22,6 +24,7 @@ CREATE TABLE dds.базы_данных (
 );
 
 
+DROP TABLE IF EXISTS dds.фреймворки CASCADE;
 CREATE TABLE dds.фреймворки (
     id INT PRIMARY KEY,
     активность BOOLEAN,
@@ -29,6 +32,7 @@ CREATE TABLE dds.фреймворки (
     название VARCHAR(50)
 );
 
+DROP TABLE IF EXISTS dds.уровни_знаний_в_предметной_област CASCADE;
 CREATE TABLE dds.уровни_знаний_в_предметной_област
 (
     id         INT PRIMARY KEY,
@@ -37,6 +41,7 @@ CREATE TABLE dds.уровни_знаний_в_предметной_област
     название VARCHAR(50)
 );
 
+DROP TABLE IF EXISTS dds.уровни_знаний_в_отрасли CASCADE;
 CREATE TABLE dds.уровни_знаний_в_отрасли
 (
     id         INT PRIMARY KEY,
@@ -45,6 +50,7 @@ CREATE TABLE dds.уровни_знаний_в_отрасли
     название VARCHAR(50)
 );
 
+DROP TABLE IF EXISTS dds.уровни_владения_ин CASCADE;
 CREATE TABLE dds.уровни_владения_ин (
     id INT PRIMARY KEY,
     активность BOOLEAN,
@@ -52,6 +58,7 @@ CREATE TABLE dds.уровни_владения_ин (
     название VARCHAR(50)
 );
 
+DROP TABLE IF EXISTS dds.языки CASCADE;
 CREATE TABLE dds.языки (
     id INT PRIMARY KEY,
     активность BOOLEAN,
@@ -59,6 +66,7 @@ CREATE TABLE dds.языки (
     название VARCHAR(50)
 );
 
+DROP TABLE IF EXISTS dds.типы_систем CASCADE;
 CREATE TABLE dds.типы_систем (
     id INT PRIMARY KEY,
     активность BOOLEAN,
@@ -66,6 +74,7 @@ CREATE TABLE dds.типы_систем (
     название VARCHAR(50)
 );
 
+DROP TABLE IF EXISTS dds.языки_программирования CASCADE;
 CREATE TABLE dds.языки_программирования (
     id INT PRIMARY KEY,
     активность BOOLEAN,
@@ -73,6 +82,7 @@ CREATE TABLE dds.языки_программирования (
     название VARCHAR(50)
 );
 
+DROP TABLE IF EXISTS dds.технологии CASCADE;
 CREATE TABLE dds.технологии (
     id INT PRIMARY KEY,
     активность BOOLEAN,
@@ -80,6 +90,7 @@ CREATE TABLE dds.технологии (
     название VARCHAR(50)
 );
 
+DROP TABLE IF EXISTS dds.инструменты CASCADE;
 CREATE TABLE dds.инструменты (
     id INT PRIMARY KEY,
     активность BOOLEAN,
@@ -87,6 +98,7 @@ CREATE TABLE dds.инструменты (
     название VARCHAR(50)
 );
 
+DROP TABLE IF EXISTS dds.среды_разработки CASCADE;
 CREATE TABLE dds.среды_разработки (
     id INT PRIMARY KEY,
     активность BOOLEAN,
@@ -94,6 +106,7 @@ CREATE TABLE dds.среды_разработки (
     название VARCHAR(50)
 );
 
+DROP TABLE IF EXISTS dds.платформы CASCADE;
 CREATE TABLE dds.платформы (
     id INT PRIMARY KEY,
     название VARCHAR(50),
@@ -101,6 +114,7 @@ CREATE TABLE dds.платформы (
     "Дата изм." DATE
 );
 
+DROP TABLE IF EXISTS dds.платформы CASCADE;
 CREATE TABLE dds.уровни_знаний (
     id INT PRIMARY KEY,
     активность BOOLEAN,
@@ -108,6 +122,7 @@ CREATE TABLE dds.уровни_знаний (
     название VARCHAR(50)
 );
 
+DROP TABLE IF EXISTS dds.платформы CASCADE;
 CREATE TABLE dds.отрасли (
     id INT PRIMARY KEY,
     активность BOOLEAN,
@@ -115,6 +130,7 @@ CREATE TABLE dds.отрасли (
     название VARCHAR(50)
 );
 
+DROP TABLE IF EXISTS dds.платформы CASCADE;
 CREATE TABLE dds.предметная_область (
     id INT PRIMARY KEY,
     активность BOOLEAN,
@@ -122,6 +138,7 @@ CREATE TABLE dds.предметная_область (
     название VARCHAR(50)
 );
 
+DROP TABLE IF EXISTS dds.платформы CASCADE;
 CREATE TABLE dds.уровень_образования (
     id INT PRIMARY KEY,
     активность BOOLEAN,
@@ -129,6 +146,7 @@ CREATE TABLE dds.уровень_образования (
     название VARCHAR(50)
 );
 
+DROP TABLE IF EXISTS dds.платформы CASCADE;
 CREATE TABLE dds.образование_пользователей (
     id INT PRIMARY KEY,
     "User ID" INT,
@@ -142,7 +160,7 @@ CREATE TABLE dds.образование_пользователей (
     FOREIGN KEY ("Уровень образования") REFERENCES dds.уровень_образования(id)
 );
 
-
+DROP TABLE IF EXISTS dds.платформы CASCADE;
 CREATE TABLE dds.базы_данных_и_уровень_знаний_сотру (
     id INT PRIMARY KEY,
     "User ID" INT,
@@ -156,6 +174,7 @@ CREATE TABLE dds.базы_данных_и_уровень_знаний_сотру
     FOREIGN KEY ("Уровень знаний") REFERENCES dds.уровни_знаний(id)
 );
 
+DROP TABLE IF EXISTS dds.платформы CASCADE;
 CREATE TABLE dds.инструменты_и_уровень_знаний_сотр (
     id INT PRIMARY KEY,
     "User ID" INT,
@@ -169,6 +188,7 @@ CREATE TABLE dds.инструменты_и_уровень_знаний_сотр 
     FOREIGN KEY ("Уровень знаний") REFERENCES dds.уровни_знаний(id)
 );
 
+DROP TABLE IF EXISTS dds.платформы CASCADE;
 CREATE TABLE dds.среды_разработки_и_уровень_знаний_ (
     id INT PRIMARY KEY,
     "User ID" INT,
@@ -182,6 +202,7 @@ CREATE TABLE dds.среды_разработки_и_уровень_знаний_
     FOREIGN KEY ("Уровень знаний") REFERENCES dds.уровни_знаний(id)
 );
 
+DROP TABLE IF EXISTS dds.платформы CASCADE;
 CREATE TABLE dds.опыт_сотрудника_в_отраслях (
     id INT PRIMARY KEY,
     "User ID" INT,
@@ -195,6 +216,7 @@ CREATE TABLE dds.опыт_сотрудника_в_отраслях (
     FOREIGN KEY ("Уровень знаний в отрасли") REFERENCES dds.уровни_знаний_в_отрасли(id)
 );
 
+DROP TABLE IF EXISTS dds.платформы CASCADE;
 CREATE TABLE dds.опыт_сотрудника_в_предметных_областях (
     id INT PRIMARY KEY,
     "User ID" INT,
@@ -208,6 +230,7 @@ CREATE TABLE dds.опыт_сотрудника_в_предметных_обла�
     FOREIGN KEY ("Уровень знаний в предметной области") REFERENCES dds.уровни_знаний_в_предметной_област(id)
 );
 
+DROP TABLE IF EXISTS dds.платформы CASCADE;
 CREATE TABLE dds.сертификаты_пользователей (
     id INT PRIMARY KEY,
     "User ID" INT,
