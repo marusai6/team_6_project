@@ -1,33 +1,58 @@
+def main():
 # Импорт библиотек
-import pandas as pd
-import configparser
-from sqlalchemy import create_engine
+    import pandas as pd
+    import configparser
+    from sqlalchemy import create_engine, MetaData, Table, event
 
 # Подключение к БД через конфигурационный файл
-config = configparser.ConfigParser()
-config.read('config.ini')
+    config = configparser.ConfigParser()
+    config.read('/opt/airflow/dags/Scripts/config.ini')
 
-db_host = config['Database']['db_host']
-db_port = config['Database']['db_port']
-db_name = config['Database']['db_name']
-db_user = config['Database']['db_user']
-db_password = config['Database']['db_password']
+    db_host = config['Database']['db_host']
+    db_port = config['Database']['db_port']
+    db_name = config['Database']['db_name']
+    db_user = config['Database']['db_user']
+    db_password = config['Database']['db_password']
 
-conn_str = f"postgresql://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}"
-engine = create_engine(conn_str)
+    conn_str = f"postgresql://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}"
+    engine = create_engine(conn_str)
+
+# Процедура очистки таблиц от данных
+# def init_search_path(connection, conn_record):
+#     cursor = connection.cursor()
+#     try:
+#         cursor.execute('SET search_path TO dm;')
+#     finally:
+#         cursor.close()
+#
+#
+# def truncate_tables(table):
+#     metadata = MetaData()
+#     my_table = Table(table, metadata, autoload_with=engine)
+#
+#     conn = engine.connect()
+#     event.listen(engine, 'connect', init_search_path(conn))
+#     truncate_query = my_table.delete()
+#     conn.execute('SET search_path TO dm;')
+#     conn.execute(truncate_query)
+#     conn.close()
+#
+# tables=['dm.period', 'dm.category_know', 'dm.сотрудники_дар', 'dm.knows', 'dm.levels', 'dm.summary_tab', 'temporary_tables.навыки_и_уровни_знаний', 'temporary_tables.for_summary_tab']
+# for table in tables:
+#     truncate_tables(table)
 
 #Загружаем свои таблицы
-df_2 = pd.read_csv('period.csv', sep=',', encoding='UTF-8')
-df_3 = pd.read_csv('category_know.csv', sep=';', encoding='UTF-8')
+    df_2 = pd.read_csv('/opt/airflow/dags/Scripts/period.csv', sep=',', encoding='UTF-8')
+    df_3 = pd.read_csv('/opt/airflow/dags/Scripts/category_know.csv', sep=';', encoding='UTF-8')
 
-df_2.to_sql('period', engine, schema='dm', if_exists='append', index=False)
-df_3.to_sql('category_know', engine, schema='dm', if_exists='append', index=False)
+    df_2.to_sql('period', engine, schema='dm', if_exists='append', index=False)
+    df_3.to_sql('category_know', engine, schema='dm', if_exists='append', index=False)
 
-df=pd.read_sql('SELECT * FROM dds.сотрудники_дар', engine)
-df.to_sql('сотрудники_дар', engine, schema='dm', if_exists='append', index=False)
+    df=pd.read_sql('SELECT * FROM dds.сотрудники_дар', engine)
+    df.to_sql('сотрудники_дар', engine, schema='dm', if_exists='append', index=False)
 
 # Запрос, который объединяет таблицы_справочники по навыкам в одну
-df_5=pd.read_sql('''
+    df_5=pd.read_sql('''
 select * from dds.базы_данных
 UNION ALL
 select * from dds.инструменты
@@ -50,10 +75,10 @@ select * from dds.фреймворки
 UNION ALL
 select * from dds.языки''', engine)
 
-df_5.to_sql('knows', engine, schema='dm', if_exists='append', index=False)
+    df_5.to_sql('knows', engine, schema='dm', if_exists='append', index=False)
 
 # Запрос, который объединяет таблицы_справочники по уровням знаний в одну
-df_6=pd.read_sql('''SELECT * FROM dds.уровни_знаний_в_отрасли
+    df_6=pd.read_sql('''SELECT * FROM dds.уровни_знаний_в_отрасли
 UNION ALL
 SELECT * FROM dds.уровни_знаний_в_предметной_област
 UNION ALL
@@ -64,18 +89,18 @@ UNION ALL
 SELECT * FROM dds.уровни_знаний''', engine)
 
 # Добавляем колонку n_level
-df_6['n_level']=None
-df_6.loc[df_6['название'] == 'Использовал на проекте', 'n_level'] = 1
-df_6.loc[df_6['название'] == 'Novice', 'n_level'] = 2
-df_6.loc[df_6['название'] == 'Junior', 'n_level'] = 3
-df_6.loc[df_6['название'] == 'Middle', 'n_level'] = 4
-df_6.loc[df_6['название'] == 'Senior', 'n_level'] = 5
-df_6.loc[df_6['название'] == 'Expert', 'n_level'] = 6
-df_6.to_sql('levels', engine, schema='dm', if_exists='append', index=False)
+    df_6['n_level']=None
+    df_6.loc[df_6['название'] == 'Использовал на проекте', 'n_level'] = 1
+    df_6.loc[df_6['название'] == 'Novice', 'n_level'] = 2
+    df_6.loc[df_6['название'] == 'Junior', 'n_level'] = 3
+    df_6.loc[df_6['название'] == 'Middle', 'n_level'] = 4
+    df_6.loc[df_6['название'] == 'Senior', 'n_level'] = 5
+    df_6.loc[df_6['название'] == 'Expert', 'n_level'] = 6
+    df_6.to_sql('levels', engine, schema='dm', if_exists='append', index=False)
 
 # Запрос, который объединяет таблицы с навыками и уровнями в одну и добавляет колонку period_id, потом
 # соединяется с таблицей lables по общему полю
-request = '''CREATE temporary table temp_1 (
+    request = '''CREATE temporary table temp_1 (
 	record_id INT,
 	"User ID" INT,
 	date_first DATE,
@@ -125,27 +150,27 @@ JOIN dm.levels l ON t1.level_id=l.id'''
 
 # Далее я не смогла сообразить, как обойтись без дополнительных таблиц, поэтому создала слой temporary_tables
 # и пару таблиц в нём
-df_4=pd.read_sql(request, engine)
-df_4.to_sql('навыки_и_уровни_знаний', engine, schema='temporary_tables', if_exists='append', index=False)
+    df_4=pd.read_sql(request, engine)
+    df_4.to_sql('навыки_и_уровни_знаний', engine, schema='temporary_tables', if_exists='append', index=False)
 
-df_7=pd.DataFrame(columns=['record_id', 'User ID', 'date_last', 'date_first', 'category_know_id', 'know_id', 'level_id', 'n_level'])
+    df_7=pd.DataFrame(columns=['record_id', 'User ID', 'date_last', 'date_first', 'category_know_id', 'know_id', 'level_id', 'n_level'])
 
 # Запрос, который выбирает записи из таблиц, которые соответствуют каждому периоду
-for i in range(len(df_2)):
-    request=f'''select * from temporary_tables.навыки_и_уровни_знаний
+    for i in range(len(df_2)):
+        request=f'''select * from temporary_tables.навыки_и_уровни_знаний
 where date_last between (select начало_периода from dm.period
 						 where id = {df_2.loc[i, 'id']})
 and (select конец_периода from dm.period
 						 where id = {df_2.loc[i, 'id']});'''
-    df_8 = pd.read_sql(request, engine)
-    df_8['period_id'] = df_2.loc[i, 'id']
+        df_8 = pd.read_sql(request, engine)
+        df_8['period_id'] = df_2.loc[i, 'id']
 
-    df_7=pd.concat([df_7, df_8], axis=0, ignore_index=False)
+        df_7=pd.concat([df_7, df_8], axis=0, ignore_index=False)
 
-df_7.to_sql('for_summary_tab', engine, schema='temporary_tables', if_exists='append', index=False)
+    df_7.to_sql('for_summary_tab', engine, schema='temporary_tables', if_exists='append', index=False)
 
 # Запрос, который оставляет в итоговой таблице только записи с высшим уровнем в каждой группе
-request='''CREATE temporary table temp_2 (
+    request='''CREATE temporary table temp_2 (
 	record_id INT,
 	"User ID" INT,
 	date_first DATE,
@@ -199,8 +224,11 @@ UNION ALL
 select NULL as record_id, "User ID", NULL as date_first, NULL as date_last, 1111186 as "category_know_id", NULL as know_id, "Уровень образования" as level_id,
  NULL as n_level, NULL as period_id, NULL as growth, NULL as current_level from dds.образование_пользователей;'''
 
-df_11=pd.read_sql(request, engine)
-df_11.to_sql('summary_tab', engine, schema='dm', if_exists='append', index=False)
+    df_11=pd.read_sql(request, engine)
+    df_11.to_sql('summary_tab', engine, schema='dm', if_exists='append', index=False)
 
 
-print('Успешно!')
+    print('Успешно!')
+
+if __name__ == '__main__':
+    main()
