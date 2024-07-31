@@ -31,16 +31,19 @@ def clean_data(df, table_name):
         df.drop_duplicates(subset=['id'], keep='first', inplace=True)
         df['активность'] = df['активность'].apply(lambda x: True if x == 'Да' else False if x == 'Нет' else None)
 
-    elif table_name == 'сотрудники_даp':
-        df['Последняя авторизация'] = df['Последняя авторизация'].fillna('11.11.1111')
+    elif table_name == 'сотрудники_дар':
+        df['Последняя авторизация'] = df['Последняя авторизация'].replace('', '11.11.1111')
+
+        df.drop(columns=['Дата изменения', 'Дата регистрации', 'Дата рождения'], inplace=True)
         df['должность'] = df['должность'].replace(['', '-'], 'Не указано')
         df['активность'] = df['активность'].apply(lambda x: True if x == 'Да' else False if x == 'Нет' else None)
         df['цфо'] = df['цфо'].replace('', 'Не указано')
-        df.drop(columns=['Сорт.'], inplace=True)
         df['активность'] = df['активность'].astype(bool)
+        df['подразделения'] = df['подразделения'].apply(lambda x: x.replace('.', ''))
+        df['подразделения'] = df['подразделения'].apply(lambda x: x.strip())
+
 
     elif table_name == 'базы_данных_и_уровень_знаний_сотру':
-        df.drop(columns=['Дата изменения','Дата регистрации','Дата рождения'], inplace=True)
         df['дата'] = df['дата'].fillna(df['Дата изм.'])
         df.loc[df['дата'] == '', 'дата'] = df['Дата изм.']
 
@@ -58,7 +61,8 @@ def clean_data(df, table_name):
         df_sorted = df.sort_values(by=['User ID', 'Уровень знаний', 'Базы данных', 'id'])
         df_unique = df_sorted.drop_duplicates(subset=['User ID', 'Уровень знаний', 'Базы данных'], keep='first')
         df = df_unique.reset_index(drop=True)
-        df.drop(columns=['название'], inplace=True)
+        df = df.dropna(subset=['Уровень знаний'])
+        df.drop(columns=['название', "Сорт."], inplace=True)
 
 
 
@@ -79,7 +83,7 @@ def clean_data(df, table_name):
         df['Год окончания'] = df['Год окончания'].replace(0, 1)
 
         df['Уровень образование'] = df['Уровень образование'].str.extract(r'(\d+)').astype(int)
-        df['Фиктивное название'].replace("", "Не указано", inplace=True)
+        df['Фиктивное название'] = df['Фиктивное название'].replace("", "Не указано")
         broken_data = df[(df['Год окончания'] == 1960) & (df['User ID'] != 558)]
 
         df_sorted = df.sort_values(by=["User ID", "Название учебного заведения", "Уровень образование", 'id'])
@@ -310,7 +314,7 @@ def clean_data(df, table_name):
 
         df['Языки программирования'] = df['Языки программирования'].str.extract(r'(\d+)', expand=False)
         df['Языки программирования'] = df['Языки программирования'].fillna(0).astype(int)
-
+        df = df.dropna(subset=['Уровень знаний'])
         valid_fr = pd.read_sql("SELECT id FROM dds.языки_программирования", engine)['id']
         df = df[df['Языки программирования'].isin(valid_fr)]
 
@@ -417,8 +421,8 @@ tables = [
      'фреймворки_и_уровень_знаний_сотру',
      'платформы_и_уровень_знаний_сотруд',
      'языки_программирования_и_уровень',
-    'инструменты_и_уровень_знаний_сотр',
-    'технологии_и_уровень_знаний_сотру',
+     'инструменты_и_уровень_знаний_сотр',
+     'технологии_и_уровень_знаний_сотру',
      'базы_данных_и_уровень_знаний_сотру'
     ]
 
