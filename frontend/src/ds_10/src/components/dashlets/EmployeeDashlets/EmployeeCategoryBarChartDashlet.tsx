@@ -88,8 +88,8 @@ const EmployeeCategoryBarChartDashlet = () => {
         <Card className='flex flex-col h-full'>
             <CardHeader className='flex flex-row justify-between items-center'>
                 <div>
-                    <CardTitle>Категории навыков</CardTitle>
-                    <CardDescription>столбчатая диаграмма</CardDescription>
+                    <CardTitle>Области знаний</CardTitle>
+                    <CardDescription>сравнительный анализ с подразделением</CardDescription>
                 </div>
                 <ExportToPNGButton exportRef={ref} />
             </CardHeader>

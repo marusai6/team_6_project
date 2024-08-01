@@ -1,13 +1,11 @@
 import React from 'react'
 import { Download } from 'lucide-react'
-import { useSelector } from 'react-redux'
-
 import ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
-import { RootState } from '../../state/store';
 import { Button } from '../ui/Button';
+import { Employee } from '../../employees/columns';
 
-const ExportToSLSXButton = ({ exportData }: { exportData: { id: number, name: string, title: string, department: string, city: string, email: string }[] }) => {
+const ExportToSLSXButton = ({ exportData }: { exportData: Employee[] }) => {
 
     async function downloadXlsx() {
         const workbook = new ExcelJS.Workbook()
@@ -17,9 +15,6 @@ const ExportToSLSXButton = ({ exportData }: { exportData: { id: number, name: st
             { header: 'Id', key: 'id', width: 16 },
             { header: 'Имя', key: 'name', width: 32 },
             { header: 'Почта', key: 'email', width: 50 },
-            { header: 'Подразделение', key: 'department', width: 50 },
-            { header: 'Должность', key: 'title', width: 50 },
-            { header: 'Город', key: 'city', width: 30 },
         ]
         worksheet.addRows(exportData)
 

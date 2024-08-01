@@ -27,7 +27,7 @@ export function getNoun(number: number, one: string, two: string, five: string) 
 
 export function getCurrentPeriod() {
     return {
-        halfyear: new Date().getMonth() < 6 ? '1' : '2',
+        halfyear: 'both',
         year: new Date().getFullYear().toString()
     }
 }

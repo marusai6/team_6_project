@@ -1,6 +1,6 @@
 import { urlState, UrlState } from 'bi-internal/core';
 import React, { useEffect } from 'react';
-import { cn, getCurrentPeriod } from '../lib/utils';
+import { cn, getCurrentPeriod } from '../../lib/utils';
 
 const DatePicker = ({ setOpen }: { setOpen: React.Dispatch<React.SetStateAction<boolean>> }) => {
 
@@ -46,7 +46,7 @@ const DatePicker = ({ setOpen }: { setOpen: React.Dispatch<React.SetStateAction<
 
     return (
         <div className="flex w-80 flex-col divide-y">
-            <div className="flex select-none items-center justify-center bg-primary px-4 py-2 text-white w-full">
+            <div className="relative flex select-none items-center justify-center bg-primary px-4 py-2 text-white w-full">
                 <p className='text-lg'>{urlHalfyear === 'both' ? urlYear : `${urlHalfyear} полугодие ${urlYear}`}</p>
             </div>
             <div className='px-4 py-2 pb-4 space-y-4'>
@@ -90,7 +90,6 @@ const DatePicker = ({ setOpen }: { setOpen: React.Dispatch<React.SetStateAction<
                 </div>
 
             </div>
-
         </div>
     );
 };

@@ -37,7 +37,7 @@ const GeneralDynamicsDashlet = () => {
         <Card ref={ref} className='h-full'>
             <CardHeader className='flex flex-col items-center'>
                 <CardTitle className='flex justify-between w-full'>
-                    Общая динамика
+                    Динамика развития
                     <ExportToPNGButton exportRef={ref} />
                 </CardTitle>
                 <CardDescription className='flex justify-between w-full pt-1'>

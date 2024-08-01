@@ -1,13 +1,13 @@
 import { BookOpenCheck, CalendarDays, CircleUserRound, ListCollapse, Network, Trash2 } from 'lucide-react'
 import React, { useState } from 'react'
-import Popover from './ui/Popover'
-import { cn } from '../lib/utils'
-import SelectWithSearch from './ui/SelectWithSearch'
-import DatePicker from './DatePicker'
+import Popover from '../ui/Popover'
+import { cn } from '../../lib/utils'
+import SelectWithSearch from '../ui/SelectWithSearch'
+import DatePicker from '../ui/DatePicker'
 import { urlState, UrlState } from 'bi-internal/core'
 import { motion } from 'framer-motion'
 import { useSelector } from 'react-redux'
-import { RootState } from '../state/store'
+import { RootState } from '../../state/store'
 
 type filterItemDataType = filterSelectItemType | filterDateItemType
 
@@ -67,14 +67,19 @@ const filtersData: filterItemDataType[] = [
 const Filters = () => {
 
     return (
-        <motion.ul
-            layout
-            transition={{ duration: 0.3, ease: 'linear' }}
-            className='flex divide-x border rounded w-fit'>
-            {filtersData.map((filter) =>
-                <FilterItem filterItemData={filter} />
-            )}
-        </motion.ul>
+        <>
+            <motion.ul
+                layout
+                transition={{ duration: 0.3, ease: 'linear' }}
+                className='flex divide-x border rounded w-fit'>
+                {filtersData.map((filter) =>
+                    <FilterItem filterItemData={filter} />
+                )}
+            </motion.ul>
+            <div onClick={() => { urlState.updateModel({ year: '2024', halfyear: 'both', skill: undefined, employee: undefined, department: undefined, knowledgeField: undefined }) }} className='px-3 py-2 ml-2 bg-card border rounded hover:bg-rose-400 hover:text-white transition-all flex gap-2 items-center text-rose-400 cursor-pointer'>
+                <Trash2 />
+            </div>
+        </>
     )
 }
 
@@ -115,7 +120,7 @@ const FilterItem = ({ filterItemData }: { filterItemData: filterItemDataType }) 
                         >
                             {filterItemData.popoverContentType === 'DatePicker' ? (urlModel.halfyear === 'both' ? urlModel.year : `${urlModel.halfyear}-е полугодие ${urlModel.year}`) : urlValue || filterItemData.title}
                         </motion.h3>
-                        {filterItemData.popoverContentType === 'DatePicker' && <Trash2 size={20} strokeWidth={1.5} className='text-rose-600' onClick={(e) => { e.stopPropagation(); urlState.updateModel({ year: '2024', halfyear: '1' }) }} />}
+                        {filterItemData.popoverContentType === 'DatePicker' && <Trash2 size={20} strokeWidth={1.5} className='text-rose-600' onClick={(e) => { e.stopPropagation(); urlState.updateModel({ year: '2024', halfyear: 'both' }) }} />}
                     </li>
                 </Popover.Trigger>
                 <Popover.Content open={open} align='center'>

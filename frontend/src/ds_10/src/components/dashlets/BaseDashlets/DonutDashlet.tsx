@@ -20,8 +20,8 @@ const DonutDashlet = () => {
         <Card className='h-full flex flex-col'>
             <CardHeader className='flex flex-row justify-between items-center'>
                 <div>
-                    <CardTitle>Уровни навыков</CardTitle>
-                    <CardDescription>круговая диаграмма</CardDescription>
+                    <CardTitle>Соотношение грейдов</CardTitle>
+                    <CardDescription>для выбранных фильтров</CardDescription>
                 </div>
                 <ExportToPNGButton exportRef={ref} />
             </CardHeader>

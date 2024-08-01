@@ -29,7 +29,6 @@ function App() {
                 <Route path={BASE_URL} element={<Layout />}>
                   <Route index element={<MainDashboard />} />
                   <Route path={'employees'} element={<RecruitmentPage />} />
-                  <Route path={'settings'} element={<h1>Настройки</h1>} />
                   <Route path={'*'} element={<h1>Not Found</h1>} />
                 </Route>
               </Routes>

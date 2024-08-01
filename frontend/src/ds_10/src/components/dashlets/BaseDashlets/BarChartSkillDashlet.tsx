@@ -5,6 +5,8 @@ import { defaultDataFormatter } from '../../../lib/utils';
 import ExportToPNGButton from '../../exportButtons/ExportToPNGButton';
 import useFetch from '../../../hooks/useFetch';
 import { useFilters } from '../../../hooks/useFilters';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../state/store';
 
 
 function mergeArrays(array1: { name: string, Рост: number }[], array2: { name: string, Рост: number }[], firstArrayTitle: string, secondArrayTitle: string) {
@@ -43,6 +45,8 @@ const BarChartSkillDashlet = () => {
 
     const ref = useRef()
 
+    const { category } = useSelector((state: RootState) => state.filters)
+
     const { leveledSkillsFilter, currentPeriodFilter, previousPeriodFilter, departmentFilter, categoryFilter, currentPeriod, previousPeriod, filtersAreReady } = useFilters()
 
     // Knowledge Fetching
@@ -63,8 +67,8 @@ const BarChartSkillDashlet = () => {
         <Card className='h-full flex flex-col'>
             <CardHeader className='flex flex-row justify-between items-center'>
                 <div>
-                    <CardTitle>Категории навыков</CardTitle>
-                    <CardDescription>столбчатая диаграмма</CardDescription>
+                    <CardTitle>{category}</CardTitle>
+                    <CardDescription>сравнительный анализ по периодам</CardDescription>
                 </div>
                 <ExportToPNGButton exportRef={ref} />
             </CardHeader>

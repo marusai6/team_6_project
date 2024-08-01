@@ -5,6 +5,8 @@ import { cn, defaultDataFormatter, groupByAndSum } from '../../../lib/utils';
 import ExportToPNGButton from '../../exportButtons/ExportToPNGButton';
 import useFetch from '../../../hooks/useFetch';
 import { useFilters } from '../../../hooks/useFilters';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../state/store';
 
 // function mergeArrays(array1: { knows_название: string, sum: number, подразделения: string }[], array2: { knows_название: string, sum: number, "User ID": number }[], firstArrayTitle: string, secondArrayTitle: string) {
 //     const result = [];
@@ -65,6 +67,8 @@ const EmployeeSkillBarChartDashlet = () => {
 
     const ref = useRef()
 
+    const { category } = useSelector((state: RootState) => state.filters)
+
     const { leveledSkillsFilter, categoryFilter, employeeFilter, currentLevelFilter, yearPeriodsFilter } = useFilters()
 
     const [employeeDepartment, setEmployeeDepartment] = useState('')
@@ -99,8 +103,8 @@ const EmployeeSkillBarChartDashlet = () => {
         <Card className='flex flex-col h-full'>
             <CardHeader className='flex flex-row justify-between items-center'>
                 <div>
-                    <CardTitle>Категории навыков</CardTitle>
-                    <CardDescription>столбчатая диаграмма</CardDescription>
+                    <CardTitle>{category}</CardTitle>
+                    <CardDescription>сравнительный анализ с подразделением</CardDescription>
                 </div>
                 <ExportToPNGButton exportRef={ref} />
             </CardHeader>

@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react"
 import useFetch from "./useFetch"
 import { useFilters } from "./useFilters"
+import { useSelector } from "react-redux"
+import { RootState } from "../state/store"
 
 type EmployeeGeneralSkills = {
     category_know_название: string
@@ -14,6 +16,7 @@ type groupedEmployeeSkills = {
 
 
 const groupByCategory = (generalSkills: EmployeeGeneralSkills[]) => {
+    if (!generalSkills) return []
     return generalSkills.reduce((acc, curr) => {
         if (!acc[curr.category_know_название]) {
             acc[curr.category_know_название] = []
@@ -27,7 +30,9 @@ export const useEmployeeGeneralSkills = () => {
 
     const { employeeFilter, generalSkillsFilter, yearPeriodsFilter } = useFilters()
 
-    const { data: employeeGeneralSkillsData, loading: loadingEmployeeGeneralSkillsData } = useFetch<EmployeeGeneralSkills>({ dimensions: ['category_know_название'], measures: ['knows_название', 'levels_название'], filters: { ...employeeFilter, ...generalSkillsFilter, ...yearPeriodsFilter }, queryKey: 'EmployeeContactData' })
+    const { employee } = useSelector((state: RootState) => state.filters)
+
+    const { data: employeeGeneralSkillsData, loading: loadingEmployeeGeneralSkillsData } = useFetch<EmployeeGeneralSkills>({ dimensions: ['category_know_название'], measures: ['knows_название', 'levels_название'], filters: { ...employeeFilter, ...generalSkillsFilter, ...yearPeriodsFilter }, filtersAreReady: !!employee, queryKey: 'EmployeeContactData' })
 
     const [groupedGeneralSkillData, setGroupedGeneralSkillData] = useState<groupedEmployeeSkills>({})
 

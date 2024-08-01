@@ -2,10 +2,10 @@
 import { useState } from "react";
 import React from "react";
 import { MenuIcon, X } from "lucide-react";
-import { cn } from "../lib/utils";
-import Popover from "./ui/Popover";
+import { cn } from "../../lib/utils";
+import Popover from "../ui/Popover";
 import { Link } from "react-router-dom";
-import { BASE_URL } from "../../App";
+import { BASE_URL } from "../../../App";
 
 
 const Menu = () => {
@@ -28,12 +28,7 @@ const Menu = () => {
                     </Link>
                     <Link to={`${BASE_URL}/employees`} onClick={() => setOpen(false)}>
                         <li className="rounded hover:bg-accent transition-all cursor-pointer px-4 py-2">
-                            Поиск Сотрудников
-                        </li>
-                    </Link>
-                    <Link to={`${BASE_URL}/settings`} onClick={() => setOpen(false)}>
-                        <li className="rounded hover:bg-accent transition-all cursor-pointer px-4 py-2">
-                            Настройки
+                            Подбор Сотрудников
                         </li>
                     </Link>
                 </ul>

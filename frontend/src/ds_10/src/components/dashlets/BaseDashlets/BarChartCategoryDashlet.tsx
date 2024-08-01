@@ -74,8 +74,8 @@ const BarChartCategoryDashlet = () => {
         <Card className='h-full flex flex-col'>
             <CardHeader className='flex flex-row justify-between items-center'>
                 <div>
-                    <CardTitle>Категории навыков</CardTitle>
-                    <CardDescription>столбчатая диаграмма</CardDescription>
+                    <CardTitle>Области знаний</CardTitle>
+                    <CardDescription>сравнительный анализ по периодам</CardDescription>
                 </div>
                 <ExportToPNGButton exportRef={ref} />
             </CardHeader>

@@ -17,10 +17,10 @@ const TrainingDynamicsDashlet = () => {
     const { year, halfyear } = useSelector((state: RootState) => state.filters)
     const { currentPeriodFilter, previousPeriodFilter, categoryFilter, skillFilter, departmentFilter, isNotHiredFilter, filtersAreReady, leveledSkillsFilter } = useFilters()
 
-    const { data: currentPeriodTrainingData, loading: loadingCurrentPeriodTrainingData } = useFetch<{ growth: number }>({ dimensions: [], measures: ['sum(growth)'], filters: { ...currentPeriodFilter, ...leveledSkillsFilter, ...categoryFilter, ...skillFilter, ...departmentFilter, ...isNotHiredFilter }, filtersAreReady, queryKey: 'TrainingData' })
+    const { data: currentPeriodTrainingData, loading: loadingCurrentPeriodTrainingData } = useFetch<{ growth: number }>({ dimensions: [], measures: ['sum(growth)'], filters: { ...currentPeriodFilter, ...categoryFilter, ...skillFilter, ...departmentFilter, ...isNotHiredFilter }, filtersAreReady, queryKey: 'TrainingData' })
     const currentPeriodTraining = currentPeriodTrainingData && !loadingCurrentPeriodTrainingData ? currentPeriodTrainingData[0].growth || '0' : undefined
 
-    const { data: previousPeriodTrainingData, loading: loadingPreviousPeriodTrainingData } = useFetch<{ growth: number }>({ dimensions: [], measures: ['sum(growth)'], filters: { ...previousPeriodFilter, ...leveledSkillsFilter, ...categoryFilter, ...skillFilter, ...departmentFilter, ...isNotHiredFilter }, filtersAreReady, queryKey: 'TrainingData', })
+    const { data: previousPeriodTrainingData, loading: loadingPreviousPeriodTrainingData } = useFetch<{ growth: number }>({ dimensions: [], measures: ['sum(growth)'], filters: { ...previousPeriodFilter, ...categoryFilter, ...skillFilter, ...departmentFilter, ...isNotHiredFilter }, filtersAreReady, queryKey: 'TrainingData', })
     const previousPeriodTraining = previousPeriodTrainingData && !loadingPreviousPeriodTrainingData ? previousPeriodTrainingData[0].growth || '0' : undefined
 
     // Dynamics Calculation

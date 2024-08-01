@@ -1,9 +1,9 @@
 import React from 'react'
-import Logo from './svgs/Logo'
+import Logo from '../svgs/Logo'
 import Filters from './Filters'
 import Menu from './Menu'
 import { Link } from 'react-router-dom'
-import { BASE_URL } from '../../App'
+import { BASE_URL } from '../../../App'
 
 const Header = () => {
     return (

@@ -1188,12 +1188,12 @@ body {
   height: 1.25rem;
 }
 
-.h-6 {
-  height: 1.5rem;
+.h-56 {
+  height: 14rem;
 }
 
-.h-60 {
-  height: 15rem;
+.h-6 {
+  height: 1.5rem;
 }
 
 .h-7 {
@@ -1216,6 +1216,10 @@ body {
   height: 1px;
 }
 
+.h-\[67\.5\%\] {
+  height: 67.5%;
+}
+
 .h-fit {
   height: -moz-fit-content;
   height: fit-content;
@@ -1231,18 +1235,6 @@ body {
 
 .h-screen {
   height: 100vh;
-}
-
-.h-56 {
-  height: 14rem;
-}
-
-.h-\[67\.3\%\] {
-  height: 67.3%;
-}
-
-.h-\[67\.5\%\] {
-  height: 67.5%;
 }
 
 .max-h-80 {
@@ -6920,10 +6912,6 @@ body {
   padding-bottom: 1rem;
 }
 
-.pb-\[6\.35rem\] {
-  padding-bottom: 6.35rem;
-}
-
 .pl-10 {
   padding-left: 2.5rem;
 }
@@ -10175,6 +10163,10 @@ body {
 
 .hover\:border-b-2:hover {
   border-bottom-width: 2px;
+}
+
+.hover\:border-none:hover {
+  border-style: none;
 }
 
 .hover\:border-amber-100:hover {
@@ -22376,26 +22368,9 @@ body {
   }
 }
 
-@media (min-width: 1280px) {
-  .xl\:h-60 {
-    height: 15rem;
-  }
-}
-
-@media (min-width: 1536px) {
-  .\32xl\:h-80 {
-    height: 20rem;
-  }
-}
-
 @media (min-width: 1700px) {
   .\33xl\:h-96 {
     height: 24rem;
-  }
-
-  .\33xl\:py-20 {
-    padding-top: 5rem;
-    padding-bottom: 5rem;
   }
 
   .\33xl\:py-10 {
