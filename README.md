@@ -12,5 +12,7 @@
 
 ## Пользователи дашборда
 Дашборд предназначен для HR директора департамента аналитических решений, HR-специалистов и руководителей подразделений.
-
-!team_6_projwct/photo_5287592203440481691_y.jpg
+<p align="center">
+  <img src="team_6_projwct/photo_5287592203440481691_y.jpg" width="350" title="hover text">
+  <img src="team_6_projwct/photo_5287592203440481691_y.jpg" width="350" alt="accessibility text">
+</p>
